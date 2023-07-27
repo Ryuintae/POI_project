@@ -42,6 +42,7 @@
 <div id="map" class="map">
 </div>
 
+<!--상단 고정 바-->
 <nav class="navbar navbar-expand-lg bg-body-tertiary fixed-top" data-bs-theme="dark">
     <div class="container-fluid">
         <a class="navbar-brand" href="#">OJT 프로젝트</a>
@@ -50,12 +51,9 @@
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <button class="btn btn-dark" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasScrolling"
-                    aria-controls="offcanvasScrolling">내 정보
-            </button>
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="#">메인화면</a>
+                    <a class="nav-link active" aria-current="page" href="#">Home</a>
                 </li>
                 <form class="d-flex" role="search">
                     <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
@@ -64,18 +62,14 @@
             </ul>
         </div>
 
-        <button class="btn btn-info" type="button" data-toggle="modal" data-target="#signupModal">
-            회원가입
+        <button class="btn btn-outline-warning" type="button" data-bs-toggle="offcanvas"
+                data-bs-target="#offcanvasScrolling"
+                aria-controls="offcanvasScrolling">내 정보
         </button>
         <div class="spacer"></div> <!-- 간격을 띄우기 위한 빈 div 엘리먼트 -->
-        <button class="btn btn-info" type="button" data-toggle="modal" data-target="#loginModal">로그인
-        </button>
-        <!--        <button type="button"-->
-        <!--                class="btn btn-success"-->
-        <!--                data-toggle="modal"-->
-        <!--                data-target="#GFG">-->
-        <!--            Launch Vertically Centered modal-->
-        <!--        </button>-->
+        <button class="btn btn-outline-info" type="button" data-toggle="modal" data-target="#loginModal">로그인</button>
+        <div class="spacer"></div> <!-- 간격을 띄우기 위한 빈 div 엘리먼트 -->
+        <button class="btn btn-outline-info" type="button" data-toggle="modal" data-target="#signupModal">회원가입</button>
     </div>
 </nav>
 
@@ -88,6 +82,49 @@
     </div>
     <div class="offcanvas-body">
         <p>링크들이 들어올 자리입니다.</p>
+    </div>
+</div>
+
+
+<!-- 로그인 Modal -->
+<div class="container">
+    <div class="modal fade" id="loginModal">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header" style="text-align:center;">
+                    <h5 class="modal-title">
+                        로그인
+                    </h5>
+                    <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <form action="#" method="post">
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="email">이메일</label>
+                            <input type="email" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" class="form-control"
+                                   id="email" name="email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="password">비밀번호</label>
+                            <input type="password"
+                                   class="form-control" id="password" name="password" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">취소</button>
+                        <button type="submit" class="btn btn-primary">로그인</button>
+                    </div>
+                </form>
+                <hr>
+                <!-- 버튼 클릭 시 로그인 모달창 열기 -->
+                <div style="text-align:center;">
+                    <button class="btn btn-link" type="button" data-toggle="modal" data-target="#signupModal">
+                        회원가입 하기
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -138,60 +175,6 @@
                         <button type="submit" class="btn btn-primary">회원가입</button>
                     </div>
                 </form>
-                <hr>
-                <div style="text-align:center;">
-                    <a href="##">
-                        <label>로그인 페이지로 이동</label>
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-
-<!-- 로그인 Modal -->
-<div class="container">
-    <div class="modal fade" id="loginModal">
-        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-            <div class="modal-content">
-                <div class="modal-header" style="text-align:center;">
-                    <h5 class="modal-title">
-                        로그인
-                    </h5>
-                    <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
-                </div>
-
-                <form action="#" method="post">
-                    <div class="modal-body">
-
-
-                        <div class="form-group">
-                            <label for="email">이메일</label>
-                            <input type="email" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" class="form-control"
-                                   id="email" name="email" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="password">비밀번호</label>
-                            <input type="password"
-                                   class="form-control" id="password" name="password" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="password">비밀번호 확인</label>
-                            <input type="password" class="form-control" id="password2" name="password" required>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">취소</button>
-                        <button type="submit" class="btn btn-primary">로그인</button>
-                    </div>
-                </form>
-                <hr>
-                <div style="text-align:center;">
-                    <a href="##">
-                        <label>회원가입 페이지로 이동</label>
-                    </a>
-                </div>
             </div>
         </div>
     </div>
@@ -212,6 +195,11 @@
             zoom: 7
         })
     });
+
+    // 모달창을 열기 위한 함수
+    function openLogin() {
+        document.getElementById("modal fade").style.display = "block";
+    }
 </script>
 
 <!-- 부트스트랩 JavaScript 와 종속성 패키지(JQuery, popper.js) -->
