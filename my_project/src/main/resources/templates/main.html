@@ -1,16 +1,17 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <!-- The line below is only needed for old environments like Internet Explorer and Android 4.x -->
-    <script src="https://cdn.jsdelivr.net/npm/ol@v7.4.0/dist/ol.js"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol@v7.4.0/ol.css">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"
+    <script th:src="@{https://cdn.jsdelivr.net/npm/ol@v7.4.0/dist/ol.js}"></script>
+    <link rel="stylesheet" th:href="@{https://cdn.jsdelivr.net/npm/ol@v7.4.0/ol.css}">
+    <link th:href="@{https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css}"
+          rel="stylesheet"
           integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
     <link rel="stylesheet"
-          href="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.1.1/css/ol.css"
+          th:href="@{https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.1.1/css/ol.css}"
           type="text/css">
     <style>
         .map {
@@ -39,7 +40,7 @@
 <body>
 
 <!--지도 생성-->
-<div id="map" class="map">
+<div th:id="map" class="map">
 </div>
 
 <!--상단 고정 바-->
@@ -67,17 +68,19 @@
                 aria-controls="offcanvasScrolling">내 정보
         </button>
         <div class="spacer"></div> <!-- 간격을 띄우기 위한 빈 div 엘리먼트 -->
-        <button class="btn btn-outline-info" type="button" data-toggle="modal" data-target="#loginModal">로그인</button>
+        <button class="btn btn-outline-info" type="button" data-toggle="modal" th:data-target="'#loginModal'">로그인
+        </button>
         <div class="spacer"></div> <!-- 간격을 띄우기 위한 빈 div 엘리먼트 -->
-        <button class="btn btn-outline-info" type="button" data-toggle="modal" data-target="#signupModal">회원가입</button>
+        <button class="btn btn-outline-info" type="button" data-toggle="modal" th:data-target="'#signupModal'">회원가입
+        </button>
     </div>
 </nav>
 
 <!-- 사이드바 -->
 <div class="offcanvas offcanvas-start" data-bs-scroll="true" data-bs-backdrop="false" tabindex="-1"
-     id="offcanvasScrolling" aria-labelledby="offcanvasScrollingLabel">
+     th:id="offcanvasScrolling" aria-labelledby="offcanvasScrollingLabel">
     <div class="offcanvas-header">
-        <h5 class="offcanvas-title" id="offcanvasScrollingLabel">회원정보</h5>
+        <h5 class="offcanvas-title" th:text="회원정보">회원정보</h5>
         <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
     </div>
     <div class="offcanvas-body">
@@ -88,7 +91,7 @@
 
 <!-- 로그인 Modal -->
 <div class="container">
-    <div class="modal fade" id="loginModal">
+    <div class="modal fade" th:id="loginModal">
         <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
             <div class="modal-content">
                 <div class="modal-header" style="text-align:center;">
@@ -103,12 +106,12 @@
                         <div class="form-group">
                             <label for="email">이메일</label>
                             <input type="email" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" class="form-control"
-                                   id="email" name="email" required>
+                                   id="email" th:name="email" required>
                         </div>
                         <div class="form-group">
                             <label for="password">비밀번호</label>
                             <input type="password"
-                                   class="form-control" id="password" name="password" required>
+                                   class="form-control" id="password" th:name="password" required>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -119,7 +122,7 @@
                 <hr>
                 <!-- 버튼 클릭 시 로그인 모달창 열기 -->
                 <div style="text-align:center;">
-                    <button class="btn btn-link" type="button" data-toggle="modal" data-target="#signupModal">
+                    <button class="btn btn-link" type="button" th:data-toggle="'modal'" th:data-target="'#signupModal'">
                         회원가입 하기
                     </button>
                 </div>
@@ -130,7 +133,7 @@
 
 <!-- 회원 가입 Modal -->
 <div class="container">
-    <div class="modal fade" id="signupModal">
+    <div class="modal fade" th:id="signupModal">
         <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
             <div class="modal-content">
                 <div class="modal-header">
@@ -144,30 +147,30 @@
                     <div class="modal-body">
                         <div class="form-group">
                             <label for="name">이름</label>
-                            <input type="text" pattern="[A-Za-z가-힣]{2,}" class="form-control" id="name" name="name"
+                            <input type="text" pattern="[A-Za-z가-힣]{2,}" class="form-control" id="name" th:name="name"
                                    required>
                         </div>
                         <div class="form-group">
                             <label for="age">나이</label>
-                            <input type="text" pattern="^[0-9]+$" class="form-control" id="age" name="age" required>
+                            <input type="text" pattern="^[0-9]+$" class="form-control" id="age" th:name="age" required>
                         </div>
                         <div class="form-group">
                             <label for="email">이메일</label>
                             <input type="email" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" class="form-control"
-                                   id="email" name="email" required>
+                                   id="email" th:name="email" required>
                         </div>
                         <div class="form-group">
                             <label for="password">비밀번호</label>
                             <input type="password"
-                                   class="form-control" id="password" name="password" required>
+                                   class="form-control" id="password" th:name="password" required>
                         </div>
                         <div class="form-group">
                             <label for="password">비밀번호 확인</label>
-                            <input type="password" class="form-control" id="password2" name="password" required>
+                            <input type="password" class="form-control" id="password2" th:name="password" required>
                         </div>
                         <div class="form-group">
                             <label for="phone">전화번호</label>
-                            <input type="tel" class="form-control" id="phone" name="phone" required>
+                            <input type="tel" class="form-control" id="phone" th:name="phone" required>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -180,7 +183,7 @@
     </div>
 </div>
 
-<script type="text/javascript">
+<script type="text/javascript" th:inline="javascript">
     let map = new ol.Map({
         target: 'map',
         layers: [
@@ -195,18 +198,13 @@
             zoom: 7
         })
     });
-
-    // 모달창을 열기 위한 함수
-    function openLogin() {
-        document.getElementById("modal fade").style.display = "block";
-    }
 </script>
 
 <!-- 부트스트랩 JavaScript 와 종속성 패키지(JQuery, popper.js) -->
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+<script th:src="@{https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js}"></script>
+<script th:src="@{https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js}"></script>
+<script th:src="@{https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js}"></script>
+<script th:src="@{https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js}"
         integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
         crossorigin="anonymous"></script>
 </body>
