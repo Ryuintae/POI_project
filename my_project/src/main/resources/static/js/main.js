@@ -13,7 +13,7 @@ var mousePositionCtrl = new ol.control.MousePosition({
 });
 
 var map = new ol.Map({
-    controls: ol.control.defaults().extend( [mousePositionCtrl] ),
+    controls: ol.control.defaults().extend([mousePositionCtrl]),
     layers: [
         new ol.layer.Tile({
             source: new ol.source.OSM()
@@ -33,11 +33,11 @@ const raster = new TileLayer({
 
 const vector = new VectorLayer({
     source: new VectorSource(),
-    style : {
-        'fill-color'       : 'rgba(255, 255, 255, 0.2)',
-        'stroke-color'     : '#ffcc33',
-        'stroke-width'     : 2,
-        'circle-radius'    : 7,
+    style: {
+        'fill-color': 'rgba(255, 255, 255, 0.2)',
+        'stroke-color': '#ffcc33',
+        'stroke-width': 2,
+        'circle-radius': 7,
         'circle-fill-color': '#ffcc33',
     },
 });
@@ -45,14 +45,14 @@ const vector = new VectorLayer({
 const map = new Map({
     layers: [raster, vector],
     target: 'map',
-    view  : new View({
+    view: new View({
         center: [-11000000, 4600000],
-        zoom  : 4,
+        zoom: 4,
     }),
 });
 
 const ExampleModify = {
-    init     : function () {
+    init: function () {
         this.select = new Select();
         map.addInteraction(this.select);
 
@@ -82,7 +82,7 @@ ExampleModify.init();
 const optionsForm = document.getElementById('options-form');
 
 const ExampleDraw = {
-    init      : function () {
+    init: function () {
         map.addInteraction(this.Point);
         this.Point.setActive(false);
         map.addInteraction(this.LineString);
@@ -92,24 +92,24 @@ const ExampleDraw = {
         map.addInteraction(this.Circle);
         this.Circle.setActive(false);
     },
-    Point     : new Draw({
+    Point: new Draw({
         source: vector.getSource(),
-        type  : 'Point',
+        type: 'Point',
     }),
     LineString: new Draw({
         source: vector.getSource(),
-        type  : 'LineString',
+        type: 'LineString',
     }),
-    Polygon   : new Draw({
+    Polygon: new Draw({
         source: vector.getSource(),
-        type  : 'Polygon',
+        type: 'Polygon',
     }),
-    Circle    : new Draw({
+    Circle: new Draw({
         source: vector.getSource(),
-        type  : 'Circle',
+        type: 'Circle',
     }),
     activeDraw: null,
-    setActive : function (active) {
+    setActive: function (active) {
         if (this.activeDraw) {
             this.activeDraw.setActive(false);
             this.activeDraw = null;
@@ -141,7 +141,8 @@ optionsForm.onchange = function (e) {
         } else if (interactionType == 'draw') {
             ExampleDraw.setActive(true);
             ExampleModify.setActive(false);
-        }j
+        }
+        j
     }
 };
 
@@ -150,7 +151,6 @@ ExampleModify.setActive(false);
 
 // The snap interaction must be added after the Modify and Draw interactions
 // in order for its map browser event handlers to be fired first. Its handlers
-// are responsible of doing the snapping.
 const snap = new Snap({
     source: vector.getSource(),
 });
