@@ -14,4 +14,9 @@ public class MainController {
     public String pathCheck() {
         return "check_saved_path";
     }
+
+    @GetMapping("/admin")
+    public String admin() {
+        return "admin";
+    }
 }

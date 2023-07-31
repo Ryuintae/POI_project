@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>navBar</title>
+</head>
+<body>
+<!--상단 고정 바-->
+<th:block th:fragment="admin_navBar">
+    <nav class="navbar navbar-expand-lg bg-body-tertiary fixed-top" data-bs-theme="dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">관리자 화면</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#navbarSupportedContent"
+                    aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="/">Home</a>
+                    </li>
+                </ul>
+            </div>
+
+            <button class="btn btn-outline-warning" type="button" data-bs-toggle="offcanvas"
+                    data-bs-target="#offcanvasScrolling"
+                    aria-controls="offcanvasScrolling">사이드 바 열기
+            </button>
+        </div>
+    </nav>
+
+    <!-- 로그인 Modal -->
+    <div class="container">
+        <div class="modal fade" th:id="loginModal">
+            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                <div class="modal-content">
+                    <div class="modal-header" style="text-align:center;">
+                        <h5 class="modal-title">
+                            로그인
+                        </h5>
+                        <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+                    </div>
+
+                    <form action="#" method="post">
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label for="email">이메일</label>
+                                <input type="email" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
+                                       class="form-control"
+                                       id="email" th:name="email" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="password">비밀번호</label>
+                                <input type="password"
+                                       class="form-control" id="password" th:name="password" required>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">취소</button>
+                            <button type="submit" class="btn btn-primary">로그인</button>
+                        </div>
+                    </form>
+                    <hr>
+                    <!-- 버튼 클릭 시 회원가입 모달창 열기 -->
+                    <div style="text-align:center;">
+                        <button class="btn btn-link" type="button" th:data-toggle="'modal'"
+                                th:data-target="'#signupModal'">
+                            회원가입 하기
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 회원 가입 Modal -->
+    <div class="container">
+        <div class="modal fade" th:id="signupModal">
+            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">
+                            회원가입
+                        </h5>
+                        <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+                    </div>
+
+                    <form action="#" method="post">
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label for="name">이름</label>
+                                <input type="text" pattern="[A-Za-z가-힣]{2,}" class="form-control" id="name"
+                                       th:name="name"
+                                       required>
+                            </div>
+                            <div class="form-group">
+                                <label for="age">나이</label>
+                                <input type="text" pattern="^[0-9]+$" class="form-control" id="age" th:name="age"
+                                       required>
+                            </div>
+                            <div class="form-group">
+                                <label for="email">이메일</label>
+                                <input type="email" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
+                                       class="form-control"
+                                       id="email1" th:name="email" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="password">비밀번호</label>
+                                <input type="password"
+                                       class="form-control" id="password1" th:name="password" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="password">비밀번호 확인</label>
+                                <input type="password" class="form-control" id="password2" th:name="password" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="phone">전화번호</label>
+                                <input type="tel" class="form-control" id="phone" th:name="phone" required>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">취소</button>
+                            <button type="submit" class="btn btn-primary">회원가입</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</th:block>
+</body>
+</html>

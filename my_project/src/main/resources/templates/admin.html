@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>관리자 페이지</title>
+</head>
+<body style="background-color: #666666">
+<!--상단 내비 바-->
+<div th:replace="~{/fragments/admin_navbar :: admin_navBar }"></div>
+
+<!--측면 사이드 바-->
+<div th:replace="~{/fragments/admin_sidebar :: admin_sideBar}"></div>
+
+<!-- 공통 css -->
+<th:block th:replace="common/css"></th:block>
+
+<!-- 공통 js -->
+<th:block th:replace="common/js"></th:block>
+</body>
+</html>
