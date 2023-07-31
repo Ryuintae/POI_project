@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+<!--상단 내비 바-->
+<div th:replace="~{/fragments/navbar :: layout_navBar}"></div>
+
+<!--측면 사이드 바-->
+<div th:replace="~{/fragments/sidebar :: layout_sideBar}"></div>
+
+<!-- 테이블에 부트스트랩 적용 -->
+<table class="table" id=pathTable>
+    <thead class="thead-dark">
+    <tr>
+        <th>번호</th>
+        <th>제목</th>
+        <th>작성자</th>
+        <th>설명</th>
+        <th>날짜</th>
+        <th>상세 보기</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td>1</td>
+        <td>출근하는 길</td>
+        <td>류인태</td>
+        <td>좌회전 차선이 막히면 우회전 후 U턴 하기</td>
+        <td>2022-01-01</td>
+        <td>
+            <!-- 부트스트랩 버튼 적용 -->
+            <button class="btn btn-primary" onclick="showDetails(1)">상세보기</button>
+        </td>
+    </tr>
+    <tr>
+        <td>2</td>
+        <td>집가는 길</td>
+        <td>류인태</td>
+        <td>강동 방면으로 빠지기</td>
+        <td>2022-01-05</td>
+        <td>
+            <button class="btn btn-primary" onclick="showDetails(2)">상세보기</button>
+        </td>
+    </tr>
+    <tr>
+        <td>3</td>
+        <td>운동 가는 길</td>
+        <td>류인태</td>
+        <td>어린이 보호구역이 많음</td>
+        <td>2022-01-10</td>
+        <td>
+            <button class="btn btn-primary" onclick="showDetails(3)">상세보기</button>
+        </td>
+    </tr>
+    </tbody>
+</table>
+<nav aria-label="Page navigation example">
+    <ul class="pagination justify-content-center">
+        <li class="page-item disabled">
+            <a class="page-link">Previous</a>
+        </li>
+        <li class="page-item"><a class="page-link" href="#">1</a></li>
+        <li class="page-item"><a class="page-link" href="#">2</a></li>
+        <li class="page-item"><a class="page-link" href="#">3</a></li>
+        <li class="page-item">
+            <a class="page-link" href="#">Next</a>
+        </li>
+    </ul>
+</nav>
+<!-- 공통 css -->
+<th:block th:replace="common/css"></th:block>
+
+<!-- 공통 js -->
+<th:block th:replace="common/js"></th:block>
+</body>
+</html>

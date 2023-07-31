@@ -26,8 +26,8 @@
                 })
             ],
             view: new ol.View({
-                center: ol.proj.fromLonLat([128.4, 35.7]),
-                zoom: 7
+                center: ol.proj.fromLonLat([126.985302, 37.566671]),
+                zoom: 11
             })
         });
         $(document).ready(function () {
@@ -38,6 +38,49 @@
             });
         });
     </script>
+
+    <script>
+        var mapObj = null;
+
+        // 버튼 클릭 이벤트 핸들러 함수
+        function createMap() {
+            var mapContainer = document.getElementById("map-container");
+
+            // 동적으로 지도를 생성할 div 요소를 만듭니다.
+            var mapElem = document.createElement("div");
+            mapElem.style.width = "100%";
+            mapElem.style.height = "400px";
+
+            // 이전에 생성된 지도가 있다면 삭제합니다.
+            if (mapObj) {
+                mapObj.setTarget(null);
+                mapObj = null;
+                mapContainer.innerHTML = "";
+            }
+
+            mapContainer.append(mapElem);
+
+            // 새로운 지도 객체를 생성합니다.
+            mapObj = new ol.Map({
+                target: mapElem,
+                layers: [
+                    new ol.layer.Tile({
+                        source: new ol.source.OSM({
+                            wrapX: false
+                        })
+                    })
+                ],
+                view: new ol.View({
+                    center: ol.proj.fromLonLat([126.985302, 37.566671]),
+                    zoom: 11
+                })
+            });
+        }
+
+        // 버튼에 클릭 이벤트 리스너를 등록합니다.
+        document.getElementById("createMapBtn").addEventListener("click", createMap);
+    </script>
+
 </head>
 <body>
 
