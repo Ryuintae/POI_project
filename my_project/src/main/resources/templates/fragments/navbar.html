@@ -19,10 +19,17 @@
                     <li class="nav-item">
                         <a class="nav-link active" aria-current="page" href="/">Home</a>
                     </li>
-                    <form class="d-flex" role="search">
-                        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-                        <button class="btn btn-outline-success" type="submit">Search</button>
-                    </form>
+                    <!-- 장소 검색 버튼 -->
+                    <button class="btn btn-outline-success" type="button" data-bs-toggle="offcanvas"
+                            data-bs-target="#placeSearch"
+                            aria-controls="offcanvasScrolling">장소 검색
+                    </button>
+                    <!-- 길찾기버튼 -->
+                    <div class="spacer"></div> <!-- 간격을 띄우기 위한 빈 div 엘리먼트 -->
+                    <button class="btn btn-outline-success" type="button" data-bs-toggle="offcanvas"
+                            data-bs-target="#roadSearch"
+                            aria-controls="offcanvasScrolling">길 찾기
+                    </button>
                 </ul>
             </div>
 
@@ -39,6 +46,7 @@
             </button>
         </div>
     </nav>
+
 
     <!-- 로그인 Modal -->
     <div class="container">

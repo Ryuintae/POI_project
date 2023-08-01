@@ -1,5 +1,8 @@
 <!doctype html>
 <html lang="en">
+<body>
+
+</body>
 <head>
     <meta charset="UTF-8">
     <title>js 집합</title>
@@ -30,19 +33,12 @@
                 zoom: 11
             })
         });
-        $(document).ready(function () {
-
-            // 로그인 버튼 클릭 시 모달창 띄우기
-            $("#loginBtn").click(function () { // 내가 왜 모달창을 jquery 로 하려고 했찌?
-                $("#loginModal").modal('show');
-            });
-        });
     </script>
 
+    <!--  장소 등록 폼에서 지도 띄우기 -->
     <script>
         var mapObj = null;
 
-        // 버튼 클릭 이벤트 핸들러 함수
         function createMap() {
             var mapContainer = document.getElementById("map-container");
 
@@ -81,8 +77,22 @@
         document.getElementById("createMapBtn").addEventListener("click", createMap);
     </script>
 
-</head>
-<body>
+    <!-- 사이드바 안에서 검색을 했을 때 화면에 값 넘기기 -->
+    <script>
+        var searchKeyword = "";
 
-</body>
+        $('[data-bs-target="#placeName"]').click(function () {
+            searchKeyword = $("#searchInput").val();
+            $("#searchResult").text("'" + searchKeyword + "' 검색 결과입니다.");
+        });
+
+        <!-- 사이드바 안에서 엔터 키로 검색을 했을 때 화면에 값 넘기기 -->
+        $(document).keydown(function (e) {
+            if (e.target.id === 'searchInput' && e.keyCode === 13) {
+                e.preventDefault();
+                $('[data-bs-target="#placeName"]').click();
+            }
+        });
+    </script>
+</head>
 </html>

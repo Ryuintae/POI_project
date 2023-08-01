@@ -7,7 +7,7 @@
 <body>
 <th:block th:fragment="layout_sideBar">
 
-    <!-- 사이드바 -->
+    <!-- 내 정보 사이드바 -->
     <div class="offcanvas offcanvas-start" data-bs-scroll="true" data-bs-backdrop="false" tabindex="-1"
          th:id="offcanvasScrolling" aria-labelledby="offcanvasScrollingLabel">
         <div class="offcanvas-header">
@@ -63,6 +63,9 @@
             </div>
         </div>
     </div>
+    <!-- 내 정보 사이드바 끝 -->
+
+    <!-- Modal 창 -->
 
     <!-- 장소 수정 Modal -->
     <div class="container">
@@ -152,38 +155,33 @@
                                 <input type="text"
                                        class="form-control" th:name="gen" required>
                             </div>
-                            <div class="form-group">
-                                <label>카테고리1</label>
-                                <select class="form-select" aria-label="Default select example">
-                                    <option disabled selected value="">필수</option>
-                                    <!-- 카테고리1 목록 추가 -->
-                                    <option value="category2-1">카테고리1-1</option>
-                                    <option value="category2-2">카테고리1-2</option>
-                                    <option value="category2-3">카테고리1-3</option>
+                            <div class="spacer"></div> <!-- 간격을 띄우기 위한 빈 div 엘리먼트 -->
+                            <div class="input-group mb-3">
+                                <label class="input-group-text" for="inputGroupSelect01">카테고리1</label>
+                                <select class="form-select" id="inputGroupSelect01">
+                                    <option selected>필수</option>
+                                    <option value="1">카테고리1-1</option>
+                                    <option value="2">카테고리1-2</option>
+                                    <option value="3">카테고리1-3</option>
+                                </select>
+                            </div>
+                            <div class="input-group mb-3">
+                                <label class="input-group-text" for="inputGroupSelect02">카테고리2</label>
+                                <select class="form-select" id="inputGroupSelect02">
+                                    <option selected>필수</option>
+                                    <option value="1">카테고리2-1</option>
+                                    <option value="2">카테고리2-2</option>
+                                </select>
+                            </div>
+                            <div class="input-group mb-3">
+                                <label class="input-group-text" for="inputGroupSelect03">상세 카테고리</label>
+                                <select class="form-select" id="inputGroupSelect03">
+                                    <option selected>선택</option>
+                                    <option value="1">카테고리3-1</option>
+                                    <option value="2">카테고리3-2</option>
                                 </select>
                             </div>
 
-                            <div class="form-group">
-                                <label>카테고리2</label>
-                                <select class="form-select" aria-label="Default select example">
-                                    <option disabled selected value="">필수</option>
-                                    <!-- 카테고리2 목록 추가 -->
-                                    <option value="category2-1">카테고리2-1</option>
-                                    <option value="category2-2">카테고리2-2</option>
-                                    <option value="category2-3">카테고리2-3</option>
-                                </select>
-                            </div>
-
-                            <div class="form-group">
-                                <label>상세 카테고리</label>
-                                <select class="form-select" aria-label="Default select example">
-                                    <option disabled selected value="">선택</option>
-                                    <!-- 상세 카테고리 목록 추가 -->
-                                    <option value="category2-1">카테고리3-1</option>
-                                    <option value="category2-2">카테고리3-2</option>
-                                    <option value="category2-3">카테고리3-3</option>
-                                </select>
-                            </div>
                             <div class="form-group">
                                 <label>이미지 첨부</label>
                                 <input type="file"
@@ -320,6 +318,64 @@
             </div>
         </div>
     </div>
+    <!-- Modal 창 끝 -->
+
+    <!-- 검색 했을 때 사이드바 -->
+    <div class="offcanvas offcanvas-start" tabindex="-1" id="placeSearch"
+         aria-labelledby="offcanvasScrollingLabel">
+        <div class="offcanvas-header">
+            <img src="/img/placeSearch.png" alt="검색장소">
+            <h5 class="offcanvas-title" style="margin-right: 20px">장소 검색</h5>
+            <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <hr>
+
+        <!-- 사이드바 안에서 검색창 -->
+        <form class="d-flex" role="search">
+            <input class="form-control mx-auto me-2" id="searchInput" type="search" placeholder="Search"
+                   aria-label="Search" style="width: 300px;">
+            <button class="btn btn-outline-success mx-auto me-2" type="button"
+                    data-bs-target="#placeName"
+                    aria-controls="offcanvasScrolling">Search
+            </button>
+        </form>
+        <div class="offcanvas-body">
+            <p id="searchResult">검색 결과가 여기에 표시됩니다.</p>
+        </div>
+    </div>
+    <!-- 검색 했을 때 사이드바 끝 -->
+
+    <!-- 길 찾기 offcanvas -->
+    <div class="offcanvas offcanvas-start" tabindex="-1" id="roadSearch"
+         aria-labelledby="offcanvasScrollingLabel">
+        <div class="offcanvas-header">
+            <img src="/img/road_find.png" alt="길찾기">
+            <h5 class="offcanvas-title" style="margin-right: 20px">길 찾기</h5>
+            <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <hr>
+        <!-- 사이드바 안에서 검색창 -->
+        <form class="row g-2 text-center">
+            <div class="col-md-5 mx-auto">
+                <label for="start" class="form-label">출발지</label>
+                <input type="text" class="form-control" id="start" name="start" placeholder="start">
+            </div>
+            <div class="col-md-5 mx-auto">
+                <label for="destination" class="form-label">도착지</label>
+                <input type="text" class="form-control" id="destination" name="destination" placeholder="destination">
+            </div>
+            <div class="col-md-3">
+                <button type="submit" class="btn btn-outline-success btn-block btn-sm">길찾기</button>
+            </div>
+        </form>
+        <hr>
+
+
+        <div class="offcanvas-body">
+            <p id="roadResult">검색 결과가 여기에 표시됩니다.</p>
+        </div>
+    </div>
+
 </th:block>
 </body>
 </html>
