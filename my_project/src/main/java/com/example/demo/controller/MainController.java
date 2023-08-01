@@ -19,4 +19,9 @@ public class MainController {
     public String admin() {
         return "admin";
     }
+
+    @GetMapping("/detailPathSee")
+    public String detailPathSee() {
+        return "detail_path_see";
+    }
 }

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>경로 상세 보기</title>
+    <!-- 공통 css -->
+    <th:block th:replace="common/css"></th:block>
+
+    <!-- 공통 js -->
+    <th:block th:replace="common/js"></th:block>
+
+    <!--상단 내비 바-->
+    <div th:replace="~{/fragments/navbar :: layout_navBar}"></div>
+
+    <!--측면 사이드 바-->
+    <div th:replace="~{/fragments/sidebar :: layout_sideBar}"></div>
+</head>
+<body>
+<div class="container-5">
+    <h2>경로 상세 보기</h2>
+    <!-- 공통 링 -->
+
+    <table class="table table-bordered" id=detailPath>
+        <tr>
+            <td>번호</td>
+            <td>1</td>
+            <td>작성자</td>
+            <td>류인태</td>
+        </tr>
+        <tr>
+            <td>작성일</td>
+            <td>2022-06-30</td>
+        </tr>
+        <tr>
+            <td>제목</td>
+            <td colspan="3">회사 출근하는 길</td>
+        </tr>
+        <tr>
+            <td>내용</td>
+            <td colspan="3" height="100">좌회전 차선이 막히면 우회전 후 U턴 하기</td>
+        </tr>
+
+        <tr>
+            <td>출발 지점</td>
+            <td>강동</td>
+            <td>도착 지점</td>
+            <td>판교</td>
+        </tr>
+        <tr>
+            <td>1차 분류</td>
+            <td>카테고리1</td>
+            <td>2차 분류</td>
+            <td>카테고리2</td>
+        </tr>
+        <tr>
+            <td>상세 분류</td>
+            <td colspan="3">카테고리3</td>
+        </tr>
+        <tr>
+            <td>이미지</td>
+            <td colspan="3" height="100">
+                <img src="https://source.unsplash.com/random/400x200" alt="Random Image">
+            </td>
+        </tr>
+        <tr>
+            <td colspan="4" align="center">
+                <button type="button" class="btn btn-secondary mr-2" onclick="location.href='/search'">
+                    검색하기
+                </button>
+                <button type="button" class="btn btn-primary mr-2">
+                    수정하기
+                </button>
+                <button type="button" class="btn btn-danger mr-2">삭제하기</button>
+                <button type="button" class="btn btn-success" onclick="location.href='/home'">
+                    홈으로 돌아가기
+                </button>
+            </td>
+        </tr>
+    </table>
+</div>
+</body>
+</html>
