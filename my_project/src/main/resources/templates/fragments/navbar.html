@@ -38,10 +38,12 @@
                     aria-controls="offcanvasScrolling">내 정보
             </button>
             <div class="spacer"></div> <!-- 간격을 띄우기 위한 빈 div 엘리먼트 -->
-            <button class="btn btn-outline-info" type="button" data-toggle="modal" th:data-target="'#loginModal'">로그인
+            <button class="btn btn-outline-info" type="button" data-bs-toggle="modal" th:data-bs-target="'#loginModal'">
+                로그인
             </button>
             <div class="spacer"></div> <!-- 간격을 띄우기 위한 빈 div 엘리먼트 -->
-            <button class="btn btn-outline-info" type="button" data-toggle="modal" th:data-target="'#signupModal'">
+            <button class="btn btn-outline-info" type="button" data-bs-toggle="modal"
+                    th:data-bs-target="'#signupModal'">
                 회원가입
             </button>
         </div>
@@ -57,7 +59,7 @@
                         <h5 class="modal-title">
                             로그인
                         </h5>
-                        <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
 
                     <form action="#" method="post">
@@ -75,15 +77,15 @@
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">취소</button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
                             <button type="submit" class="btn btn-primary">로그인</button>
                         </div>
                     </form>
                     <hr>
                     <!-- 버튼 클릭 시 회원가입 모달창 열기 -->
                     <div style="text-align:center;">
-                        <button class="btn btn-link" type="button" th:data-toggle="'modal'"
-                                th:data-target="'#signupModal'">
+                        <button class="btn btn-link" type="button" th:data-bs-toggle="'modal'"
+                                th:data-bs-target="'#signupModal'">
                             회원가입 하기
                         </button>
                     </div>
@@ -94,14 +96,14 @@
 
     <!-- 회원 가입 Modal -->
     <div class="container">
-        <div class="modal fade" th:id="signupModal">
+        <div class="modal fade" th:id="signupModal" tabindex="-1" aria-labelledby="signupModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title">
+                        <h5 class="modal-title" id="signupModalLabel">
                             회원가입
                         </h5>
-                        <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
 
                     <form action="#" method="post">
@@ -138,7 +140,7 @@
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">취소</button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
                             <button type="submit" class="btn btn-primary">회원가입</button>
                         </div>
                     </form>

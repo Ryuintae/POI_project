@@ -1,8 +1,8 @@
-import Map from 'ol/Map.js';
-import View from 'ol/View.js';
-import {Draw, Modify, Select, Snap} from 'ol/interaction.js';
-import {OSM, Vector as VectorSource} from 'ol/source.js';
-import {Tile as TileLayer, Vector as VectorLayer} from 'ol/layer.js';
+import Map from 'static/js/ol/Map.js';
+import View from 'static/js/ol/View.js';
+import {Draw, Modify, Select, Snap} from 'static/js/ol/interaction.js';
+import {OSM, Vector as VectorSource} from 'static/js/ol/Source.js';
+import {Tile as TileLayer, Vector as VectorLayer} from 'static/js/ol/Layer.js';
 
 var mousePositionCtrl = new ol.control.MousePosition({
     coordinateFormat: ol.coordinate.createStringXY(4),

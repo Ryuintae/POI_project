@@ -8,8 +8,8 @@
 <th:block th:fragment="layout_sideBar">
 
     <!-- 내 정보 사이드바 -->
-    <div class="offcanvas offcanvas-start" data-bs-scroll="true" data-bs-backdrop="false" tabindex="-1"
-         th:id="offcanvasScrolling" aria-labelledby="offcanvasScrollingLabel">
+    <div class="offcanvas offcanvas-start" tabindex="-1" th:id="offcanvasScrolling"
+         aria-labelledby="offcanvasScrollingLabel">
         <div class="offcanvas-header">
             <img src="/img/my_page_man.png" alt="사람 이미지">
             <h5 class="offcanvas-title" th:text="회원정보">회원정보</h5>
@@ -17,70 +17,71 @@
         </div>
         <div class="offcanvas-body">
             <div class="btn-group-vertical" role="group" aria-label="Vertical button group">
-                <button class="btn btn-outline-secondary  d-block text-start my-1" type="button" data-toggle="modal"
-                        th:data-target="'#placeRegister'">신규 장소 등록
+                <button id="placeRegisterBtn" class="btn btn-outline-secondary d-block text-start my-1" type="button"
+                        data-bs-toggle="modal"
+                        th:data-bs-target="'#placeRegister'">신규 장소 등록
                 </button>
 
                 <div class="spacer"></div> <!-- 간격을 띄우기 위한 빈 div 엘리먼트 -->
 
-                <button class="btn btn-outline-secondary d-block text-start my-1" type="button" data-toggle="modal"
-                        th:data-target="'#placeModify'">
+                <button class="btn btn-outline-secondary d-block text-start my-1" type="button" data-bs-toggle="modal"
+                        th:data-bs-target="'#placeModify'">
                     장소 수정
                 </button>
 
                 <div class="spacer"></div> <!-- 간격을 띄우기 위한 빈 div 엘리먼트 -->
 
-                <button class="btn btn-outline-danger  d-block text-start my-1" type="button" data-toggle="modal"
-                        th:data-target="'#placeDelete'">장소 삭제
+                <button class="btn btn-outline-danger d-block text-start my-1" type="button" data-bs-toggle="modal"
+                        th:data-bs-target="'#placeDelete'">장소 삭제
                 </button>
                 <div class="spacer"></div> <!-- 간격을 띄우기 위한 빈 div 엘리먼트 -->
 
-                <button class="btn btn-outline-secondary  d-block text-start my-1" type="button" data-toggle="modal"
-                        th:data-target="'#pathCheck'">
+                <button class="btn btn-outline-secondary d-block text-start my-1" type="button" data-bs-toggle="modal"
+                        th:data-bs-target="'#pathCheck'">
                     <a class="nav-link active" aria-current="page" href="/check_saved_path">
                         저장한 경로 확인하기</a>
                 </button>
                 <div class="spacer"></div> <!-- 간격을 띄우기 위한 빈 div 엘리먼트 -->
 
-                <button class="btn btn-outline-secondary  d-block text-start my-1" type="button" data-toggle="modal"
-                        th:data-target="'#goHome'">
+                <button class="btn btn-outline-secondary d-block text-start my-1" type="button" data-bs-toggle="modal"
+                        th:data-bs-target="'#goHome'">
                     <a class="nav-link active" aria-current="page" href="/">지도 홈으로 돌아가기</a>
                 </button>
             </div>
             <hr>
             <div class="btn-group-vertical" role="group" aria-label="Vertical button group">
 
-                <button class="btn btn-outline-success d-block text-start my-1" type="button" data-toggle="modal"
-                        th:data-target="'#userModify'">
+                <button class="btn btn-outline-success d-block text-start my-1" type="button" data-bs-toggle="modal"
+                        th:data-bs-target="'#userModify'">
                     회원 정보 수정
                 </button>
 
                 <div class="spacer"></div> <!-- 간격을 띄우기 위한 빈 div 엘리먼트 -->
 
-                <button class="btn btn-outline-danger  d-block text-start my-1" type="button" data-toggle="modal"
-                        th:data-target="'#'">로그 아웃
+                <button class="btn btn-outline-danger d-block text-start my-1" type="button" data-bs-toggle="modal"
+                        th:data-bs-target="'#'">로그 아웃
                 </button>
             </div>
         </div>
     </div>
     <!-- 내 정보 사이드바 끝 -->
 
-    <!-- Modal 창 -->
+    <!-- Modal 창 시작 -->
 
     <!-- 장소 수정 Modal -->
     <div class="container">
-        <div class="modal fade" th:id="placeModify">
+        <div class="modal fade" id="placeModify" tabindex="-1" aria-labelledby="placeModifyLabel" aria-hidden="true">
             <div class="modal-dialog modal-xl">
                 <div class="modal-content">
                     <div class="modal-header" style="text-align:center;">
-                        <h5 class="modal-title">
+                        <h5 class="modal-title" id="placeModifyLabel">
                             장소 수정
                         </h5>
-                        <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <!-- 테이블에 부트스트랩 적용 -->
                     <table class="table">
-                        <thead class="thead-dark">
+                        <thead class="table-dark">
                         <tr>
                             <th>ID</th>
                             <th>장소 이름</th>
@@ -97,8 +98,8 @@
                             <td>111.222./ 333.222</td>
                             <td>
                                 <!-- 부트스트랩 버튼 적용 -->
-                                <button class="btn btn-primary" onclick="showDetails(1)" th:data-toggle="'modal'"
-                                        th:data-target="'#placeRegister'">수정하기
+                                <button class="btn btn-primary" onclick="showDetails(1)" data-bs-toggle="modal"
+                                        data-bs-target="#placeRegister">수정하기
                                 </button>
                             </td>
                         </tr>
@@ -108,8 +109,8 @@
                             <td>02-123-1234</td>
                             <td>123.111./122.111</td>
                             <td>
-                                <button class="btn btn-primary" onclick="showDetails(2)" th:data-toggle="'modal'"
-                                        th:data-target="'#placeRegister'">수정하기
+                                <button class="btn btn-primary" onclick="showDetails(2)" data-bs-toggle="modal"
+                                        data-bs-target="#placeRegister">수정하기
                                 </button>
                             </td>
                         </tr>
@@ -119,8 +120,8 @@
                             <td>02-123-4321</td>
                             <td>123.111/123.444</td>
                             <td>
-                                <button class="btn btn-primary" onclick="showDetails(3)" th:data-toggle="'modal'"
-                                        th:data-target="'#placeRegister'">수정하기
+                                <button class="btn btn-primary" onclick="showDetails(3)" data-bs-toggle="modal"
+                                        data-bs-target="#placeRegister">수정하기
                                 </button>
                             </td>
                         </tr>
@@ -134,31 +135,33 @@
     <!-- 장소 등록 Modal -->
     <div class="container">
         <div class="modal fade" th:id="placeRegister">
-            <div class="modal-dialog modal-xl">
+            <div class="modal-dialog modal-dialog-scrollable">
                 <div class="modal-content">
                     <div class="modal-header" style="text-align:center;">
                         <h5 class="modal-title">
                             장소 등록
                         </h5>
-                        <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
 
-                    <form action="#" method="post">
-                        <!-- 이곳에 폼 값 추가하기 -->
-                        <div class="modal-body">
-                            <div class="form-group">
+                    <div class="modal-body">
+                        <form action="#" method="post">
+                            <!-- 이곳에 폼 값 추가하기 -->
+                            <div class="mb-3">
                                 <label>장소이름</label>
                                 <input type="text" class="form-control" th:name="placeName" required>
                             </div>
-                            <div class="form-group">
+                            <div class="mb-3">
                                 <label>대표 번호</label>
                                 <input type="text"
                                        class="form-control" th:name="gen" required>
                             </div>
+
                             <div class="spacer"></div> <!-- 간격을 띄우기 위한 빈 div 엘리먼트 -->
+
                             <div class="input-group mb-3">
                                 <label class="input-group-text" for="inputGroupSelect01">카테고리1</label>
-                                <select class="form-select" id="inputGroupSelect01">
+                                <select class="form-control" id="inputGroupSelect01">
                                     <option selected>필수</option>
                                     <option value="1">카테고리1-1</option>
                                     <option value="2">카테고리1-2</option>
@@ -167,39 +170,52 @@
                             </div>
                             <div class="input-group mb-3">
                                 <label class="input-group-text" for="inputGroupSelect02">카테고리2</label>
-                                <select class="form-select" id="inputGroupSelect02">
+                                <select class="form-control" id="inputGroupSelect02">
                                     <option selected>필수</option>
                                     <option value="1">카테고리2-1</option>
                                     <option value="2">카테고리2-2</option>
                                 </select>
                             </div>
                             <div class="input-group mb-3">
-                                <label class="input-group-text" for="inputGroupSelect03">상세 카테고리</label>
-                                <select class="form-select" id="inputGroupSelect03">
-                                    <option selected>선택</option>
+                                <label class="input-group-text" for="inputGroupSelect03">카테고리3</label>
+                                <select class="form-control" id="inputGroupSelect03">
+                                    <option selected>필수</option>
                                     <option value="1">카테고리3-1</option>
                                     <option value="2">카테고리3-2</option>
                                 </select>
                             </div>
+                            <div class="input-group mb-3">
+                                <label class="input-group-text" for="inputGroupSelect04">상세 카테고리</label>
+                                <select class="form-control" id="inputGroupSelect04">
+                                    <option selected>선택</option>
+                                    <option value="1">카테고리4-1</option>
+                                    <option value="2">카테고리4-2</option>
+                                </select>
+                            </div>
 
-                            <div class="form-group">
+                            <div class="mb-3">
                                 <label>이미지 첨부</label>
                                 <input type="file"
                                        class="form-control" accept=".jpg, .png" th:name="detailCategory">
                             </div>
 
-                            <div class="spacer"></div> <!-- 간격을 띄우기 위한 빈 div 엘리먼트 -->
-
-                            <div class="form-group">
-                                <button class="btn btn-outline-success" id="createMapBtn">주소 입력</button>
-                                <div id="map-container"></div>
+                            <!-- 메모 input -->
+                            <div class="mb-3">
+                                <label for="memo">메모</label>
+                                <input type="text" class="form-control" th:name="memo" id="memo"
+                                       placeholder="간단한 메모를 작성해주세요.">
                             </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">취소</button>
-                            <button type="submit" class="btn btn-primary">등록하기</button>
-                        </div>
-                    </form>
+
+                            <div class="spacer"></div> <!-- 간격을 띄우기 위한 빈 div 엘리먼트 -->
+                            <!--폼 안에 지도 띄우기-->
+                            <div id="map-container"></div>
+
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+                                <button type="submit" class="btn btn-primary">등록하기</button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
@@ -207,19 +223,18 @@
 
     <!-- 장소 삭제 Modal -->
     <div class="container">
-        <div class="modal fade" th:id="placeDelete">
+        <div class="modal fade" id="placeDelete" tabindex="-1" aria-labelledby="placeDeleteLabel" aria-hidden="true">
             <div class="modal-dialog modal-xl">
                 <div class="modal-content">
                     <div class="modal-header" style="text-align:center;">
-                        <h5 class="modal-title">
+                        <h5 class="modal-title" id="placeDeleteLabel">
                             장소 삭제
                         </h5>
-                        <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-
                     <!-- 테이블에 부트스트랩 적용 -->
                     <table class="table">
-                        <thead class="thead-dark">
+                        <thead class="table-dark">
                         <tr>
                             <th>ID</th>
                             <th>장소 이름</th>
@@ -266,51 +281,51 @@
 
     <!-- 회원 수정 Modal -->
     <div class="container">
-        <div class="modal fade" th:id="userModify">
+        <div class="modal fade" id="userModify" tabindex="-1" aria-labelledby="userModifyLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title">
+                        <h5 class="modal-title" id="userModifyLabel">
                             회원 정보 수정하기
                         </h5>
-                        <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
 
                     <form action="#" method="post">
                         <div class="modal-body">
-                            <div class="form-group">
+                            <div class="form-group mb-3">
                                 <label>이름</label>
                                 <input type="text" pattern="[A-Za-z가-힣]{2,}" class="form-control"
-                                       th:name="name"
+                                       name="name"
                                        required>
                             </div>
-                            <div class="form-group">
+                            <div class="form-group mb-3">
                                 <label>나이</label>
-                                <input type="text" pattern="^[0-9]+$" class="form-control" th:name="age"
+                                <input type="text" pattern="^[0-9]+$" class="form-control" name="age"
                                        required>
                             </div>
-                            <div class="form-group">
+                            <div class="form-group mb-3">
                                 <label>이메일</label>
                                 <input type="email" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
                                        class="form-control"
-                                       id="email1" th:name="email" required>
+                                       id="email1" name="email" required>
                             </div>
-                            <div class="form-group">
+                            <div class="form-group mb-3">
                                 <label>비밀번호</label>
                                 <input type="password"
-                                       class="form-control" id="password1" th:name="password" required>
+                                       class="form-control" id="password1" name="password" required>
                             </div>
-                            <div class="form-group">
+                            <div class="form-group mb-3">
                                 <label>비밀번호 확인</label>
-                                <input type="password" class="form-control" id="password2" th:name="password" required>
+                                <input type="password" class="form-control" id="password2" name="password" required>
                             </div>
-                            <div class="form-group">
+                            <div class="form-group mb-3">
                                 <label>전화번호</label>
-                                <input type="tel" class="form-control"th:name="phone" required>
+                                <input type="tel" class="form-control" name="phone" required>
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">취소</button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
                             <button type="submit" class="btn btn-primary">수정하기</button>
                         </div>
                     </form>
@@ -318,20 +333,20 @@
             </div>
         </div>
     </div>
+
     <!-- Modal 창 끝 -->
 
     <!-- 검색 했을 때 사이드바 -->
-    <div class="offcanvas offcanvas-start" tabindex="-1" id="placeSearch"
-         aria-labelledby="offcanvasScrollingLabel">
+    <div class="offcanvas offcanvas-start" tabindex="-1" id="placeSearch" aria-labelledby="placeSearchLabel">
         <div class="offcanvas-header">
             <img src="/img/placeSearch.png" alt="검색장소">
-            <h5 class="offcanvas-title" style="margin-right: 20px">장소 검색</h5>
+            <h5 class="offcanvas-title" style="margin-right: 20px" id="placeSearchLabel">장소 검색</h5>
             <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
         </div>
         <hr>
 
         <!-- 사이드바 안에서 검색창 -->
-        <form class="d-flex" role="search">
+        <form class="d-flex mb-3" role="search">
             <input class="form-control mx-auto me-2" id="searchInput" type="search" placeholder="Search"
                    aria-label="Search" style="width: 300px;">
             <button class="btn btn-outline-success mx-auto me-2" type="button"
@@ -346,16 +361,15 @@
     <!-- 검색 했을 때 사이드바 끝 -->
 
     <!-- 길 찾기 offcanvas -->
-    <div class="offcanvas offcanvas-start" tabindex="-1" id="roadSearch"
-         aria-labelledby="offcanvasScrollingLabel">
+    <div class="offcanvas offcanvas-start" tabindex="-1" id="roadSearch" aria-labelledby="roadSearchLabel">
         <div class="offcanvas-header">
             <img src="/img/road_find.png" alt="길찾기">
-            <h5 class="offcanvas-title" style="margin-right: 20px">길 찾기</h5>
+            <h5 class="offcanvas-title" style="margin-right: 20px" id="roadSearchLabel">길 찾기</h5>
             <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
         </div>
         <hr>
         <!-- 사이드바 안에서 검색창 -->
-        <form class="row g-2 text-center">
+        <form class="row g-2 text-center mb-3">
             <div class="col-md-5 mx-auto">
                 <label for="start" class="form-label">출발지</label>
                 <input type="text" class="form-control" id="start" name="start" placeholder="start">
@@ -369,7 +383,6 @@
             </div>
         </form>
         <hr>
-
 
         <div class="offcanvas-body">
             <p id="roadResult">검색 결과가 여기에 표시됩니다.</p>
