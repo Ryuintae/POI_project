@@ -101,6 +101,25 @@
             let coordinate = evt.coordinate;
             console.log(coordinate);
         })
+        // 자동으로 지워주는 jQuery
+        $('#loginModal').on('hidden.bs.modal', function () {
+            $(this).find('form').trigger('reset');
+        });
+        $('#signupModal').on('hidden.bs.modal', function () {
+            $(this).find('form').trigger('reset');
+        });
+        $('#userModify').on('hidden.bs.modal', function () {
+            $(this).find('form').trigger('reset');
+        });
+        $('#placeDelete').on('hidden.bs.modal', function () {
+            $(this).find('form').trigger('reset');
+        })
+        $('#placeRegister').on('hidden.bs.modal', function () {
+            $(this).find('form').trigger('reset');
+        })
+        $('#placeModify').on('hidden.bs.modal', function () {
+            $(this).find('form').trigger('reset');
+        })
     </script>
 </head>
 </html>
