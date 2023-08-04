@@ -9,4 +9,19 @@ public class MainController {
     public String map() {
         return "main";
     }
+
+    @GetMapping("/check_saved_path")
+    public String pathCheck() {
+        return "check_saved_path";
+    }
+
+    @GetMapping("/admin")
+    public String admin() {
+        return "admin";
+    }
+
+    @GetMapping("/detailPathSee")
+    public String detailPathSee() {
+        return "detail_path_see";
+    }
 }

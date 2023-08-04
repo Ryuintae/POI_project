@@ -19,10 +19,17 @@
                     <li class="nav-item">
                         <a class="nav-link active" aria-current="page" href="/">Home</a>
                     </li>
-                    <form class="d-flex" role="search">
-                        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-                        <button class="btn btn-outline-success" type="submit">Search</button>
-                    </form>
+                    <!-- 장소 검색 버튼 -->
+                    <button class="btn btn-outline-success" type="button" data-bs-toggle="offcanvas"
+                            data-bs-target="#placeSearch"
+                            aria-controls="offcanvasScrolling">장소 검색
+                    </button>
+                    <!-- 길찾기버튼 -->
+                    <div class="spacer"></div> <!-- 간격을 띄우기 위한 빈 div 엘리먼트 -->
+                    <button class="btn btn-outline-success" type="button" data-bs-toggle="offcanvas"
+                            data-bs-target="#roadSearch"
+                            aria-controls="offcanvasScrolling">길 찾기
+                    </button>
                 </ul>
             </div>
 
@@ -31,14 +38,17 @@
                     aria-controls="offcanvasScrolling">내 정보
             </button>
             <div class="spacer"></div> <!-- 간격을 띄우기 위한 빈 div 엘리먼트 -->
-            <button class="btn btn-outline-info" type="button" data-toggle="modal" th:data-target="'#loginModal'">로그인
+            <button class="btn btn-outline-info" type="button" data-bs-toggle="modal" th:data-bs-target="'#loginModal'">
+                로그인
             </button>
             <div class="spacer"></div> <!-- 간격을 띄우기 위한 빈 div 엘리먼트 -->
-            <button class="btn btn-outline-info" type="button" data-toggle="modal" th:data-target="'#signupModal'">
+            <button class="btn btn-outline-info" type="button" data-bs-toggle="modal"
+                    th:data-bs-target="'#signupModal'">
                 회원가입
             </button>
         </div>
     </nav>
+
 
     <!-- 로그인 Modal -->
     <div class="container">
@@ -49,33 +59,33 @@
                         <h5 class="modal-title">
                             로그인
                         </h5>
-                        <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
 
                     <form action="#" method="post">
                         <div class="modal-body">
                             <div class="form-group">
-                                <label for="email">이메일</label>
+                                <label>이메일</label>
                                 <input type="email" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
                                        class="form-control"
-                                       id="email" th:name="email" required>
+                                       th:name="email" required>
                             </div>
                             <div class="form-group">
-                                <label for="password">비밀번호</label>
+                                <label>비밀번호</label>
                                 <input type="password"
-                                       class="form-control" id="password" th:name="password" required>
+                                       class="form-control" th:name="password" required>
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">취소</button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
                             <button type="submit" class="btn btn-primary">로그인</button>
                         </div>
                     </form>
                     <hr>
                     <!-- 버튼 클릭 시 회원가입 모달창 열기 -->
                     <div style="text-align:center;">
-                        <button class="btn btn-link" type="button" th:data-toggle="'modal'"
-                                th:data-target="'#signupModal'">
+                        <button class="btn btn-link" type="button" th:data-bs-toggle="'modal'"
+                                th:data-bs-target="'#signupModal'">
                             회원가입 하기
                         </button>
                     </div>
@@ -86,51 +96,51 @@
 
     <!-- 회원 가입 Modal -->
     <div class="container">
-        <div class="modal fade" th:id="signupModal">
+        <div class="modal fade" th:id="signupModal" tabindex="-1" aria-labelledby="signupModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title">
+                        <h5 class="modal-title" id="signupModalLabel">
                             회원가입
                         </h5>
-                        <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
 
                     <form action="#" method="post">
                         <div class="modal-body">
                             <div class="form-group">
-                                <label for="name">이름</label>
-                                <input type="text" pattern="[A-Za-z가-힣]{2,}" class="form-control" id="name"
+                                <label>이름</label>
+                                <input type="text" pattern="[A-Za-z가-힣]{2,}" class="form-control"
                                        th:name="name"
                                        required>
                             </div>
                             <div class="form-group">
-                                <label for="age">나이</label>
-                                <input type="text" pattern="^[0-9]+$" class="form-control" id="age" th:name="age"
+                                <label>나이</label>
+                                <input type="text" pattern="^[0-9]+$" class="form-control" th:name="age"
                                        required>
                             </div>
                             <div class="form-group">
-                                <label for="email">이메일</label>
+                                <label>이메일</label>
                                 <input type="email" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
                                        class="form-control"
-                                       id="email1" th:name="email" required>
+                                       th:name="email" required>
                             </div>
                             <div class="form-group">
-                                <label for="password">비밀번호</label>
+                                <label>비밀번호</label>
                                 <input type="password"
-                                       class="form-control" id="password1" th:name="password" required>
+                                       class="form-control" th:name="password" required>
                             </div>
                             <div class="form-group">
-                                <label for="password">비밀번호 확인</label>
-                                <input type="password" class="form-control" id="password2" th:name="password" required>
+                                <label>비밀번호 확인</label>
+                                <input type="password" class="form-control" th:name="password" required>
                             </div>
                             <div class="form-group">
-                                <label for="phone">전화번호</label>
-                                <input type="tel" class="form-control" id="phone" th:name="phone" required>
+                                <label>전화번호</label>
+                                <input type="tel" class="form-control" th:name="phone" required>
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">취소</button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
                             <button type="submit" class="btn btn-primary">회원가입</button>
                         </div>
                     </form>

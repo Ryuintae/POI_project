@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>경로 상세 보기</title>
+    <!-- 공통 css -->
+    <th:block th:replace="common/css"></th:block>
+
+    <!-- 공통 js -->
+    <th:block th:replace="common/js"></th:block>
+
+    <!--상단 내비 바-->
+    <div th:replace="~{/fragments/navbar :: layout_navBar}"></div>
+
+    <!--측면 사이드 바-->
+    <div th:replace="~{/fragments/sidebar :: layout_sideBar}"></div>
+</head>
+<body>
+<div class="container-5">
+    <h2>경로 상세 보기</h2>
+    <table class="table table-bordered" id=detailPath>
+        <tr>
+            <td class="table-info"><strong>제목</strong></td>
+            <td colspan="3">회사 출근하는 길</td>
+        </tr>
+        <tr>
+            <td class="table-info"><strong>작성자</strong></td>
+            <td>류인태</td>
+            <td class="table-info"><strong>작성일</strong></td>
+            <td>2022-06-30</td>
+        </tr>
+        <tr>
+            <td class="table-info"><strong>출발 지점</strong></td>
+            <td>강동</td>
+            <td class="table-info"><strong>도착 지점</strong></td>
+            <td>판교</td>
+        </tr>
+        <tr>
+            <td class="table-info"><strong>경로 방식</strong></td>
+            <td>길 찾기1</td>
+            <td class="table-info"><strong>경로 방식2</strong></td>
+            <td>길 찾기2</td>
+        </tr>
+        <tr>
+            <td class="table-info"><strong>경로 방식3</strong></td>
+            <td colspan="3">길찾기3</td>
+        </tr>
+        <tr>
+            <td class="table-info"><strong>내용</strong></td>
+            <td colspan="3" height="100">좌회전 차선이 막히면 우회전 후 U턴 하기</td>
+        </tr>
+        <tr>
+            <td class="table-info"><strong>이미지</strong></td>
+            <td colspan="3" height="100" class="bg-light">
+                <img src="https://source.unsplash.com/random/400x200" alt="Random Image">
+            </td>
+        </tr>
+        <tr>
+            <td colspan="4" align="center">
+                <button type="button" class="btn btn-secondary mr-2" onclick="location.href='/search'">
+                    검색하기
+                </button>
+                <button type="button" class="btn btn-primary mr-2">
+                    수정하기
+                </button>
+                <button type="button" class="btn btn-danger mr-2">삭제하기</button>
+                <button type="button" class="btn btn-success" onclick="location.href='/home'">
+                    홈으로 돌아가기
+                </button>
+            </td>
+        </tr>
+    </table>
+</div>
+</body>
+</html>

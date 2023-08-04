@@ -1,5 +1,8 @@
 <!doctype html>
 <html lang="en">
+<body>
+
+</body>
 <head>
     <meta charset="UTF-8">
     <title>js 집합</title>
@@ -11,11 +14,14 @@
     <script src="https://cdn.jsdelivr.net/npm/ol@v7.4.0/dist/ol.js"></script>
 
     <!-- Bootstrap JS file -->
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <script th:src="@{https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js}"
-            integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm"
             crossorigin="anonymous"></script>
+
+    <script th:src="@{../static/js/ol/main.js}"></script>
     <script type="text/javascript" th:inline="javascript">
+        $(function () {
+        })
         let map = new ol.Map({
             target: 'map',
             layers: [
@@ -26,20 +32,94 @@
                 })
             ],
             view: new ol.View({
-                center: ol.proj.fromLonLat([128.4, 35.7]),
-                zoom: 7
+                center: ol.proj.fromLonLat([126.985302, 37.566671]),
+                zoom: 11
             })
         });
-        $(document).ready(function () {
+    </script>
+    <!-- 장소 등록 폼에서 지도 띄우기 -->
+    <script>
+        var mapObj = null;
 
-            // 로그인 버튼 클릭 시 모달창 띄우기
-            $("#loginBtn").click(function () { // 내가 왜 모달창을 jquery 로 하려고 했찌?
-                $("#loginModal").modal('show');
+        function createMap() {
+            var mapContainer = document.getElementById("map-container");
+            // 동적으로 지도를 생성할 div 요소를 만듭니다.
+            var mapElem = document.createElement("div");
+            mapElem.style.width = "100%";
+            mapElem.style.height = "400px";
+            // 이전에 생성된 지도가 있다면 삭제합니다.
+            if (mapObj) {
+                mapObj.setTarget(null);
+                mapObj = null;
+                mapContainer.innerHTML = "";
+            }
+            mapContainer.append(mapElem);
+            // 새로운 지도 객체를 생성합니다.
+            mapObj = new ol.Map({
+                target: mapElem,
+                layers: [
+                    new ol.layer.Tile({
+                        source: new ol.source.OSM({
+                            wrapX: false
+                        })
+                    })
+                ],
+                view: new ol.View({
+                    center: ol.proj.fromLonLat([126.985302, 37.566671]),
+                    zoom: 11
+                })
+            });
+        }
+
+        // 문서가 로드된 뒤 아래 코드가 실행됩니다.
+        $(document).ready(function () {
+            // 버튼에 클릭 이벤트 리스너를 등록합니다.
+            $("#placeRegisterBtn").on("click", function () {
+                createMap();
             });
         });
+
+        <!-- 사이드바 안에서 검색을 했을 때 화면에 값 넘기기 -->
+        var searchKeyword = "";
+
+        $('[data-bs-target="#placeName"]').click(function () {
+            searchKeyword = $("#searchInput").val();
+            $("#searchResult").text("'" + searchKeyword + "' 검색 결과입니다.");
+        });
+
+        <!-- 사이드바 안에서 엔터 키로 검색을 했을 때 화면에 값 넘기기 -->
+        $(document).keydown(function (e) {
+            if (e.target.id === 'searchInput' && e.keyCode === 13) {
+                e.preventDefault();
+                $('[data-bs-target="#placeName"]').click();
+            }
+        });
+        //클릭하기
+        map.on('click', function (evt) {
+
+            //var lonlat = ol.proj.transform(evt.coordinate, 'EPSG:3857', 'EPSG:4326');
+            let coordinate = evt.coordinate;
+            console.log(coordinate);
+        })
+        // 자동으로 지워주는 jQuery
+        $('#loginModal').on('hidden.bs.modal', function () {
+            $(this).find('form').trigger('reset');
+        });
+        $('#signupModal').on('hidden.bs.modal', function () {
+            $(this).find('form').trigger('reset');
+        });
+        $('#userModify').on('hidden.bs.modal', function () {
+            $(this).find('form').trigger('reset');
+        });
+        $('#placeDelete').on('hidden.bs.modal', function () {
+            $(this).find('form').trigger('reset');
+        })
+        $('#placeRegister').on('hidden.bs.modal', function () {
+            $(this).find('form').trigger('reset');
+        })
+        $('#placeModify').on('hidden.bs.modal', function () {
+            $(this).find('form').trigger('reset');
+        })
     </script>
 </head>
-<body>
-
-</body>
 </html>
