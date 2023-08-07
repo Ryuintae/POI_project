@@ -120,6 +120,51 @@
         $('#placeModify').on('hidden.bs.modal', function () {
             $(this).find('form').trigger('reset');
         })
+
+        function loadPois() {
+            $.ajax({
+                type: "GET",
+                url: "/poi",
+                success: function (data) {
+                    var tbody = $("#poi-table tbody");
+                    tbody.empty();
+                    data.forEach(function (poi) {
+                        tbody.append(`<tr><td>${poi.poi_name}</td></tr>`);
+                    });
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    console.error("Failed to load POIs: " + textStatus + " " + errorThrown);
+                }
+            });
+        }
+
+        // 검색 기능 추가
+        $("#searchInput").on("keyup", function () {
+            var value = $(this).val().toLowerCase();
+            // 숨기기 토글 및 값이 비어있지 않으면 테이블 표시
+            var isVisibleRowCount = 0;
+            $("#poi-table tbody tr").filter(function () {
+                var isVisible = $(this).text().toLowerCase().indexOf(value) > -1;
+                $(this).toggle(isVisible);
+                if (isVisible) isVisibleRowCount++;
+                return isVisible;
+            });
+
+            // 입력 값이 없으면 테이블 숨기기
+            if (value === "") {
+                $("#poi-table").hide();
+            } else {
+                $("#poi-table").show();
+            }
+
+            // 검색 결과 갯수 표시
+            $("#searchResults p").text('검색 결과: ' + isVisibleRowCount + '개');
+        });
+
+        $(document).ready(function () {
+            loadPois();
+        });
+
     </script>
 </head>
 </html>

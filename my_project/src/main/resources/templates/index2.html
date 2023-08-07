@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>POI List</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<body>
+<h1>POI List</h1>
+
+<!-- 검색 폼 추가 -->
+<form>
+    <input type="text" id="search-input" placeholder="Search...">
+</form>
+
+<div id="search-results">
+    <p>검색 결과:</p>
+    <table id="poi-table" style="display:none;">
+        <thead>
+        <tr>
+            <th>POI Name</th>
+        </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</div>
+
+<script>
+    function loadPois() {
+        $.ajax({
+            type: "GET",
+            url: "/poi",
+            success: function (data) {
+                var tbody = $("#poi-table tbody");
+                tbody.empty();
+                data.forEach(function (poi) {
+                    tbody.append(`<tr><td>${poi.poi_name}</td></tr>`);
+                });
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.error("Failed to load POIs: " + textStatus + " " + errorThrown);
+            }
+        });
+    }
+
+    // 검색 기능 추가
+    $("#search-input").on("keyup", function () {
+        var value = $(this).val().toLowerCase();
+        // 숨기기 토글 및 값이 비어있지 않으면 테이블 표시
+        var isVisibleRowCount = 0;
+        $("#poi-table tbody tr").filter(function () {
+            var isVisible = $(this).text().toLowerCase().indexOf(value) > -1;
+            $(this).toggle(isVisible);
+            if (isVisible) isVisibleRowCount++;
+            return isVisible;
+        });
+
+        // 입력 값이 없으면 테이블 숨기기
+        if (value === "") {
+            $("#poi-table").hide();
+        } else {
+            $("#poi-table").show();
+        }
+
+        // 검색 결과 갯수 표시
+        $("#search-results p").text('검색 결과: ' + isVisibleRowCount + '개');
+    });
+
+    $(document).ready(function () {
+        loadPois();
+    });
+</script>
+</body>
+</html>

@@ -347,7 +347,7 @@
 
         <!-- 사이드바 안에서 검색창 -->
         <form class="d-flex mb-3" role="search">
-            <input class="form-control mx-auto me-2" id="searchInput" type="search" placeholder="Search"
+            <input class="form-control mx-auto me-2" id="searchInput" type="text" placeholder="Search..."
                    aria-label="Search" style="width: 300px;">
             <button class="btn btn-outline-success mx-auto me-2" type="button"
                     data-bs-target="#placeName"
@@ -355,7 +355,18 @@
             </button>
         </form>
         <div class="offcanvas-body">
-            <p id="searchResult">검색 결과가 여기에 표시됩니다.</p>
+            <div id="searchResults">
+                <p>검색 결과:</p>
+                <table id="poi-table" style="display:none;">
+                    <thead>
+                    <tr>
+                        <th>POI Name</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
     <!-- 검색 했을 때 사이드바 끝 -->
@@ -388,10 +399,9 @@
         <hr>
 
         <div class="offcanvas-body">
-            <p id="roadResult">검색 결과가 여기에 표시됩니다.</p>
+            <!--            <p id="roadResult">검색 결과가 여기에 표시됩니다.</p>-->
         </div>
     </div>
-
 </th:block>
 </body>
 </html>

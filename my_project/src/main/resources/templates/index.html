@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>User List</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<body>
+<h1>User List</h1>
+<table id="user-table">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Age</th>
+        <th>Email</th>
+        <th>Password</th>
+        <th>Phone</th>
+    </tr>
+    </thead>
+    <tbody>
+    </tbody>
+</table>
+
+<script>
+    function loadUsers() {
+        $.ajax({
+            type: "GET",
+            url: "/users",
+            success: function (data) {
+                var tbody = $("#user-table tbody");
+                tbody.empty();
+                data.forEach(function (user) {
+                    tbody.append(`<tr><td>${user.user_id}</td><td>${user.user_name}</td><td>${user.user_age}
+                    </td><td>${user.user_email}</td><td>${user.user_password}</td><td>${user.user_phone}</td></tr>`);
+                });
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.error("Failed to load users: " + textStatus + " " + errorThrown);
+            }
+        });
+    }
+
+
+    $(document).ready(function () {
+        loadUsers();
+    });
+</script>
+</body>
+</html>
