@@ -1,75 +1,86 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>POI List</title>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <title>Show Current Location</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol@v7.4.0/ol.css" type="text/css"/>
+    <style>
+        .map {
+            height: 400px;
+            width: 100%;
+        }
+    </style>
+    <!-- OpenLayers JavaScript 파일 로드 -->
+    <script src="https://cdn.jsdelivr.net/npm/ol@v7.4.0/dist/ol.js"></script>
 </head>
 <body>
-<h1>POI List</h1>
-
-<!-- 검색 폼 추가 -->
-<form>
-    <input type="text" id="search-input" placeholder="Search...">
-</form>
-
-<div id="search-results">
-    <p>검색 결과:</p>
-    <table id="poi-table" style="display:none;">
-        <thead>
-        <tr>
-            <th>POI Name</th>
-        </tr>
-        </thead>
-        <tbody>
-        </tbody>
-    </table>
-</div>
-
+<h2>당신의 현재 위치</h2>
+<div id="map" class="map"></div>
 <script>
-    function loadPois() {
-        $.ajax({
-            type: "GET",
-            url: "/poi",
-            success: function (data) {
-                var tbody = $("#poi-table tbody");
-                tbody.empty();
-                data.forEach(function (poi) {
-                    tbody.append(`<tr><td>${poi.poi_name}</td></tr>`);
+    // 지도 생성
+    const map = new ol.Map({
+        target: 'map',
+        layers: [
+            // 지도에 사용할 레이어 생성 (OSM 기반 지도 레이어 사용)
+            new ol.layer.Tile({
+                source: new ol.source.OSM(),
+            }),
+        ],
+        view: new ol.View({
+            // 초기 중심 좌표와 줌 레벨 설정
+            center: [0, 0],
+            zoom: 2,
+        }),
+    });
+
+    // 마커를 출력할 벡터 레이어 생성
+    const markerLayer = new ol.layer.Vector({
+        source: new ol.source.Vector(),
+    });
+
+    // 마커 레이어를 지도에 추가
+    map.addLayer(markerLayer);
+
+    // 마커 스타일 정의
+    const markerStyle = new ol.style.Style({
+        image: new ol.style.Icon({
+            // 마커 앵커 포인트 설정 (이미지 기준 x: 50%, y: 100% 위치)
+            anchor: [0.5, 1],
+            // 마커 이미지(아이콘) URL
+            src: 'https://openlayers.org/en/latest/examples/data/icon.png',
+        }),
+    });
+
+    // 현재 위치 표시
+    // 브라우저에서 지오로케이션(위치정보)를 지원하는지 확인
+    if ('geolocation' in navigator) {
+        // 현재 위치를 가져옴
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                // 가져온 경도, 위도 좌표를 OpenLayers 지도 좌표계로 변환
+                const coords = ol.proj.fromLonLat([position.coords.longitude, position.coords.latitude]);
+
+                // 현재 위치 좌표로 지점(포인트) 지오메트리를 가진 피처 생성
+                const markerFeature = new ol.Feature({
+                    geometry: new ol.geom.Point(coords),
                 });
+
+                // 생성한 피처에 마커 스타일을 적용
+                markerFeature.setStyle(markerStyle);
+
+                // 피처를 마커 레이어의 소스에 추가
+                markerLayer.getSource().addFeature(markerFeature);
+
+                // 지도 뷰를 현재 위치로 애니메이션 효과와 함께 이동시키고 줌 레벨을 조절
+                map.getView().animate({center: coords, zoom: 10});
             },
-            error: function (jqXHR, textStatus, errorThrown) {
-                console.error("Failed to load POIs: " + textStatus + " " + errorThrown);
+            // 현재 위치를 가져오는 데 실패한 경우 에러 처리
+            (error) => {
+                console.error('Error getting geolocation', error);
             }
-        });
+        );
+    } else {
+        alert('이 브라우저에서는 지오로케이션을 지원하지 않습니다.');
     }
-
-    // 검색 기능 추가
-    $("#search-input").on("keyup", function () {
-        var value = $(this).val().toLowerCase();
-        // 숨기기 토글 및 값이 비어있지 않으면 테이블 표시
-        var isVisibleRowCount = 0;
-        $("#poi-table tbody tr").filter(function () {
-            var isVisible = $(this).text().toLowerCase().indexOf(value) > -1;
-            $(this).toggle(isVisible);
-            if (isVisible) isVisibleRowCount++;
-            return isVisible;
-        });
-
-        // 입력 값이 없으면 테이블 숨기기
-        if (value === "") {
-            $("#poi-table").hide();
-        } else {
-            $("#poi-table").show();
-        }
-
-        // 검색 결과 갯수 표시
-        $("#search-results p").text('검색 결과: ' + isVisibleRowCount + '개');
-    });
-
-    $(document).ready(function () {
-        loadPois();
-    });
 </script>
 </body>
 </html>

@@ -12,21 +12,6 @@ var mousePositionCtrl = new ol.control.MousePosition({
     undefinedHTML: '&nbsp;'
 });
 
-var map = new ol.Map({
-    controls: ol.control.defaults().extend([mousePositionCtrl]),
-    layers: [
-        new ol.layer.Tile({
-            source: new ol.source.OSM()
-        })
-    ],
-    target: 'map',
-    view: new ol.View({
-        center: [0, 0],
-        zoom: 2
-    })
-});
-
-
 const raster = new TileLayer({
     source: new OSM(),
 });
