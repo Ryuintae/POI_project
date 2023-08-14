@@ -11,7 +11,9 @@
 
 <!--지도 생성-->
 <div th:id="map" class="map"></div>
-
+<div th:id="popup">
+    <div th:id="popup-content"></div>
+</div>
 <!--상단 내비 바-->
 <div th:replace="~{/fragments/navbar :: layout_navBar}"></div>
 

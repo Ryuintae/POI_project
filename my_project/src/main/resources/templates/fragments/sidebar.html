@@ -94,7 +94,7 @@
                             <td>1</td>
                             <td>맛나식당</td>
                             <td>010-1111-2222</td>
-                            <td>111.222./ 333.222</td>
+                            <td>좌표값을 주소명으로 변환해야함</td>
                             <td>
                                 <!-- 부트스트랩 버튼 적용 -->
                                 <button class="btn btn-primary" onclick="showDetails(1)" data-bs-toggle="modal"
@@ -106,7 +106,7 @@
                             <td>2</td>
                             <td>메가커피</td>
                             <td>02-123-1234</td>
-                            <td>123.111./122.111</td>
+                            <td>좌표값을 주소명으로 변환해야함</td>
                             <td>
                                 <button class="btn btn-primary" onclick="showDetails(2)" data-bs-toggle="modal"
                                         data-bs-target="#placeRegister">수정하기
@@ -117,7 +117,7 @@
                             <td>3</td>
                             <td>gs편의점</td>
                             <td>02-123-4321</td>
-                            <td>123.111/123.444</td>
+                            <td>좌표값을 주소명으로 변환해야함</td>
                             <td>
                                 <button class="btn btn-primary" onclick="showDetails(3)" data-bs-toggle="modal"
                                         data-bs-target="#placeRegister">수정하기
@@ -204,10 +204,11 @@
                                 <input type="text" class="form-control" th:name="memo" id="memo"
                                        placeholder="간단한 설명을 작성해주세요.">
                             </div>
+                            <button id="placeRegisterBtn1">지도 생성</button>
 
                             <div class="spacer"></div> <!-- 간격을 띄우기 위한 빈 div 엘리먼트 -->
                             <!--폼 안에 지도 띄우기-->
-                            <div id="map-container"></div>
+                            <div id="map-container" style="width: 100%; height: 400px;"></div>
 
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
@@ -247,7 +248,7 @@
                             <td>1</td>
                             <td>맛나식당</td>
                             <td>010-1111-2222</td>
-                            <td>111.222./ 333.222</td>
+                            <td>좌표값을 주소명으로 변환해야함</td>
                             <td>
                                 <!-- 부트스트랩 버튼 적용 -->
                                 <button class="btn btn-danger" onclick="showDetails(1)">삭제하기</button>
@@ -257,7 +258,7 @@
                             <td>2</td>
                             <td>메가커피</td>
                             <td>02-123-1234</td>
-                            <td>123.111./122.111</td>
+                            <td>좌표값을 주소명으로 변환해야함</td>
                             <td>
                                 <button class="btn btn-danger" onclick="showDetails(2)">삭제하기</button>
                             </td>
@@ -266,7 +267,7 @@
                             <td>3</td>
                             <td>gs편의점</td>
                             <td>02-123-4321</td>
-                            <td>123.111/123.444</td>
+                            <td>좌표값을 주소명으로 변환해야함</td>
                             <td>
                                 <button class="btn btn-danger" onclick="showDetails(3)">삭제하기</button>
                             </td>
@@ -346,25 +347,34 @@
 
         <!-- 사이드바 안에서 검색창 -->
         <form class="d-flex mb-3" role="search">
-            <input class="form-control mx-auto me-2" id="searchInput" type="text" placeholder="Search..."
-                   aria-label="Search" style="width: 300px;">
+            <input class="form-control mx-auto me-2" id="searchInput" type="text" placeholder="검색어를 입력하세요"
+                   aria-label="검색" style="width: 300px;">
             <button class="btn btn-outline-success mx-auto me-2" type="button"
+                    onclick="searchPoi()"
                     data-bs-target="#placeName"
-                    aria-controls="offcanvasScrolling">Search
+                    aria-controls="offcanvasScrolling">검색
             </button>
         </form>
         <div class="offcanvas-body">
             <div id="searchResults">
                 <p>검색 결과:</p>
-                <table id="poi-table" style="display:none;">
-                    <thead>
-                    <tr>
-                        <th>POI Name</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    </tbody>
-                </table>
+                <div id="poi-list"></div>
+            </div>
+        </div>
+    </div>
+
+    <!--    --------------------------------  -->
+    <!-- 모달 컴포넌트 -->
+    <div class="modal fade" id="poiModal" tabindex="-1" aria-labelledby="poiModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="poiModalLabel">상세정보</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="poiModalBody">
+                    <!--상세정보 입력-->
+                </div>
             </div>
         </div>
     </div>

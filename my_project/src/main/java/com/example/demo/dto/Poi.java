@@ -16,12 +16,12 @@ public class Poi {
     private int user_id;
     private int category_code;
     private String poi_name;
-    private String Iclas;
+    private String iclas;
     private String mlsfc;
     private String sclas;
     private String dclas;
     private String tel_no;
     private String memo;
-    private float lon;
-    private float lat;
+    private double lon;
+    private double lat;
 }

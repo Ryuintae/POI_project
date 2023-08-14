@@ -20,4 +20,15 @@ public class PoiServiceImpl implements PoiService {
     public List<Poi> findAll() {
         return poiMapper.findAll();
     }
+
+    @Override
+    public List<Poi> findByName(String poiName) {
+        return poiMapper.findByName(poiName);
+    }
+
+    @Override
+    public List<Poi> findByLatitudeAndLongitude(double lon, double lat) {
+        return poiMapper.findByLatitudeAndLongitude(lon, lat);
+    }
+
 }

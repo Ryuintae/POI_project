@@ -1,86 +1,73 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Show Current Location</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol@v7.4.0/ol.css" type="text/css"/>
+    <meta charset="UTF-8">
+    <title>POI Search</title>
     <style>
-        .map {
-            height: 400px;
+        table {
             width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 8px;
+            text-align: left;
+            border: 1px solid black;
+        }
+
+        th {
+            background-color: #f2f2f2;
         }
     </style>
-    <!-- OpenLayers JavaScript 파일 로드 -->
-    <script src="https://cdn.jsdelivr.net/npm/ol@v7.4.0/dist/ol.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        function searchPoi() {
+            const lon = document.getElementById('lon').value;
+            const lat = document.getElementById('lat').value;
+            const url = `/poi/hover?lon=${lon}&lat=${lat}`;
+
+            // AJAX 요청
+            $.ajax({
+                url: url,
+                dataType: 'json',
+                success: function (data) {
+                    // 콘솔에 JSON 데이터 출력
+                    console.log(data);
+
+                    const tableBody = document.getElementById('poi-table-body');
+                    tableBody.innerHTML = ''; // 이전 데이터 삭제
+
+                    for (const poi of data) {
+                        // 테이블에 새 행 추가
+                        const row = document.createElement('tr');
+                        row.innerHTML = `<td>${poi.poi_name}</td><td>${poi.lat}</td><td>${poi.lon}</td>`;
+                        tableBody.appendChild(row);
+                    }
+                }
+            });
+        }
+    </script>
 </head>
 <body>
-<h2>당신의 현재 위치</h2>
-<div id="map" class="map"></div>
-<script>
-    // 지도 생성
-    const map = new ol.Map({
-        target: 'map',
-        layers: [
-            // 지도에 사용할 레이어 생성 (OSM 기반 지도 레이어 사용)
-            new ol.layer.Tile({
-                source: new ol.source.OSM(),
-            }),
-        ],
-        view: new ol.View({
-            // 초기 중심 좌표와 줌 레벨 설정
-            center: [0, 0],
-            zoom: 2,
-        }),
-    });
-
-    // 마커를 출력할 벡터 레이어 생성
-    const markerLayer = new ol.layer.Vector({
-        source: new ol.source.Vector(),
-    });
-
-    // 마커 레이어를 지도에 추가
-    map.addLayer(markerLayer);
-
-    // 마커 스타일 정의
-    const markerStyle = new ol.style.Style({
-        image: new ol.style.Icon({
-            // 마커 앵커 포인트 설정 (이미지 기준 x: 50%, y: 100% 위치)
-            anchor: [0.5, 1],
-            // 마커 이미지(아이콘) URL
-            src: 'https://openlayers.org/en/latest/examples/data/icon.png',
-        }),
-    });
-
-    // 현재 위치 표시
-    // 브라우저에서 지오로케이션(위치정보)를 지원하는지 확인
-    if ('geolocation' in navigator) {
-        // 현재 위치를 가져옴
-        navigator.geolocation.getCurrentPosition(
-            (position) => {
-                // 가져온 경도, 위도 좌표를 OpenLayers 지도 좌표계로 변환
-                const coords = ol.proj.fromLonLat([position.coords.longitude, position.coords.latitude]);
-
-                // 현재 위치 좌표로 지점(포인트) 지오메트리를 가진 피처 생성
-                const markerFeature = new ol.Feature({
-                    geometry: new ol.geom.Point(coords),
-                });
-
-                // 생성한 피처에 마커 스타일을 적용
-                markerFeature.setStyle(markerStyle);
-
-                // 피처를 마커 레이어의 소스에 추가
-                markerLayer.getSource().addFeature(markerFeature);
-
-                // 지도 뷰를 현재 위치로 애니메이션 효과와 함께 이동시키고 줌 레벨을 조절
-                map.getView().animate({center: coords, zoom: 10});
-            },
-            // 현재 위치를 가져오는 데 실패한 경우 에러 처리
-            (error) => {
-                console.error('Error getting geolocation', error);
-            }
-        );
-    } else {
-        alert('이 브라우저에서는 지오로케이션을 지원하지 않습니다.');
-    }
-</script>
+<h1>POI Search</h1>
+<div>
+    <label for="lon">Longitude:</label>
+    <input type="text" id="lon">
+    <label for="lat">Latitude:</label>
+    <input type="text" id="lat">
+    <button onclick="searchPoi()">Search POI</button>
+</div>
+<br>
+<table>
+    <thead>
+    <tr>
+        <th>POI Name</th>
+        <th>Latitude</th>
+        <th>Longitude</th>
+    </tr>
+    </thead>
+    <tbody id="poi-table-body">
+    </tbody>
+</table>
 </body>
 </html>
