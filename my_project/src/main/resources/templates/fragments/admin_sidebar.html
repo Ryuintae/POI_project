@@ -201,7 +201,12 @@
                                 <input type="text" class="form-control" th:name="memo" id="memo"
                                        placeholder="간단한 설명을 작성해주세요.">
                             </div>
-
+                            <!-- 주소 input -->
+                            <div class="mb-3">
+                                <label for="memo">주소</label>
+                                <input type="text" class="form-control" th:name="memo" id="address"
+                                       placeholder="지도 클릭시 주소명이 나옵니다.">
+                            </div>
                             <div class="spacer"></div> <!-- 간격을 띄우기 위한 빈 div 엘리먼트 -->
                             <!--폼 안에 지도 띄우기-->
                             <div id="map-container"></div>

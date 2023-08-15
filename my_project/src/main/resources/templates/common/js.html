@@ -227,7 +227,7 @@
                         source: new ol.source.OSM(),
                     }),
                 ],
-                overlays: [overlay],
+                // overlays: [overlay],
                 view: new ol.View({
                     center: ol.proj.fromLonLat([126.985302, 37.566671]),
                     zoom: 11
@@ -262,8 +262,13 @@
         $('#placeModify').on('hidden.bs.modal', function () {
             $(this).find('form').trigger('reset');
         })
-        // 버튼에 클릭 이벤트 리스너를 등록합니다.
-        $("#placeRegisterBtn").on("click", function () {
+        // // 버튼에 클릭 이벤트 리스너를 등록합니다.
+        // $("#placeRegisterBtn").on("click", function () {
+        //     $("#placeRegister").modal("show");
+        // });
+
+        // 모달이 완전히 열린 후에 지도 생성
+        $("#placeRegister").on("shown.bs.modal", function () {
             createMap();
         });
 

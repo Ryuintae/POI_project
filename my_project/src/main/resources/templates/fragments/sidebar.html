@@ -204,13 +204,17 @@
                                 <input type="text" class="form-control" th:name="memo" id="memo"
                                        placeholder="간단한 설명을 작성해주세요.">
                             </div>
-                            <button id="placeRegisterBtn1">지도 생성</button>
-
+                            <!-- 주소 input -->
+                            <div class="mb-3">
+                                <label for="memo">주소</label>
+                                <input type="text" class="form-control" th:name="memo" id="address"
+                                       placeholder="지도 클릭시 주소명이 나옵니다.">
+                            </div>
                             <div class="spacer"></div> <!-- 간격을 띄우기 위한 빈 div 엘리먼트 -->
                             <!--폼 안에 지도 띄우기-->
-                            <div id="map-container" style="width: 100%; height: 400px;"></div>
+                            <div id="map-container"></div>
 
-                            <div class="modal-footer">
+                            <div class="modal-footer fixed-buttons">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
                                 <button type="submit" class="btn btn-primary">등록하기</button>
                             </div>
