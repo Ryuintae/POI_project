@@ -57,10 +57,10 @@
 
 
         // 팝업 변수 선언
-        var hover_container = document.getElementById('popup'); //팝업 컨테이너
-        var hover_content = document.getElementById('popup-content'); //팝업 내용
+        let hover_container = $('#popup'); //팝업 컨테이너
+        let hover_content = $('#popup-content'); //팝업 내용
         function init() {
-            mapOverlay = new ol.Overlay(({element: hover_container})); //Overlay 생성, 요소는 컨테이너
+            mapOverlay = new ol.Overlay(({element: hover_container.get(0)})); //Overlay 생성, 요소는 컨테이너의 첫 번째 요소(Native DOM element)
             // 대한민국 전체 영역 좌표 [xmin, ymin, xmax, ymax]
             const koreaExtent = [124.61, 33.06, 129, 38];
             map = new ol.Map({
@@ -155,50 +155,73 @@
                     hover = feature;
                     return true;
                 });
-                const inputProj = 'EPSG:xyz';
+
+                // 수정: 좌표계 변경
+                const inputProj = 'EPSG:3857';
                 const outputProj = 'EPSG:4326';
 
                 // 마커가 있을 경우
                 if (hover) {
-                    const lon = hover.getGeometry().getCoordinates()[0];
-                    const lat = hover.getGeometry().getCoordinates()[1];
+                    const lonlat = hover.getGeometry().getCoordinates();
+                    const coords = ol.proj.transform(lonlat, inputProj, outputProj);
+                    const lon = coords[0];
+                    const lat = coords[1];
                     const url = `/poi/hover?lon=${lon}&lat=${lat}`;
                     $.ajax({
                         url: url,
                         type: 'GET',
-                        dataType: 'html',  // 응답 데이터 타입을 HTML로 지정
+                        dataType: 'json',
                         success: (data) => {
                             console.log(data);
-                            // HTML 데이터를 JavaScript 객체로 파싱
+                            console.log(Object.keys(data)); // 키 목록 출력
                             const dataObj = $(data);
                             // 파싱한 객체에서 POI 이름과 전화번호를 가져와서 팝업 내용에 사용
-                            const content = "<div class='pointeMaker'>"
-                                + "간단 정보"
-                                + (dataObj.find('#poi_name').text() || '1')
-                                + (dataObj.find('#tel_no').text() || '1')
-                                + "</div>";
+                            const content = $("<div class='pointeMaker'></div>").append(
+                                $("<div class='header'></div>").text("간단 정보"),
+                                $("<div class='info'></div>").append(
+                                    $("<p></p>").text("장소명: " + (data[0].poi_name || '값 없음')),
+                                    $("<p></p>").text("전화번호: " + (data[0].tel_no || '값 없음'))
+                                )
+                            );
 
-                            hover_content.innerHTML = content;
+                            hover_content.html(content); // 수정된 부분
                             mapOverlay.setPosition(coordinate);
                         },
                         error: (error) => {
                             console.error('Error fetching data from API', error);
                         }
                     });
+                } else {
+                    // 마커 위에 마우스 포인터가 없으면 팝업을 숨깁니다.
+                    mapOverlay.setPosition(undefined);
                 }
 
+                map.on('singleclick', function (evt) {
+                    let ff = map.hasFeatureAtPixel(evt.pixel);
 
+                    if (ff === true && hover) {
+                        const lonlat = hover.getGeometry().getCoordinates();
+                        const coords = ol.proj.transform(lonlat, inputProj, outputProj);
+                        const lon = coords[0];
+                        const lat = coords[1];
+
+                        const url = `/poi/hover?lon=${lon}&lat=${lat}`;
+                        $.ajax({
+                            url: url,
+                            type: 'GET',
+                            dataType: 'json',
+                            success: (data) => {
+                                console.log("성공")
+                                openPoiModal(data[0]);
+                            },
+                            error: (error) => {
+                                console.error('Error fetching data from API', error);
+                            }
+                        });
+                    }
+                });
             })
-            map.on('singleclick', function (evt) {
-                let ff = map.hasFeatureAtPixel(evt.pixel);
 
-                if (ff === true && hover) {
-                    openPoiModal({
-                        poi_name: hover.get('poi_name' || 'X'),
-                        tel_no: hover.get('tel_no' || '-'),
-                    });
-                }
-            });
         }
 
 
@@ -207,21 +230,22 @@
 
 
         function createMap() {
-            let mapContainer = document.getElementById("map-container");
+            let mapContainer = $("#map-container");
             // 동적으로 지도를 생성할 div 요소를 만듭니다.
-            let mapElem = document.createElement("div");
-            mapElem.style.width = "100%";
-            mapElem.style.height = "400px";
+            let mapElem = $("<div>").css({
+                width: "100%",
+                height: "400px"
+            });
             // 이전에 생성된 지도가 있다면 삭제합니다.
             if (mapObj) {
                 mapObj.setTarget(null);
                 mapObj = null;
-                mapContainer.innerHTML = "";
+                mapContainer.empty();
             }
             mapContainer.append(mapElem);
             // 새로운 지도 객체를 생성합니다.
             mapObj = new ol.Map({
-                target: mapElem,
+                target: mapElem[0],
                 layers: [
                     new ol.layer.Tile({
                         source: new ol.source.OSM(),
@@ -344,9 +368,18 @@
                         const poiInfo = $('<span>').text(`${poi.poi_name} `);
                         itemContainer.append(poiInfo);
 
+                        itemContainer.append(
+                            $('<button>')
+                                .addClass("btn btn-outline-warning btn-sm ms-2 ms-auto move-button")
+                                .text('이동하기')
+                                .on('click', function () {
+                                    moveToPoi(poi.lat, poi.lon);
+                                })
+                        );
+
                         const detailButton = $('<button>')
                             .text('상세보기')
-                            .addClass('btn btn-sm btn-outline-info ms-2')
+                            .addClass('btn btn-sm btn-outline-info ms-2 move-button')
                             .click(function () {
                                 openPoiModal(poi);
                             });
@@ -364,34 +397,41 @@
 
         // openPoiModal() 함수 추가
         function openPoiModal(poi) {
-            const poiModalBody = document.getElementById('poiModalBody');
-            poiModalBody.innerHTML = `
-        <div class="row">
-            <div class="col-4 fw-bold">장소 이름</div>
-            <div class="col-8">${poi.poi_name}</div>
-            <div class="col-4 fw-bold">위치</div>
-            <div class="col-8"><button class="btn btn-outline-warning btn-sm" onclick="moveToPoi(${poi.lat}, ${poi.lon})">이동하기</button></div>
-        </div>
-        <hr>
-        <div class="row">
-            <h6>상세 정보</h6>
-            <div class="col-4 fw-bold">전화번호</div>
-            <div class="col-8">${poi.tel_no || '-'}</div>
-            <div class="col-4 fw-bold">대분류</div>
-            <div class="col-8">${poi.iclas}</div>
-            <div class="col-4 fw-bold">중분류</div>
-            <div class="col-8">${poi.mlsfc || '-'}</div>
-            <div class="col-4 fw-bold">소분류</div>
-            <div class="col-8">${poi.sclas || '-'}</div>
-            <div class="col-4 fw-bold">상세분류</div>
-            <div class="col-8">${poi.dclas || '-'}</div>
-            <div class="col-4 fw-bold">설명</div>
-            <div class="col-8">${poi.memo || '-'}</div>
-            <div class="col-4 fw-bold">대표사진</div>
-            <div class="col-8">${poi.memo || '-'}</div>
-
-        </div>
-    `;
+            const poiModalBody = $('#poiModalBody');
+            poiModalBody.empty().append(
+                $('<div class="row"></div>').append(
+                    $('<div class="col-4 fw-bold"></div>').text('장소 이름'),
+                    $('<div class="col-8"></div>').text(poi.poi_name)
+                ),
+                $('<div class="row"></div>').append(
+                    $('<div class="col-4 fw-bold"></div>').text('위치'),
+                    $('<div class="col-8"></div>').append(
+                        $('<button class="btn btn-outline-warning btn-sm"></button>')
+                            .text('로드뷰로 보기')
+                            .on('click', function () {
+                                moveToPoi(poi.lat, poi.lon);
+                            })
+                    )
+                ),
+                $('<hr>'),
+                $('<div class="row"></div>').append(
+                    $('<h6></h6>').text('상세 정보'),
+                    $('<div class="col-4 fw-bold"></div>').text('전화번호'),
+                    $('<div class="col-8"></div>').text(poi.tel_no || '-'),
+                    $('<div class="col-4 fw-bold"></div>').text('대분류'),
+                    $('<div class="col-8"></div>').text(poi.iclas),
+                    $('<div class="col-4 fw-bold"></div>').text('중분류'),
+                    $('<div class="col-8"></div>').text(poi.mlsfc || '-'),
+                    $('<div class="col-4 fw-bold"></div>').text('소분류'),
+                    $('<div class="col-8"></div>').text(poi.sclas || '-'),
+                    $('<div class="col-4 fw-bold"></div>').text('상세분류'),
+                    $('<div class="col-8"></div>').text(poi.dclas || '-'),
+                    $('<div class="col-4 fw-bold"></div>').text('설명'),
+                    $('<div class="col-8"></div>').text(poi.memo || '-'),
+                    $('<div class="col-4 fw-bold"></div>').text('대표사진'),
+                    $('<div class="col-8"></div>').text(poi.memo || '-')
+                )
+            );
             $('#poiModal').modal('show');
         }
 
