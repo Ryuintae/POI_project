@@ -27,7 +27,7 @@
             type: "GET",
             url: "/users",
             success: function (data) {
-                var tbody = $("#user-table tbody");
+                let tbody = $("#user-table tbody");
                 tbody.empty();
                 data.forEach(function (user) {
                     tbody.append(`<tr><td>${user.user_id}</td><td>${user.user_name}</td><td>${user.user_age}

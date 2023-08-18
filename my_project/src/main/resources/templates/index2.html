@@ -1,73 +1,197 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>POI Search</title>
-    <style>
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        th, td {
-            padding: 8px;
-            text-align: left;
-            border: 1px solid black;
-        }
-
-        th {
-            background-color: #f2f2f2;
-        }
-    </style>
+    <title>POI 카테고리 테스트</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-        function searchPoi() {
-            const lon = document.getElementById('lon').value;
-            const lat = document.getElementById('lat').value;
-            const url = `/poi/hover?lon=${lon}&lat=${lat}`;
+        $(document).ready(function () {
+            loadLCLASCD();
 
-            // AJAX 요청
+            $('#lclascd-select').change(function () {
+                loadMLSFCCD($(this).val());
+            });
+
+            $('#mlsfccd-select').change(function () {
+                loadSCLASCD($('#lclascd-select').val(), $(this).val());
+            });
+
+            $('#sclascd-select').change(function () {
+                loadDCLASCD($('#lclascd-select').val(), $('#mlsfccd-select').val(), $(this).val());
+            });
+
+            $('#dclascd-select').change(function () {
+                loadBCLASCD($('#lclascd-select').val(), $('#mlsfccd-select').val(), $('#sclascd-select').val(), $(this).val());
+            });
+        });
+
+        function loadLCLASCD() {
             $.ajax({
-                url: url,
-                dataType: 'json',
-                success: function (data) {
-                    // 콘솔에 JSON 데이터 출력
-                    console.log(data);
-
-                    const tableBody = document.getElementById('poi-table-body');
-                    tableBody.innerHTML = ''; // 이전 데이터 삭제
-
-                    for (const poi of data) {
-                        // 테이블에 새 행 추가
-                        const row = document.createElement('tr');
-                        row.innerHTML = `<td>${poi.poi_name}</td><td>${poi.lat}</td><td>${poi.lon}</td>`;
-                        tableBody.appendChild(row);
+                type: "GET",
+                url: "/findDataByLCLASCD",
+                success: function (response) {
+                    for (let i = 0; i < response.length; i++) {
+                        $("#lclascd-select").append(`<option value="${response[i].lclascd}">${response[i].lclasdc}</option>`);
                     }
+                },
+                error: function () {
+                    $('#lclascd-select').append('<option value="error">데이터 로드에 실패했습니다.</option>');
                 }
             });
         }
+
+        function loadMLSFCCD(lclascdValue) {
+            $.ajax({
+                type: "GET",
+                url: "/findDataByLCLASCDAndMLSFCCD",
+                data: {lclascd: lclascdValue},
+                success: function (response) {
+                    $('#mlsfccd-select').empty();
+                    $('#mlsfccd-select').append(`<option disabled>중분류명을 선택하세요</option>`);
+
+                    $('#sclascd-select').empty();
+                    $('#sclascd-select').append(`<option disabled>소분류명을 선택하세요</option>`);
+
+                    $('#dclascd-select').empty();
+                    $('#dclascd-select').append(`<option disabled>상세 분류명을 선택하세요</option>`);
+
+                    $('#bclascd-select').empty();
+                    $('#bclascd-select').append(`<option disabled>브랜드 분류명을 선택하세요</option>`);
+
+                    for (let i = 0; i < response.length; i++) {
+                        $("#mlsfccd-select").append(`<option value="${response[i].mlsfccd}">${response[i].mlsfcdc}</option>`);
+                    }
+                },
+                error: function () {
+                    $('#mlsfccd-select').append('<option value="error">데이터 로드에 실패했습니다.</option>');
+                }
+            });
+        }
+
+        function loadSCLASCD(lclascdValue, mlsfccdValue) {
+            if (!mlsfccdValue) {
+                $('#sclascd-select').empty();
+                $('#sclascd-select').append(`<option value="">소분류명을 선택하세요</option>`);
+                return;
+            }
+
+            $.ajax({
+                type: "GET",
+                url: "/findByMLSFCCDAndSCLASCD",
+                data: {
+                    lclascd: lclascdValue,
+                    mlsfccd: mlsfccdValue
+                },
+                success: function (response) {
+                    $('#sclascd-select').empty();
+                    $('#sclascd-select').append(`<option value="">소분류명을 선택하세요</option>`);
+
+                    for (let i = 0; i < response.length; i++) {
+                        $("#sclascd-select").append(`<option value="${response[i].sclascd}">${response[i].sclasdc}</option>`);
+                    }
+                },
+                error: function () {
+                    $('#sclascd-select').append('<option value="error">데이터 로드에 실패했습니다.</option>');
+                }
+            });
+        }
+
+        function loadDCLASCD(lclascdValue, mlsfccdValue, sclascdValue) {
+            if (!sclascdValue) {
+                $('#dclascd-select').empty();
+                $('#dclascd-select').append(`<option value="">상세 분류명을 선택하세요</option>`);
+                return;
+            }
+
+            $.ajax({
+                type: "GET",
+                url: "/findBySCLASCDAndDCLASCD",
+                data: {
+                    lclascd: lclascdValue,
+                    mlsfccd: mlsfccdValue,
+                    sclascd: sclascdValue
+                },
+                success: function (response) {
+                    $('#dclascd-select').empty();
+                    $('#dclascd-select').append(`<option value="">상세 분류명을 선택하세요</option>`);
+
+                    for (let i = 0; i < response.length; i++) {
+                        $("#dclascd-select").append(`<option value="${response[i].dclascd}">${response[i].dclasdc}</option>`);
+                    }
+                },
+                error: function () {
+                    $('#dclascd-select').append('<option value="error">데이터 로드에 실패했습니다.</option>');
+                }
+            });
+        }
+
+        function loadBCLASCD(lclascdValue, mlsfccdValue, sclascdValue, dclascdValue) {
+            if (!dclascdValue) {
+                $('#bclascd-select').empty();
+                $('#bclascd-select').append(`<option value="">브랜드 분류명을 선택하세요</option>`);
+                return;
+            }
+
+            $.ajax({
+                type: "GET",
+                url: "/findByDCLASCDAndBCLASCD",
+                data: {
+                    lclascd: lclascdValue,
+                    mlsfccd: mlsfccdValue,
+                    sclascd: sclascdValue,
+                    dclascd: dclascdValue
+                },
+                success: function (response) {
+                    $('#bclascd-select').empty();
+                    $('#bclascd-select').append(`<option value="">브랜드 분류명을 선택하세요</option>`);
+
+                    for (let i = 0; i < response.length; i++) {
+                        $("#bclascd-select").append(`<option value="${response[i].bclascd}">${response[i].bclasdc}</option>`);
+                    }
+                },
+                error: function () {
+                    $('#bclascd-select').append('<option value="error">데이터 로드에 실패했습니다.</option>');
+                }
+            });
+        }
+
     </script>
 </head>
 <body>
-<h1>POI Search</h1>
+<h1>POI 카테고리 테스트</h1>
 <div>
-    <label for="lon">Longitude:</label>
-    <input type="text" id="lon">
-    <label for="lat">Latitude:</label>
-    <input type="text" id="lat">
-    <button onclick="searchPoi()">Search POI</button>
+    <div>
+        <div class="form-group">
+            <label for="lclascd-select">대분류:</label>
+            <select id="lclascd-select">
+                <option value="">대분류명을 선택하세요</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="mlsfccd-select">중분류:</label>
+            <select id="mlsfccd-select">
+                <option value="">중분류명을 선택하세요</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="sclascd-select">소분류:</label>
+            <select id="sclascd-select">
+                <option value="">소분류명을 선택하세요</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="dclascd-select">상세 분류:</label>
+            <select id="dclascd-select">
+                <option value="">상세 분류명 을 선택하세요</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="bclascd-select">브랜드 분류:</label>
+            <select id="bclascd-select">
+                <option value="">브랜드 분류명 을 선택하세요</option>
+            </select>
+        </div>
+    </div>
 </div>
-<br>
-<table>
-    <thead>
-    <tr>
-        <th>POI Name</th>
-        <th>Latitude</th>
-        <th>Longitude</th>
-    </tr>
-    </thead>
-    <tbody id="poi-table-body">
-    </tbody>
-</table>
 </body>
 </html>

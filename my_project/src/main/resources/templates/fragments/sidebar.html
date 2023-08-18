@@ -146,73 +146,72 @@
                     <div class="modal-body">
                         <form action="#" method="post">
                             <!-- 이곳에 폼 값 추가하기 -->
-                            <div class="mb-3">
-                                <label>장소이름</label>
-                                <input type="text" class="form-control" th:name="placeName" required>
-                            </div>
-                            <div class="mb-3">
-                                <label>대표 번호</label>
-                                <input type="text"
-                                       class="form-control" th:name="gen" required>
-                            </div>
+                            <div style="max-height: 444px; overflow-y: auto">
+                                <div class="mb-3">
+                                    <label>장소이름</label>
+                                    <input type="text" class="form-control" th:name="placeName" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label>대표 번호</label>
+                                    <input type="text"
+                                           class="form-control" th:name="gen" required>
+                                </div>
 
-                            <div class="spacer"></div> <!-- 간격을 띄우기 위한 빈 div 엘리먼트 -->
+                                <div class="spacer"></div> <!-- 간격을 띄우기 위한 빈 div 엘리먼트 -->
 
-                            <div class="input-group mb-3">
-                                <label class="input-group-text" for="inputGroupSelect01">카테고리1</label>
-                                <select class="form-control" id="inputGroupSelect01">
-                                    <option selected>필수</option>
-                                    <option value="1">카테고리1-1</option>
-                                    <option value="2">카테고리1-2</option>
-                                    <option value="3">카테고리1-3</option>
-                                </select>
-                            </div>
-                            <div class="input-group mb-3">
-                                <label class="input-group-text" for="inputGroupSelect02">카테고리2</label>
-                                <select class="form-control" id="inputGroupSelect02">
-                                    <option selected>필수</option>
-                                    <option value="1">카테고리2-1</option>
-                                    <option value="2">카테고리2-2</option>
-                                </select>
-                            </div>
-                            <div class="input-group mb-3">
-                                <label class="input-group-text" for="inputGroupSelect03">카테고리3</label>
-                                <select class="form-control" id="inputGroupSelect03">
-                                    <option selected>필수</option>
-                                    <option value="1">카테고리3-1</option>
-                                    <option value="2">카테고리3-2</option>
-                                </select>
-                            </div>
-                            <div class="input-group mb-3">
-                                <label class="input-group-text" for="inputGroupSelect04">상세 카테고리</label>
-                                <select class="form-control" id="inputGroupSelect04">
-                                    <option selected>선택</option>
-                                    <option value="1">카테고리4-1</option>
-                                    <option value="2">카테고리4-2</option>
-                                </select>
-                            </div>
+                                <div class="input-group mb-3">
+                                    <label class="input-group-text" for="lclascd-select">대분류</label>
+                                    <select class="form-control" id="lclascd-select">
+                                        <option selected>필수</option>
+                                    </select>
+                                </div>
+                                <div class="input-group mb-3">
+                                    <label class="input-group-text" for="mlsfccd-select">중분류</label>
+                                    <select class="form-control" id="mlsfccd-select">
+                                        <option selected>필수</option>
+                                    </select>
+                                </div>
+                                <div class="input-group mb-3">
+                                    <label class="input-group-text" for="sclascd-select">소분류</label>
+                                    <select class="form-control" id="sclascd-select">
+                                        <option selected>필수</option>
+                                    </select>
+                                </div>
+                                <div class="input-group mb-3">
+                                    <label class="input-group-text" for="dclascd-select">상세 분류</label>
+                                    <select class="form-control" id="dclascd-select">
+                                        <option selected>선택</option>
+                                    </select>
+                                </div>
+                                <div class="input-group mb-3">
+                                    <label class="input-group-text" for="bclascd-select">브랜드 카테고리</label>
+                                    <select class="form-control" id="bclascd-select">
+                                        <option selected>선택</option>
+                                    </select>
+                                </div>
 
-                            <div class="mb-3">
-                                <label>이미지 첨부</label>
-                                <input type="file"
-                                       class="form-control" accept=".jpg, .png" th:name="detailCategory">
-                            </div>
+                                <div class="mb-3">
+                                    <label>이미지 첨부</label>
+                                    <input type="file"
+                                           class="form-control" accept=".jpg, .png" th:name="detailCategory">
+                                </div>
 
-                            <!-- 메모 input -->
-                            <div class="mb-3">
-                                <label for="memo">메모</label>
-                                <input type="text" class="form-control" th:name="memo" id="memo"
-                                       placeholder="간단한 설명을 작성해주세요.">
+                                <!-- 메모 input -->
+                                <div class="mb-3">
+                                    <label for="memo">메모</label>
+                                    <input type="text" class="form-control" th:name="memo" id="memo"
+                                           placeholder="간단한 설명을 작성해주세요.">
+                                </div>
+                                <!-- 주소 input -->
+                                <div class="mb-3">
+                                    <label for="memo">주소</label>
+                                    <input type="text" class="form-control" th:name="memo" id="address"
+                                           placeholder="지도 클릭시 주소명이 나옵니다.">
+                                </div>
+                                <div class="spacer"></div> <!-- 간격을 띄우기 위한 빈 div 엘리먼트 -->
+                                <!--폼 안에 지도 띄우기-->
+                                <div id="map-container"></div>
                             </div>
-                            <!-- 주소 input -->
-                            <div class="mb-3">
-                                <label for="memo">주소</label>
-                                <input type="text" class="form-control" th:name="memo" id="address"
-                                       placeholder="지도 클릭시 주소명이 나옵니다.">
-                            </div>
-                            <div class="spacer"></div> <!-- 간격을 띄우기 위한 빈 div 엘리먼트 -->
-                            <!--폼 안에 지도 띄우기-->
-                            <div id="map-container"></div>
 
                             <div class="modal-footer fixed-buttons">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>

@@ -303,10 +303,10 @@
                 type: "GET", // HTTP GET 요청 메서드를 사용합니다.
                 url: "/poi", // 요청할 URL 주소입니다.
                 success: function (data) { // 성공적인 요청 시의 콜백 함수입니다.
-                    var features = []; // 배열을 생성합니다.
+                    let features = []; // 배열을 생성합니다.
                     // POI 데이터 배열에 대해 반복합니다.
                     data.forEach(function (poi) {
-                        var feature = new ol.Feature({ // 새로운 Feature 객체를 만듭니다.
+                        let feature = new ol.Feature({ // 새로운 Feature 객체를 만듭니다.
                             // POI의 좌표를 이용하여 새로운 Point 객체를 생성합니다.
                             geometry: new ol.geom.Point(ol.proj.fromLonLat([poi.lon, poi.lat])),
                             // POI 이름을 갖는 속성 값을 추가합니다.
@@ -324,7 +324,7 @@
 
         function addMarkersToMap(features) {
             // 마커 스타일 설정
-            var markerStyle = new ol.style.Style({
+            let markerStyle = new ol.style.Style({
                 image: new ol.style.Icon({
                     opacity: 1,
                     scale: 1.2,
@@ -334,12 +334,12 @@
             });
 
             // 마커 레이어에 들어갈 소스 생성
-            var markerSource = new ol.source.Vector({
+            let markerSource = new ol.source.Vector({
                 features: features
             });
 
             // 마커 레이어 생성
-            var markerLayer = new ol.layer.Vector({
+            let markerLayer = new ol.layer.Vector({
                 source: markerSource,
                 style: markerStyle
             });
@@ -453,9 +453,184 @@
             $('#placeSearch').offcanvas('hide');
         }
 
+        // 대분류를 불러오는 함수
+        function loadLCLASCD() {
+            $.ajax({
+                type: "GET",
+                url: "/findDataByLCLASCD",
+                success: function (response) {
+                    for (let i = 0; i < response.length; i++) {
+                        $("#lclascd-select").append(`<option value="${response[i].lclascd}">${response[i].lclasdc}</option>`);
+                    }
+                },
+                error: function () {
+                    $('#lclascd-select').append('<option value="error">데이터 로드에 실패했습니다.</option>');
+                }
+            });
+        }
+
+        // 중분류를 불러오는 함수입니다.
+        // 이 함수는 대분류값를 받아 대분류 값에 따른 중분류를 불러옴
+        function loadMLSFCCD(lclascdValue) {
+            $.ajax({
+                type: "GET",
+                url: "/findDataByLCLASCDAndMLSFCCD",
+                data: {lclascd: lclascdValue},
+                success: function (response) {
+                    $('#mlsfccd-select').empty();
+                    $('#mlsfccd-select').append(`<option disabled>중분류명을 선택하세요</option>`);
+
+                    $('#sclascd-select').empty();
+                    $('#sclascd-select').append(`<option disabled>소분류명을 선택하세요</option>`);
+
+                    $('#dclascd-select').empty();
+                    $('#dclascd-select').append(`<option disabled>상세 분류명을 선택하세요</option>`);
+
+                    $('#bclascd-select').empty();
+                    $('#bclascd-select').append(`<option disabled>브랜드 분류명을 선택하세요</option>`);
+
+                    for (let i = 0; i < response.length; i++) {
+                        $("#mlsfccd-select").append(`<option value="${response[i].mlsfccd}">${response[i].mlsfcdc}</option>`);
+                    }
+                },
+                error: function () {
+                    $('#mlsfccd-select').append('<option value="error">데이터 로드에 실패했습니다.</option>');
+                }
+            });
+        }
+
+        function loadSCLASCD(lclascdValue, mlsfccdValue) {
+            if (!mlsfccdValue) {
+                $('#sclascd-select').empty();
+                $('#sclascd-select').append(`<option value="">소분류명을 선택하세요</option>`);
+                return;
+            }
+
+            $.ajax({
+                type: "GET",
+                url: "/findByMLSFCCDAndSCLASCD",
+                data: {
+                    lclascd: lclascdValue,
+                    mlsfccd: mlsfccdValue
+                },
+                success: function (response) {
+                    $('#sclascd-select').empty();
+                    $('#sclascd-select').append(`<option value="">소분류명을 선택하세요</option>`);
+
+                    for (let i = 0; i < response.length; i++) {
+                        $("#sclascd-select").append(`<option value="${response[i].sclascd}">${response[i].sclasdc}</option>`);
+                    }
+                },
+                error: function () {
+                    $('#sclascd-select').append('<option value="error">데이터 로드에 실패했습니다.</option>');
+                }
+            });
+        }
+
+        function loadDCLASCD(lclascdValue, mlsfccdValue, sclascdValue) {
+            if (!sclascdValue) {
+                $('#dclascd-select').empty();
+                $('#dclascd-select').append(`<option value="">상세 분류명을 선택하세요</option>`);
+                return;
+            }
+
+            $.ajax({
+                type: "GET",
+                url: "/findBySCLASCDAndDCLASCD",
+                data: {
+                    lclascd: lclascdValue,
+                    mlsfccd: mlsfccdValue,
+                    sclascd: sclascdValue
+                },
+                success: function (response) {
+                    $('#dclascd-select').empty();
+                    $('#dclascd-select').append(`<option value="">상세 분류명을 선택하세요</option>`);
+
+                    for (let i = 0; i < response.length; i++) {
+                        $("#dclascd-select").append(`<option value="${response[i].dclascd}">${response[i].dclasdc}</option>`);
+                    }
+                },
+                error: function () {
+                    $('#dclascd-select').append('<option value="error">데이터 로드에 실패했습니다.</option>');
+                }
+            });
+        }
+
+        function loadBCLASCD(lclascdValue, mlsfccdValue, sclascdValue, dclascdValue) {
+            if (!dclascdValue) {
+                $('#bclascd-select').empty();
+                $('#bclascd-select').append(`<option value="">브랜드 분류명을 선택하세요</option>`);
+                return;
+            }
+
+            $.ajax({
+                type: "GET",
+                url: "/findByDCLASCDAndBCLASCD",
+                data: {
+                    lclascd: lclascdValue,
+                    mlsfccd: mlsfccdValue,
+                    sclascd: sclascdValue,
+                    dclascd: dclascdValue
+                },
+                success: function (response) {
+                    $('#bclascd-select').empty();
+                    $('#bclascd-select').append(`<option value="">브랜드 분류명을 선택하세요</option>`);
+
+                    for (let i = 0; i < response.length; i++) {
+                        $("#bclascd-select").append(`<option value="${response[i].bclascd}">${response[i].bclasdc}</option>`);
+                    }
+                },
+                error: function () {
+                    $('#bclascd-select').append('<option value="error">데이터 로드에 실패했습니다.</option>');
+                }
+            });
+        }
+
+        function resetSelectBoxes() {
+            $('#mlsfccd-select').empty().append(`<option disabled selected>중분류명을 선택하세요</option>`);
+            $('#sclascd-select').empty().append(`<option disabled selected>소분류명을 선택하세요</option>`);
+            $('#dclascd-select').empty().append(`<option disabled selected>상세 분류명을 선택하세요</option>`);
+            $('#bclascd-select').empty().append(`<option disabled selected>브랜드 분류명을 선택하세요</option>`);
+        }
+
+        function resetSubCategories() {
+            $('#sclascd-select').empty().append(`<option disabled selected>소분류명을 선택하세요</option>`);
+            $('#dclascd-select').empty().append(`<option disabled selected>상세 분류명을 선택하세요</option>`);
+            $('#bclascd-select').empty().append(`<option disabled selected>브랜드 분류명을 선택하세요</option>`);
+        }
+
         $(document).ready(function () {
             init();
             searchPoi();
+            // 초기에 대분류 목록을 불러옵니다.
+            loadLCLASCD();
+
+            // 대분류가 변경되면 중분류 목록을 불러옵니다.
+            $('#lclascd-select').change(function () {
+                loadMLSFCCD($(this).val());
+                if (lclascdValue) {
+                    loadMLSFCCD(lclascdValue);
+                } else {
+                    resetSelectBoxes();
+                }
+                resetSubCategories();
+
+            });
+
+            // 중분류가 변경되면 소분류 목록을 불러옵니다.
+            $('#mlsfccd-select').change(function () {
+                loadSCLASCD($('#lclascd-select').val(), $(this).val());
+            });
+
+            // 소분류가 변경되면 상세 분류 목록을 불러옵니다.
+            $('#sclascd-select').change(function () {
+                loadDCLASCD($('#lclascd-select').val(), $('#mlsfccd-select').val(), $(this).val());
+            });
+
+            // 상세분류가 변경되면 브랜드 분류 목록을 불러옵니다.
+            $('#dclascd-select').change(function () {
+                loadBCLASCD($('#lclascd-select').val(), $('#mlsfccd-select').val(), $('#sclascd-select').val(), $(this).val());
+            });
         });
 
     </script>
