@@ -58,7 +58,7 @@
 
 
 <div class="research">
-    <button type="button" class="btn btn-success">현재 지도에서 검색</button>
+    <button type="button" id="search" class="btn btn-success">현재 지도에서 검색</button>
 </div>
 
 <script>
@@ -76,6 +76,41 @@
         });
         $('#dclascd').change(function () {
             loadBCLASCD_main($('#lclascd').val(), $('#mlsfccd').val(), $('#sclascd').val(), $(this).val());
+        });
+
+        // 검색 버튼에 대한 이벤트 핸들러
+        $("#search").on("click", function () {
+            let lclascd = $("#lclascd").val();
+            let mlsfccd = $("#mlsfccd").val();
+            let sclascd = $("#sclascd").val();
+            let dclascd = $("#dclascd").val();
+            let bclascd = $("#bclascd").val();
+
+            if (!lclascd) {
+                alert("대분류명을 선택하세요.");
+                return;
+            }
+
+            if (!mlsfccd) {
+                showLPois(lclascd);
+                return;
+            }
+
+            if (!sclascd) {
+                showMPois(lclascd, mlsfccd);
+                return;
+            }
+
+            if (!dclascd) {
+                showSPois(lclascd, mlsfccd, sclascd);
+                return;
+            }
+
+            if (bclascd) {
+                showBPois(lclascd, mlsfccd, sclascd, dclascd, bclascd);
+            } else {
+                showDPois(lclascd, mlsfccd, sclascd, dclascd);
+            }
         });
     });
 

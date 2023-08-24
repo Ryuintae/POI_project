@@ -10,6 +10,9 @@ public interface PoiMapper {
     @Select("SELECT * FROM public.poi_data;")
     List<Poi> findAll();
 
+    @Select("SELECT * FROM public.poi_data where poi_num=#{poi_num};")
+    Poi findById(Long poi_num);
+
     // POI 정보 등록
     @Insert("INSERT INTO public.poi_data (user_id, category_code, poi_name, Iclas, mlsfc, sclas, dclas, tel_no, memo, lon, lat) " +
             "VALUES (#{user_id}, #{category_code}, #{poi_name}, #{Iclas}, #{mlsfc}, #{sclas}, #{dclas}, #{tel_no}, #{memo}, #{lon}, #{lat});")
@@ -28,7 +31,4 @@ public interface PoiMapper {
     @Select("SELECT * FROM public.poi_data WHERE poi_name like '%${poi_name}%';")
     List<Poi> findByName(String poi_name);
 
-    // 위도, 경도를 사용하여 POI 정보 검색
-    @Select("SELECT * FROM public.poi_data WHERE lon=#{lon} AND lat=#{lat};")
-    List<Poi> findByLatitudeAndLongitude(double lon, double lat);
 }

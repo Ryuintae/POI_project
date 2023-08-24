@@ -20,7 +20,6 @@
         let markerLayer;
         let searchMaker;
         let markerStyle;
-
         //
         // /**
         //  * Elements that make up the popup.
@@ -61,23 +60,20 @@
         let hover_content = $('#popup-content'); //팝업 내용
         function init() {
             mapOverlay = new ol.Overlay(({element: hover_container.get(0)})); //Overlay 생성, 요소는 컨테이너의 첫 번째 요소(Native DOM element)
-            // 대한민국 전체 영역 좌표 [xmin, ymin, xmax, ymax]
             const koreaExtent = [124.61, 33.06, 129, 38];
             map = new ol.Map({
                 target: 'map',
                 layers: [
-                    // 지도에 사용할 레이어 생성 (OSM 기반 지도 레이어 사용)
                     new ol.layer.Tile({
                         source: new ol.source.OSM(),
                     }),
                 ],
-                overlays: [mapOverlay], //오버레이
+                overlays: [mapOverlay],
                 view: new ol.View({
-                    //Web Mercator 좌표계로 변환
                     extent: ol.proj.transformExtent(koreaExtent, 'EPSG:4326', 'EPSG:3857'),
-                    zoom: 7, // 초기 줌 레벨 설정
-                    maxZoom: 19, // 지도 줌 레벨의 최대 값 설정
-                    minZoom: 9, // 지도 줌 레벨의 최소 값 설정
+                    zoom: 7,
+                    maxZoom: 19,
+                    minZoom: 9,
                 }),
             });
 
@@ -109,7 +105,8 @@
             });
 
             // 현재 위치 표시
-            // 브라우저에서 지오로케이션(위치정보)를 지원하는지 확인
+            const geoSource = new ol.source.Vector();
+
             if ('geolocation' in navigator) {
                 // 현재 위치를 가져옴
                 navigator.geolocation.getCurrentPosition(
@@ -118,15 +115,17 @@
                         const coords = ol.proj.fromLonLat([position.coords.longitude, position.coords.latitude]);
 
                         // 현재 위치 좌표로 지점(포인트) 지오메트리를 가진 피처 생성
-                        const markerFeature = new ol.Feature({
+                        const geoMarkerFeature = new ol.Feature({
                             geometry: new ol.geom.Point(coords),
                         });
 
                         // 생성한 피처에 마커 스타일을 적용
-                        markerFeature.setStyle(markerStyle);
+                        geoMarkerFeature.setStyle(markerStyle);
+
+                        geoSource.addFeature(geoMarkerFeature);
 
                         // 피처를 마커 레이어의 소스에 추가
-                        markerLayer.getSource().addFeature(markerFeature);
+                        markerLayer.setSource(geoSource);
 
                         // 지도 뷰를 현재 위치로 애니메이션 효과와 함께 이동시키고 줌 레벨을 조절
                         map.getView().animate({center: coords, zoom: 14});
@@ -146,7 +145,11 @@
                 const coordinate = event.coordinate;
 
                 // 마우스 위치에 마커가 있다면 커서 스타일을 'pointer'로 변경, 그렇지 않으면 기본 스타일 사용
-                map.getTargetElement().style.cursor = map.hasFeatureAtPixel(event.pixel) ? 'pointer' : '';
+                if (map.hasFeatureAtPixel(event.pixel)) {
+                    map.getTargetElement().style.cursor = 'pointer';
+                } else {
+                    map.getTargetElement().style.cursor = '';
+                }
 
                 let hover = null;
 
@@ -155,18 +158,9 @@
                     hover = feature;
                     return true;
                 });
-
-                // 수정: 좌표계 변경
-                const inputProj = 'EPSG:3857';
-                const outputProj = 'EPSG:4326';
-
                 // 마커가 있을 경우
                 if (hover) {
-                    const lonlat = hover.getGeometry().getCoordinates();
-                    const coords = ol.proj.transform(lonlat, inputProj, outputProj);
-                    const lon = coords[0];
-                    const lat = coords[1];
-                    const url = `/poi/hover?lon=${lon}&lat=${lat}`;
+                    const url = `/poi/hover?id=${hover.values_.poi_num}`;
                     $.ajax({
                         url: url,
                         type: 'GET',
@@ -174,16 +168,14 @@
                         success: (data) => {
                             console.log(data);
                             console.log(Object.keys(data)); // 키 목록 출력
-                            const dataObj = $(data);
                             // 파싱한 객체에서 POI 이름과 전화번호를 가져와서 팝업 내용에 사용
                             const content = $("<div class='pointeMaker'></div>").append(
                                 $("<div class='header'></div>").text("간단 정보"),
                                 $("<div class='info'></div>").append(
-                                    $("<p></p>").text("장소명: " + (data[0].poi_name || '값 없음')),
-                                    $("<p></p>").text("전화번호: " + (data[0].tel_no || '값 없음'))
+                                    $("<p></p>").text("장소명: " + (data.poi_name || '값 없음')),
+                                    $("<p></p>").text("전화번호: " + (data.tel_no || '값 없음'))
                                 )
                             );
-
                             hover_content.html(content); // 수정된 부분
                             mapOverlay.setPosition(coordinate);
                         },
@@ -200,19 +192,14 @@
                     let ff = map.hasFeatureAtPixel(evt.pixel);
 
                     if (ff === true && hover) {
-                        const lonlat = hover.getGeometry().getCoordinates();
-                        const coords = ol.proj.transform(lonlat, inputProj, outputProj);
-                        const lon = coords[0];
-                        const lat = coords[1];
-
-                        const url = `/poi/hover?lon=${lon}&lat=${lat}`;
+                        const url = `/poi/hover?id=${hover.values_.poi_num}`;
                         $.ajax({
                             url: url,
                             type: 'GET',
                             dataType: 'json',
                             success: (data) => {
                                 console.log("성공")
-                                openPoiModal(data[0]);
+                                openPoiModal(data);
                             },
                             error: (error) => {
                                 console.error('Error fetching data from API', error);
@@ -296,7 +283,6 @@
             createMap();
         });
 
-
         function showPois() {
             // AJAX 요청을 이용하여 서버로부터 POI 데이터를 비동기적으로 요청합니다.
             $.ajax({
@@ -310,7 +296,8 @@
                             // POI의 좌표를 이용하여 새로운 Point 객체를 생성합니다.
                             geometry: new ol.geom.Point(ol.proj.fromLonLat([poi.lon, poi.lat])),
                             // POI 이름을 갖는 속성 값을 추가합니다.
-                            name: poi.poi_name
+                            name: poi.poi_name,
+                            id: poi.poi_num
                         });
                         features.push(feature); // 생성한 Feature 객체를 배열에 추가합니다.
                     });
@@ -321,6 +308,144 @@
                 }
             });
         }
+
+        // ================ 조인 함수 ==================
+        function showLPois(lclascd) {
+            $.ajax({
+                type: "GET",
+                url: "/getPoisByLclascd?lclascd=" + lclascd,
+                success: function (data) {
+                    let features = [];
+                    data.forEach(function (poi) {
+                        console.log('ppoi============  ', poi)
+                        let feature = new ol.Feature({
+                            geometry: new ol.geom.Point(ol.proj.fromLonLat([poi.lon, poi.lat])),
+                            name: poi.poi_name,
+                            poi_num: poi.poi_num
+                        });
+                        features.push(feature);
+                    });
+                    // 이전 마커들을 제거하기 위해 categoryMarkerSource의 clear() 호출
+                    if (categoryMarkerSource) {
+                        categoryMarkerSource.clear();
+                    }
+                    addMarkersToMap(features);
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    console.error("Failed to load POIs: " + textStatus + " " + errorThrown);
+                }
+            });
+        }
+
+        function showMPois(lclascd, mlsfccd) {
+            $.ajax({
+                type: "GET",
+                url: "/getPoisByMlsfccd?lclascd=" + lclascd + "&mlsfccd=" + mlsfccd,
+                success: function (data) {
+                    let features = [];
+                    data.forEach(function (poi) {
+                        console.log('ppoi============  ', poi)
+                        let feature = new ol.Feature({
+                            geometry: new ol.geom.Point(ol.proj.fromLonLat([poi.lon, poi.lat])),
+                            name: poi.poi_name,
+                            poi_num: poi.poi_num
+                        });
+                        features.push(feature);
+                    });
+                    addMarkersToMap(features);
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    console.error("Failed to load POIs: " + textStatus + " " + errorThrown);
+                }
+            });
+        }
+
+        function showSPois(lclascd, mlsfccd, sclascd) {
+            $.ajax({
+                type: "GET",
+                url: "/getPoisBySclascd?lclascd=" + lclascd + "&mlsfccd=" + mlsfccd + "&sclascd=" + sclascd,
+                success: function (data) {
+                    let features = [];
+                    data.forEach(function (poi) {
+                        console.log('ppoi============  ', poi)
+                        let feature = new ol.Feature({
+                            geometry: new ol.geom.Point(ol.proj.fromLonLat([poi.lon, poi.lat])),
+                            name: poi.poi_name,
+                            poi_num: poi.poi_num
+                        });
+                        features.push(feature);
+                    });
+                    addMarkersToMap(features);
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    console.error("Failed to load POIs: " + textStatus + " " + errorThrown);
+                }
+            });
+        }
+
+        function showDPois(lclascd, mlsfccd, sclascd, dclascd) {
+            $.ajax({
+                type: "GET",
+                url: "/getPoisByDclascd?lclascd=" + lclascd + "&mlsfccd=" + mlsfccd + "&sclascd=" + sclascd + "&dclascd=" + dclascd,
+                success: function (data) {
+                    let features = [];
+                    data.forEach(function (poi) {
+                        console.log('ppoi============  ', poi)
+                        let feature = new ol.Feature({
+                            geometry: new ol.geom.Point(ol.proj.fromLonLat([poi.lon, poi.lat])),
+                            name: poi.poi_name,
+                            poi_num: poi.poi_num
+                        });
+                        features.push(feature);
+                    });
+                    addMarkersToMap(features);
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    console.error("Failed to load POIs: " + textStatus + " " + errorThrown);
+                }
+            });
+        }
+
+        function showBPois(lclascd, mlsfccd, sclascd, dclascd, bclascd) {
+            $.ajax({
+                type: "GET",
+                url: "/getPoisByBclascd?lclascd=" + lclascd + "&mlsfccd=" + mlsfccd + "&sclascd=" + sclascd + "&dclascd=" + dclascd + "&bclascd=" + bclascd,
+                success: function (data) {
+                    let features = [];
+                    data.forEach(function (poi) {
+                        console.log('ppoi============  ', poi)
+                        let feature = new ol.Feature({
+                            geometry: new ol.geom.Point(ol.proj.fromLonLat([poi.lon, poi.lat])),
+                            name: poi.poi_name,
+                            poi_num: poi.poi_num
+                        });
+                        features.push(feature);
+                    });
+                    addMarkersToMap(features);
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    console.error("Failed to load POIs: " + textStatus + " " + errorThrown);
+                }
+            });
+        }
+
+        function clearMarkersFromMap() {
+            // 마커 레이어가 있는지 확인하고 있으면 제거합니다.
+            if (markerLayer) {
+                map.removeLayer(markerLayer);
+            }
+
+            // 기존의 features 배열을 초기화합니다.
+            features = [];
+
+            // 마커 레이어를 새로 생성하지 않고 기존 레이어의 소스에 빈 feature 배열을 적용하여 마커를 지웁니다.
+            if (markerSource) {
+                markerSource.clear();
+            }
+        }
+
+        // showLPois 함수가 호출될 때 categoryMarkerSource를 생성하도록 전역 변수로 추가
+        let categoryMarkerSource;
 
         function addMarkersToMap(features) {
             // 마커 스타일 설정
@@ -333,14 +458,25 @@
                 zindex: 10
             });
 
-            // 마커 레이어에 들어갈 소스 생성
-            let markerSource = new ol.source.Vector({
-                features: features
+
+            // categoryMarkerSource 초기화 또는 새로 생성
+            if (!categoryMarkerSource) {
+                categoryMarkerSource = new ol.source.Vector();
+            } else {
+                categoryMarkerSource.clear();
+            }
+            if (moveSource) {
+                moveSource.clear();
+            }
+            // features를 categoryMarkerSource에 추가
+            features.forEach(function (feature) {
+                categoryMarkerSource.addFeature(feature);
             });
 
+
             // 마커 레이어 생성
-            let markerLayer = new ol.layer.Vector({
-                source: markerSource,
+            markerLayer = new ol.layer.Vector({
+                source: categoryMarkerSource,
                 style: markerStyle
             });
 
@@ -373,7 +509,7 @@
                                 .addClass("btn btn-outline-warning btn-sm ms-2 ms-auto move-button")
                                 .text('이동하기')
                                 .on('click', function () {
-                                    moveToPoi(poi.lat, poi.lon);
+                                    moveToPoi(poi);
                                 })
                         );
 
@@ -409,7 +545,7 @@
                         $('<button class="btn btn-outline-warning btn-sm"></button>')
                             .text('로드뷰로 보기')
                             .on('click', function () {
-                                moveToPoi(poi.lat, poi.lon);
+                                moveToPoi(poi);
                             })
                     )
                 ),
@@ -435,25 +571,41 @@
             $('#poiModal').modal('show');
         }
 
-        function moveToPoi(lat, lon) {
+        let moveSource = new ol.source.Vector();
+
+        function moveToPoi(poi) {
             // POI의 위도와 경도 좌표를 OpenLayers 지도 좌표계로 변환
-            const coords = ol.proj.fromLonLat([lon, lat]);
+            const coords = ol.proj.fromLonLat([poi.lon, poi.lat]);
 
             // 지도 뷰를 POI 좌표로 애니메이션 효과와 함께 이동시키고 줌 레벨을 조정
             map.getView().animate({center: coords, zoom: 19});
-
+            moveSource.clear();
+            if (categoryMarkerSource) {
+                categoryMarkerSource.clear();
+            }
             // POI 마커 추가
             const markerFeature = new ol.Feature({
                 geometry: new ol.geom.Point(coords),
+                poi_num: poi.poi_num
             });
             markerFeature.setStyle(searchMaker);
-            markerLayer.getSource().addFeature(markerFeature);
+            moveSource.addFeature(markerFeature);
+
+            // 마커 레이어 생성
+            markerLayer = new ol.layer.Vector({
+                source: moveSource,
+                style: searchMaker
+            });
+
+            // 지도에 마커가 그려진 레이어 추가
+            map.addLayer(markerLayer);
+
             // 이동 후 화면 가리지 않게 모달창, 사이드바 닫기
             $('#poiModal').modal('hide');
             $('#placeSearch').offcanvas('hide');
         }
 
-        // 대분류를 불러오는 함수
+        // =============================== 대분류를 불러오는 함수 =========================================
         function loadLCLASCD() {
             $.ajax({
                 type: "GET",
@@ -584,6 +736,7 @@
             searchPoi();
             // 초기에 대분류 목록을 불러옵니다.
             loadLCLASCD();
+            // showPois();
         });
 
     </script>

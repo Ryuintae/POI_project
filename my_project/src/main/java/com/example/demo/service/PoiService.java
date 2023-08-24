@@ -9,6 +9,5 @@ public interface PoiService {
 
     List<Poi> findByName(String poiName);
 
-    List<Poi> findByLatitudeAndLongitude(double lon, double lat);
-
+    Poi findById(Long id);
 }

@@ -1,6 +1,5 @@
 package com.example.demo.mapper;
 
-import java.util.Map;
 
 public class CategorySQL {
     public String findByLCLASCD() {

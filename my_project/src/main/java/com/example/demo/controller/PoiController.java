@@ -32,8 +32,8 @@ public class PoiController {
 
     @GetMapping("/poi/hover")
     @ResponseBody
-    public List<Poi> getPoiByLatitudeAndLongitude(@RequestParam("lon") double lon, @RequestParam("lat") double lat) {
-        return poiService.findByLatitudeAndLongitude(lon, lat);
+    public Poi getPoiByLatitudeAndLongitude(@RequestParam("id") Long id ) {
+        return poiService.findById(id);
     }
 
     @GetMapping("/poi-page")

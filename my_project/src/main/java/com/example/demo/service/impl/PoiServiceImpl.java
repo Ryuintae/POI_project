@@ -26,9 +26,7 @@ public class PoiServiceImpl implements PoiService {
         return poiMapper.findByName(poiName);
     }
 
-    @Override
-    public List<Poi> findByLatitudeAndLongitude(double lon, double lat) {
-        return poiMapper.findByLatitudeAndLongitude(lon, lat);
+    public Poi findById(Long id) {
+        return poiMapper.findById(id);
     }
-
 }

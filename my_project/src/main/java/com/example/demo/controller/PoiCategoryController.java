@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import com.example.demo.dto.Poi;
 import com.example.demo.dto.PoiCategory;
 import com.example.demo.service.PoiCategoryService;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -49,5 +50,41 @@ public class PoiCategoryController {
                                                      @RequestParam(value = "sclascd", required = false) Integer sclascd,
                                                      @RequestParam(value = "dclascd", required = false) Integer dclascd) {
         return poiCategoryService.findByDCLASCDAndBCLASCD(lclascd, mlsfccd, sclascd, dclascd);
+    }
+
+    //================================= poi_data 와 category 를 조인 하는 컨트롤러 ===================================
+    @GetMapping("getPoisByLclascd")
+    public List<Poi> getPoisByLclascd(@RequestParam(value = "lclascd", required = true) int lclascd) {
+        return poiCategoryService.getPoisByLclascd(lclascd);
+    }
+
+    @GetMapping("getPoisByMlsfccd")
+    public List<Poi> getPoisByMlsfccd(@RequestParam(value = "lclascd", required = true) int lclascd,
+                                      @RequestParam(value = "mlsfccd", required = true) int mlsfccd) {
+        return poiCategoryService.getPoisByMlsfccd(lclascd, mlsfccd);
+    }
+
+    @GetMapping("getPoisBySclascd")
+    public List<Poi> getPoisBySclascd(@RequestParam(value = "lclascd", required = true) int lclascd,
+                                      @RequestParam(value = "mlsfccd", required = true) int mlsfccd,
+                                      @RequestParam(value = "sclascd", required = true) int sclascd) {
+        return poiCategoryService.getPoisBySclascd(lclascd, mlsfccd, sclascd);
+    }
+
+    @GetMapping("getPoisByDclascd")
+    public List<Poi> getPoisByDclascd(@RequestParam(value = "lclascd", required = true) int lclascd,
+                                      @RequestParam(value = "mlsfccd", required = true) int mlsfccd,
+                                      @RequestParam(value = "sclascd", required = true) int sclascd,
+                                      @RequestParam(value = "dclascd", required = true) int dclascd) {
+        return poiCategoryService.getPoisByDclascd(lclascd, mlsfccd, sclascd, dclascd);
+    }
+
+    @GetMapping("getPoisByBclascd")
+    public List<Poi> getPoisByBclascd(@RequestParam(value = "lclascd", required = true) int lclascd,
+                                      @RequestParam(value = "mlsfccd", required = true) int mlsfccd,
+                                      @RequestParam(value = "sclascd", required = true) int sclascd,
+                                      @RequestParam(value = "dclascd", required = true) int dclascd,
+                                      @RequestParam(value = "bclascd", required = true) int bclascd) {
+        return poiCategoryService.getPoisByBclascd(lclascd, mlsfccd, sclascd, dclascd, bclascd);
     }
 }
