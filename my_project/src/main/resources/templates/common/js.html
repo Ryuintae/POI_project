@@ -15,58 +15,48 @@
             crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
     <script>
-        // map 과 markerLayer 를 전역 변수로 설정
         let map;
         let markerLayer;
         let searchMaker;
         let markerStyle;
-        //
-        // /**
-        //  * Elements that make up the popup.
-        //  */
-        // let container = document.getElementById('popup');
-        // let content = document.getElementById('popup-content');
-        // let closer = document.getElementById('popup-closer');
-        // /**
-        //  * Create an overlay to anchor the popup to the map.
-        //  */
-        // let overlay = new ol.Overlay({
-        //     element: container,
-        //     autoPan: true,
-        //     autoPanAnimation: {
-        //         duration: 250
-        //     }
-        // });
-        //
-        // /**
-        //  * Add a click handler to hide the popup.
-        //  * @return {boolean} Don't follow the href.
-        //  */
-        // closer.onclick = function () {
-        //     overlay.setPosition(undefined);
-        //     closer.blur();
-        //     return false;
-        // };
-        //
-        // /**
-        //  * Add a click handler to the map to render the popup.
-        //  */
+        // showLPois 함수가 호출될 때 categoryMarkerSource를 생성하도록 전역 변수로 추가
+        let categoryMarkerSource;
+        let moveSource = new ol.source.Vector();
+        let koreaExtent = [124.61, 33.06, 129, 38];
+
+        // 현재 위치 표시
+        let geoSource = new ol.source.Vector();
+
         let mapOverlay;
         let hover = null; //마우스 이벤트에 사용될 변수
 
 
         // 팝업 변수 선언
-        let hover_container = $('#popup'); //팝업 컨테이너
-        let hover_content = $('#popup-content'); //팝업 내용
+        let hover_container = $('#hover'); //팝업 컨테이너
+        let hover_content = $('#hover-content'); //팝업 내용
+        // 벡터 소스 생성
+        let vectorsource = new ol.source.Vector();
+
+        // 벡터 레이어 생성
+        let vectorlayer = new ol.layer.Vector({
+            source: vectorsource,
+            style: new ol.style.Style({
+                stroke: new ol.style.Stroke({
+                    width: 2,
+                    color: [0, 0, 255, 1]
+                })
+            })
+        });
+
         function init() {
             mapOverlay = new ol.Overlay(({element: hover_container.get(0)})); //Overlay 생성, 요소는 컨테이너의 첫 번째 요소(Native DOM element)
-            const koreaExtent = [124.61, 33.06, 129, 38];
             map = new ol.Map({
                 target: 'map',
                 layers: [
                     new ol.layer.Tile({
                         source: new ol.source.OSM(),
                     }),
+                    vectorlayer // 벡터 레이어 추가
                 ],
                 overlays: [mapOverlay],
                 view: new ol.View({
@@ -84,6 +74,9 @@
 
             // 마커 레이어를 지도에 추가
             map.addLayer(markerLayer);
+
+            // 지도 이동 이벤트 리스너 등록
+            map.on('moveend', onMoveEnd);
 
             // 마커 스타일 정의
             markerStyle = new ol.style.Style({
@@ -104,8 +97,6 @@
                 }),
             });
 
-            // 현재 위치 표시
-            const geoSource = new ol.source.Vector();
 
             if ('geolocation' in navigator) {
                 // 현재 위치를 가져옴
@@ -208,29 +199,100 @@
                     }
                 });
             })
-
         }
 
+        function getBottomLeft(extent) {
+            return [extent[0], extent[1]];
+        }
+
+        function getTopRight(extent) {
+            return [extent[2], extent[3]];
+        }
+
+        function getTopLeft(extent) {
+            return [extent[0], extent[3]];
+        }
+
+        function getBottomRight(extent) {
+            return [extent[2], extent[1]];
+        }
+
+        function onMoveEnd(evt) {
+            let map = evt.map;
+            let size = map.getSize();
+            let extent = map.getView().calculateExtent(size);
+            let bottomLeft = ol.proj.toLonLat(getBottomLeft(extent));
+            let topRight = ol.proj.toLonLat(getTopRight(extent));
+            let bottomRight = ol.proj.toLonLat(getBottomRight(extent));
+            let topLeft = ol.proj.toLonLat(getTopLeft(extent));
+            let box = new ol.Feature({
+                geometry: new ol.geom.LineString(
+                    [
+                        bottomLeft, bottomRight, topRight, topLeft, bottomLeft
+                    ]
+                )
+            });
+            let current_projection = ol.proj.get('EPSG:4326');
+            let new_projection = ol.proj.get('EPSG:3857');
+
+            box.getGeometry().transform(current_projection, new_projection);
+            vectorsource.addFeatures([box]);
+            console.log("bottomLeft", bottomLeft);
+            console.log("topRight", topRight);
+            console.log("bottomRight", bottomRight);
+            console.log("topLeft", topLeft);
+        }
 
         // -------------------------------------------------------------------------
         let mapObj = null;
 
 
+        /**
+         * Elements that make up the popup.
+         */
+        let container = document.getElementById('popup');
+        let content = document.getElementById('popup-content');
+        let closer = document.getElementById('popup-closer');
+        /**
+         * Create an overlay to anchor the popup to the map.
+         */
+        let overlay = new ol.Overlay({
+            element: container,
+            autoPan: true,
+            autoPanAnimation: {
+                duration: 250
+            }
+        });
+
+        /**
+         * Add a click handler to hide the popup.
+         * @return {boolean} Don't follow the href.
+         */
+        closer.onclick = function () {
+            overlay.setPosition(undefined);
+            closer.blur();
+            return false;
+        };
+
         function createMap() {
             let mapContainer = $("#map-container");
-            // 동적으로 지도를 생성할 div 요소를 만듭니다.
+            // 동적으로 지도를 생성할 div 요소를 만들기
             let mapElem = $("<div>").css({
                 width: "100%",
                 height: "400px"
             });
-            // 이전에 생성된 지도가 있다면 삭제합니다.
+            // 이전에 생성된 지도가 있다면 삭제
             if (mapObj) {
                 mapObj.setTarget(null);
                 mapObj = null;
                 mapContainer.empty();
+
+                // 팝업 내용을 초기화
+                content.innerHTML = '';
+                overlay.setPosition(undefined);
+                closer.blur();
             }
             mapContainer.append(mapElem);
-            // 새로운 지도 객체를 생성합니다.
             mapObj = new ol.Map({
                 target: mapElem[0],
                 layers: [
@@ -238,11 +300,23 @@
                         source: new ol.source.OSM(),
                     }),
                 ],
-                // overlays: [overlay],
+                overlays: [overlay],
                 view: new ol.View({
+                    extent: ol.proj.transformExtent(koreaExtent, 'EPSG:4326', 'EPSG:3857'),
                     center: ol.proj.fromLonLat([126.985302, 37.566671]),
-                    zoom: 11
+                    zoom: 7,
+                    maxZoom: 19,
+                    minZoom: 9,
                 })
+            });
+
+            mapObj.on('singleclick', function (evt) {
+                let coordinate = evt.coordinate;
+                let lonLat = ol.proj.toLonLat(coordinate);
+                let hdms = ol.coordinate.toStringHDMS(lonLat);
+
+                content.innerHTML = '<p>You clicked here:</p><code>' + hdms + '</code>';
+                overlay.setPosition(coordinate);
             });
         }
 
@@ -273,11 +347,6 @@
         $('#placeModify').on('hidden.bs.modal', function () {
             $(this).find('form').trigger('reset');
         })
-        // // 버튼에 클릭 이벤트 리스너를 등록합니다.
-        // $("#placeRegisterBtn").on("click", function () {
-        //     $("#placeRegister").modal("show");
-        // });
-
         // 모달이 완전히 열린 후에 지도 생성
         $("#placeRegister").on("shown.bs.modal", function () {
             createMap();
@@ -316,15 +385,23 @@
                 url: "/getPoisByLclascd?lclascd=" + lclascd,
                 success: function (data) {
                     let features = [];
+                    // 현재 지도의 화면 영역
+                    let mapViewExtent = map.getView().calculateExtent(map.getSize());
                     data.forEach(function (poi) {
-                        console.log('ppoi============  ', poi)
-                        let feature = new ol.Feature({
-                            geometry: new ol.geom.Point(ol.proj.fromLonLat([poi.lon, poi.lat])),
-                            name: poi.poi_name,
-                            poi_num: poi.poi_num
-                        });
-                        features.push(feature);
+                        // POI의 좌표를 OpenLayers 좌표로 변환
+                        let lonLat = ol.proj.fromLonLat([poi.lon, poi.lat]);
+
+                        // 현재 지도 화면 영역에 해당 좌표가 포함되는지 확인
+                        if (ol.extent.containsCoordinate(mapViewExtent, lonLat)) {
+                            let feature = new ol.Feature({
+                                geometry: new ol.geom.Point(lonLat),
+                                name: poi.poi_name,
+                                poi_num: poi.poi_num
+                            });
+                            features.push(feature);
+                        }
                     });
+
                     // 이전 마커들을 제거하기 위해 categoryMarkerSource의 clear() 호출
                     if (categoryMarkerSource) {
                         categoryMarkerSource.clear();
@@ -337,20 +414,25 @@
             });
         }
 
+        // 상위 showLPois 함수와 로직 주석 참고
         function showMPois(lclascd, mlsfccd) {
             $.ajax({
                 type: "GET",
                 url: "/getPoisByMlsfccd?lclascd=" + lclascd + "&mlsfccd=" + mlsfccd,
                 success: function (data) {
                     let features = [];
+                    let mapViewExtent = map.getView().calculateExtent(map.getSize());
                     data.forEach(function (poi) {
-                        console.log('ppoi============  ', poi)
-                        let feature = new ol.Feature({
-                            geometry: new ol.geom.Point(ol.proj.fromLonLat([poi.lon, poi.lat])),
-                            name: poi.poi_name,
-                            poi_num: poi.poi_num
-                        });
-                        features.push(feature);
+                        let lonLat = ol.proj.fromLonLat([poi.lon, poi.lat]);
+                        // 현재 지도 화면 영역에 해당 좌표가 포함되는지 확인
+                        if (ol.extent.containsCoordinate(mapViewExtent, lonLat)) {
+                            let feature = new ol.Feature({
+                                geometry: new ol.geom.Point(lonLat),
+                                name: poi.poi_name,
+                                poi_num: poi.poi_num
+                            });
+                            features.push(feature);
+                        }
                     });
                     addMarkersToMap(features);
                 },
@@ -366,14 +448,17 @@
                 url: "/getPoisBySclascd?lclascd=" + lclascd + "&mlsfccd=" + mlsfccd + "&sclascd=" + sclascd,
                 success: function (data) {
                     let features = [];
+                    let mapViewExtent = map.getView().calculateExtent(map.getSize());
                     data.forEach(function (poi) {
-                        console.log('ppoi============  ', poi)
-                        let feature = new ol.Feature({
-                            geometry: new ol.geom.Point(ol.proj.fromLonLat([poi.lon, poi.lat])),
-                            name: poi.poi_name,
-                            poi_num: poi.poi_num
-                        });
-                        features.push(feature);
+                        let lonLat = ol.proj.fromLonLat([poi.lon, poi.lat]);
+                        if (ol.extent.containsCoordinate(mapViewExtent, lonLat)) {
+                            let feature = new ol.Feature({
+                                geometry: new ol.geom.Point(lonLat),
+                                name: poi.poi_name,
+                                poi_num: poi.poi_num
+                            });
+                            features.push(feature);
+                        }
                     });
                     addMarkersToMap(features);
                 },
@@ -389,14 +474,17 @@
                 url: "/getPoisByDclascd?lclascd=" + lclascd + "&mlsfccd=" + mlsfccd + "&sclascd=" + sclascd + "&dclascd=" + dclascd,
                 success: function (data) {
                     let features = [];
+                    let mapViewExtent = map.getView().calculateExtent(map.getSize());
                     data.forEach(function (poi) {
-                        console.log('ppoi============  ', poi)
-                        let feature = new ol.Feature({
-                            geometry: new ol.geom.Point(ol.proj.fromLonLat([poi.lon, poi.lat])),
-                            name: poi.poi_name,
-                            poi_num: poi.poi_num
-                        });
-                        features.push(feature);
+                        let lonLat = ol.proj.fromLonLat([poi.lon, poi.lat]);
+                        if (ol.extent.containsCoordinate(mapViewExtent, lonLat)) {
+                            let feature = new ol.Feature({
+                                geometry: new ol.geom.Point(lonLat),
+                                name: poi.poi_name,
+                                poi_num: poi.poi_num
+                            });
+                            features.push(feature);
+                        }
                     });
                     addMarkersToMap(features);
                 },
@@ -412,14 +500,17 @@
                 url: "/getPoisByBclascd?lclascd=" + lclascd + "&mlsfccd=" + mlsfccd + "&sclascd=" + sclascd + "&dclascd=" + dclascd + "&bclascd=" + bclascd,
                 success: function (data) {
                     let features = [];
+                    let mapViewExtent = map.getView().calculateExtent(map.getSize());
                     data.forEach(function (poi) {
-                        console.log('ppoi============  ', poi)
-                        let feature = new ol.Feature({
-                            geometry: new ol.geom.Point(ol.proj.fromLonLat([poi.lon, poi.lat])),
-                            name: poi.poi_name,
-                            poi_num: poi.poi_num
-                        });
-                        features.push(feature);
+                        let lonLat = ol.proj.fromLonLat([poi.lon, poi.lat]);
+                        if (ol.extent.containsCoordinate(mapViewExtent, lonLat)) {
+                            let feature = new ol.Feature({
+                                geometry: new ol.geom.Point(lonLat),
+                                name: poi.poi_name,
+                                poi_num: poi.poi_num
+                            });
+                            features.push(feature);
+                        }
                     });
                     addMarkersToMap(features);
                 },
@@ -444,8 +535,6 @@
             }
         }
 
-        // showLPois 함수가 호출될 때 categoryMarkerSource를 생성하도록 전역 변수로 추가
-        let categoryMarkerSource;
 
         function addMarkersToMap(features) {
             // 마커 스타일 설정
@@ -571,7 +660,6 @@
             $('#poiModal').modal('show');
         }
 
-        let moveSource = new ol.source.Vector();
 
         function moveToPoi(poi) {
             // POI의 위도와 경도 좌표를 OpenLayers 지도 좌표계로 변환

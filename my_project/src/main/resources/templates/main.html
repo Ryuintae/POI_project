@@ -11,9 +11,14 @@
 
 <!--지도 생성-->
 <div th:id="map" class="map"></div>
-<div th:id="popup">
-    <div th:id="popup-content"></div>
+<div id="popup" class="ol-popup">
+    <a href="#" id="popup-closer" class="ol-popup-closer"></a>
+    <div id="popup-content"></div>
 </div>
+<div th:id="hover">
+    <div th:id="hover-content"></div>
+</div>
+
 <!--상단 내비 바-->
 <div th:replace="~{/fragments/navbar :: layout_navBar}"></div>
 
@@ -26,8 +31,11 @@
 
 <!-- 공통 js -->
 <th:block th:replace="common/js"></th:block>
-<!-- 토글 버튼 추가 -->
 
+<!-- 검색 버튼 -->
+<div class="research">
+    <button type="button" id="search" class="custom-btn btn-12"><span>클릭!</span><span>검색하기</span></button>
+</div>
 
 <div class="collapse" id="category_search_toggle">
     <div class="category_search">
@@ -56,10 +64,6 @@
     </div>
 </div>
 
-
-<div class="research">
-    <button type="button" id="search" class="btn btn-success">현재 지도에서 검색</button>
-</div>
 
 <script>
     $(document).ready(function () {
