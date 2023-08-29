@@ -24,4 +24,6 @@ public class Poi {
     private String memo;
     private double lon;
     private double lat;
+    private String address;
+    private int zip_code;
 }

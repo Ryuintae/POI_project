@@ -56,7 +56,6 @@
                     new ol.layer.Tile({
                         source: new ol.source.OSM(),
                     }),
-                    vectorlayer // 벡터 레이어 추가
                 ],
                 overlays: [mapOverlay],
                 view: new ol.View({
@@ -157,14 +156,11 @@
                         type: 'GET',
                         dataType: 'json',
                         success: (data) => {
-                            console.log(data);
-                            console.log(Object.keys(data)); // 키 목록 출력
-                            // 파싱한 객체에서 POI 이름과 전화번호를 가져와서 팝업 내용에 사용
-                            const content = $("<div class='pointeMaker'></div>").append(
-                                $("<div class='header'></div>").text("간단 정보"),
+                            const content = $("<div class='pointMaker'></div>").append(
+                                $("<div class='header-popup'></div>").text("간단 정보"),
                                 $("<div class='info'></div>").append(
-                                    $("<p></p>").text("장소명: " + (data.poi_name || '값 없음')),
-                                    $("<p></p>").text("전화번호: " + (data.tel_no || '값 없음'))
+                                    $("<p class='info-line'></p>").html("<span class='info-label'>장소명:</span> " + (data.poi_name || '값 없음')),
+                                    $("<p class='info-line'></p>").html("<span class='info-label'>전화번호:</span> " + (data.tel_no || '값 없음'))
                                 )
                             );
                             hover_content.html(content); // 수정된 부분
@@ -175,7 +171,6 @@
                         }
                     });
                 } else {
-                    // 마커 위에 마우스 포인터가 없으면 팝업을 숨깁니다.
                     mapOverlay.setPosition(undefined);
                 }
 
@@ -313,11 +308,33 @@
             mapObj.on('singleclick', function (evt) {
                 let coordinate = evt.coordinate;
                 let lonLat = ol.proj.toLonLat(coordinate);
-                let hdms = ol.coordinate.toStringHDMS(lonLat);
 
-                content.innerHTML = '<p>You clicked here:</p><code>' + hdms + '</code>';
-                overlay.setPosition(coordinate);
+                // Nominatim API를 통해 클릭한 좌표의 주소 정보 가져오기
+                let nominatimUrl = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lonLat[1]}&lon=${lonLat[0]}`;
+
+                $.get(nominatimUrl, function (response) {
+                    if (response.display_name) {
+                        let addressParts = response.display_name.split(', ');
+
+                        // 우편번호 및 '대한민국' 제외하고 주소 가공
+                        let formattedAddress = addressParts.slice(1).filter(part => !part.match(/^\d+$/) && part !== '대한민국').reverse().join(', ');
+
+                        // 클릭한 좌표의 경도와 위도 값을 폼 필드에 자동으로 채우기
+                        $('#lon').val(lonLat[0]);
+                        $('#lat').val(lonLat[1]);
+
+
+                        // 주소와 우편번호 입력란에 값을 자동으로 채우기
+                        $('#address').val(formattedAddress);
+                        $('#zip_code').val(response.address.postcode);
+
+                        content.innerHTML = '<p>Address:</p><code>' + formattedAddress + '</code>';
+                        overlay.setPosition(coordinate);
+                    }
+                });
             });
+
+
         }
 
         <!-- 사이드바 안에서 엔터 키로 검색을 했을 때 화면에 값 넘기기 -->
@@ -706,6 +723,7 @@
                     for (let i = 0; i < response.length; i++) {
                         $("#lclascd-select").append(`<option value="${response[i].lclascd}">${response[i].lclasdc}</option>`);
                     }
+                    $("input[name='iclas']").val(response[0].lclasdc);
                 },
                 error: function () {
                     $('#lclascd-select').append('<option value="error">데이터 로드에 실패했습니다.</option>');
@@ -730,6 +748,7 @@
                     for (let i = 0; i < response.length; i++) {
                         $("#mlsfccd-select").append(`<option value="${response[i].mlsfccd}">${response[i].mlsfcdc}</option>`);
                     }
+                    $("input[name='mlsfc']").val(response[0].mlsfcdc);
                 },
                 error: function () {
                     $('#mlsfccd-select').append('<option value="error">데이터 로드에 실패했습니다.</option>');
@@ -754,6 +773,7 @@
                     for (let i = 0; i < response.length; i++) {
                         $("#sclascd-select").append(`<option value="${response[i].sclascd}">${response[i].sclasdc}</option>`);
                     }
+                    $("input[name='sclas']").val(response[0].sclasdc);
                 },
                 error: function () {
                     $('#sclascd-select').append('<option value="error">데이터 로드에 실패했습니다.</option>');
@@ -777,6 +797,7 @@
                     for (let i = 0; i < response.length; i++) {
                         $("#dclascd-select").append(`<option value="${response[i].dclascd}">${response[i].dclasdc}</option>`);
                     }
+                    $("input[name='dclas']").val(response[0].dclasdc);
                 },
                 error: function () {
                     $('#dclascd-select').append('<option value="error">데이터 로드에 실패했습니다.</option>');
@@ -799,6 +820,7 @@
                     for (let i = 0; i < response.length; i++) {
                         $("#bclascd-select").append(`<option value="${response[i].bclascd}">${response[i].bclasdc}</option>`);
                     }
+                    $("input[name='bclas']").val(response[0].bclasdc);
                 },
                 error: function () {
                     $('#bclascd-select').append('<option value="error">데이터 로드에 실패했습니다.</option>');
@@ -808,16 +830,37 @@
 
         $('#lclascd-select').change(function () {
             loadMLSFCCD($(this).val());
+            updateCategoryCode();
         });
         $('#mlsfccd-select').change(function () {
             loadSCLASCD($('#lclascd-select').val(), $(this).val());
+            updateCategoryCode();
         });
         $('#sclascd-select').change(function () {
             loadDCLASCD($('#lclascd-select').val(), $('#mlsfccd-select').val(), $(this).val());
+            updateCategoryCode();
         });
         $('#dclascd-select').change(function () {
             loadBCLASCD($('#lclascd-select').val(), $('#mlsfccd-select').val(), $('#sclascd-select').val(), $(this).val());
+            updateCategoryCode();
         });
+        $('#bclascd-select').change(function () {
+            updateCategoryCode();
+        });
+
+
+        // categoryCode 업데이트 함수
+        function updateCategoryCode() {
+            let lclascdValue = parseInt($('#lclascd-select').val()) || 0;
+            let mlsfccdValue = parseInt($('#mlsfccd-select').val()) || 0;
+            let sclascdValue = parseInt($('#sclascd-select').val()) || 0;
+            let dclascdValue = parseInt($('#dclascd-select').val()) || 0;
+            let bclascdValue = parseInt($('#bclascd-select').val());
+
+            let categoryCode = `${lclascdValue}0${mlsfccdValue}0${sclascdValue}0${dclascdValue}0${bclascdValue}`;
+
+            $('#categoryCode').val(categoryCode);
+        }
 
         $(document).ready(function () {
             init();

@@ -9,6 +9,10 @@ import java.util.List;
 
 @Service
 public class PoiServiceImpl implements PoiService {
+    @Override
+    public void registerPoi(Poi poi) {
+        poiMapper.register(poi);
+    }
 
     private final PoiMapper poiMapper;
 
@@ -29,4 +33,6 @@ public class PoiServiceImpl implements PoiService {
     public Poi findById(Long id) {
         return poiMapper.findById(id);
     }
+
+
 }

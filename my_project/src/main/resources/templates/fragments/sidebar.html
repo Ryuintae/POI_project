@@ -144,66 +144,77 @@
                     </div>
 
                     <div class="modal-body">
-                        <form action="#" method="post">
-                            <!-- 이곳에 폼 값 추가하기 -->
+                        <form action="/register" method="post">
                             <div style="max-height: 444px; overflow-y: auto">
+                                <label for="userId">User ID:</label>
+                                <input type="text" id="userId" name="user_id" required>
+                                <br>
                                 <div class="mb-3">
-                                    <label>장소이름</label>
-                                    <input type="text" class="form-control" th:name="placeName" required>
+                                    <label for="placeName">장소이름</label>
+                                    <input type="text" class="form-control" id="placeName" name="poi_name" required>
                                 </div>
                                 <div class="mb-3">
-                                    <label>대표 번호</label>
-                                    <input type="text"
-                                           class="form-control" th:name="gen" required>
+                                    <label for="gen">대표 번호</label>
+                                    <input type="text" class="form-control" id="gen" name="tel_no" required>
                                 </div>
-
-                                <div class="spacer"></div> <!-- 간격을 띄우기 위한 빈 div 엘리먼트 -->
-
+                                <div class="spacer"></div>
                                 <div class="input-group mb-3">
                                     <label class="input-group-text">대분류</label>
                                     <select class="form-select" id="lclascd-select">
                                         <option selected disabled>대분류명을 선택하세요</option>
                                     </select>
+                                    <input type="hidden" name="iclas">
                                 </div>
                                 <div class="input-group mb-3">
                                     <label class="input-group-text">중분류</label>
-                                    <select class="form-select" id="mlsfccd-select"></select>
+                                    <select class="form-select" id="mlsfccd-select">
+                                    </select>
+                                    <input type="hidden" name="mlsfc">
                                 </div>
                                 <div class="input-group mb-3">
                                     <label class="input-group-text">소분류</label>
-                                    <select class="form-select" id="sclascd-select"></select>
+                                    <select class="form-select" id="sclascd-select">
+                                    </select>
+                                    <input type="hidden" name="sclas">
                                 </div>
                                 <div class="input-group mb-3">
                                     <label class="input-group-text">상세 분류</label>
-                                    <select class="form-select" id="dclascd-select"></select>
+                                    <select class="form-select" id="dclascd-select">
+                                    </select>
+                                    <input type="hidden" name="dclas">
+
                                 </div>
                                 <div class="input-group mb-3">
                                     <label class="input-group-text">브랜드 카테고리</label>
-                                    <select class="form-select" id="bclascd-select"></select>
+                                    <select class="form-select" id="bclascd-select">
+                                    </select>
+                                    <input type="hidden" name="bclas">
                                 </div>
-
                                 <div class="mb-3">
-                                    <label>이미지 첨부</label>
-                                    <input type="file"
-                                           class="form-control" accept=".jpg, .png" th:name="detailCategory">
+                                    <label for="file">이미지 첨부</label>
+                                    <input type="file" class="form-control" accept=".jpg, .png" id="file" name="file">
                                 </div>
-
-                                <!-- 메모 input -->
                                 <div class="mb-3">
                                     <label for="memo">메모</label>
-                                    <input type="text" class="form-control" th:name="memo" id="memo"
+                                    <input type="text" class="form-control" id="memo" name="memo"
                                            placeholder="간단한 설명을 작성해주세요.">
                                 </div>
-                                <!-- 주소 input -->
                                 <div class="mb-3">
-                                    <label for="memo">주소</label>
-                                    <input type="text" class="form-control" th:name="memo" id="address"
-                                           placeholder="지도 클릭시 주소명이 나옵니다.">
+                                    <label for="address">주소</label>
+                                    <input type="text" class="form-control" id="address" name="address"
+                                           placeholder="지도 클릭시 주소명이 나옵니다." readonly>
                                 </div>
-                                <div class="spacer"></div> <!-- 간격을 띄우기 위한 빈 div 엘리먼트 -->
-                                <!--폼 안에 지도 띄우기-->
+                                <div class="mb-3">
+                                    <label for="zip_code">우편번호</label>
+                                    <input type="text" class="form-control" id="zip_code" name="zip_code"
+                                           placeholder="지도 클릭시 우편 번호가 나옵니다." readonly>
+                                </div>
+                                <div class="spacer"></div>
                                 <div id="map-container"></div>
                             </div>
+                            <input type="hidden" id="categoryCode" name="category_code" value="0">
+                            <input type="hidden" id="lon" name="lon" value="0">
+                            <input type="hidden" id="lat" name="lat" value="0">
 
                             <div class="modal-footer fixed-buttons">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>

@@ -14,9 +14,9 @@ public interface PoiMapper {
     Poi findById(Long poi_num);
 
     // POI 정보 등록
-    @Insert("INSERT INTO public.poi_data (user_id, category_code, poi_name, Iclas, mlsfc, sclas, dclas, tel_no, memo, lon, lat) " +
-            "VALUES (#{user_id}, #{category_code}, #{poi_name}, #{Iclas}, #{mlsfc}, #{sclas}, #{dclas}, #{tel_no}, #{memo}, #{lon}, #{lat});")
-    void save(Poi poi);
+    @Insert("INSERT INTO public.poi_data (user_id, category_code, poi_name, iclas, mlsfc, sclas, dclas, tel_no, memo, lon, lat, address, zip_code) " +
+            "VALUES (#{user_id}, #{category_code}, #{poi_name}, #{iclas}, #{mlsfc}, #{sclas}, #{dclas}, #{tel_no}, #{memo}, #{lon}, #{lat}, #{address}, #{zip_code});")
+    void register(Poi poi);
 
     // POI 정보 수정
     @Update("UPDATE public.poi_data SET user_id=#{user_id}, category_code=#{category_code}, poi_name=#{poi_name}, Iclas=#{Iclas}, mlsfc=#{mlsfc}, sclas=#{sclas}, dclas=#{dclas}, tel_no=#{tel_no}, memo=#{memo}, lon=#{lon}, lat=#{lat} " +

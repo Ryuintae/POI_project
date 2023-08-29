@@ -10,4 +10,7 @@ public interface PoiService {
     List<Poi> findByName(String poiName);
 
     Poi findById(Long id);
+
+    void registerPoi(Poi poi);
+
 }

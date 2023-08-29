@@ -31,7 +31,7 @@
                 url: "/findDataByLCLASCD",
                 success: function (response) {
                     for (let i = 0; i < response.length; i++) {
-                        $("#lclascd-select").append(`<option value="${response[i].lclascd}">${response[i].lclasdc}</option>`);
+                        $("#lclascd-select").append(`<option value="${response[i].lclascd}">${response[i].lclasdc}</option>`).data('lclasdc', response[i].lclasdc);
                     }
                 },
                 error: function () {
