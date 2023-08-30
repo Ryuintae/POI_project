@@ -1,9 +1,13 @@
 package com.example.demo.service.impl;
 
-import com.example.demo.dto.User;
+import com.example.demo.dto.UserVo;
 import com.example.demo.mapper.UserMapper;
 import com.example.demo.service.UserService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -17,12 +21,42 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<User> findAll() {
+    public List<UserVo> findAll() {
         return userMapper.findAll();
     }
 
     @Override
-    public User getUserById(Long userId) {
+    public UserVo getUserById(Long userId) {
         return userMapper.getUserById(userId);
+    }
+
+    @Transactional
+    public void joinUser(UserVo userVo) {
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        userVo.setUser_password(passwordEncoder.encode(userVo.getPassword()));
+        userVo.setUser_auth("USER");
+        userMapper.saveUser(userVo);
+    }
+
+    @Override
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
+    @Override
+    public UserVo loadUserByUsername(String user_password) throws UsernameNotFoundException {
+        //여기서 받은 유저 패스워드와 비교하여 로그인 인증
+        System.out.println(user_password);
+        UserVo userVo = userMapper.getUserAccount(user_password);
+        if (userVo == null) {
+            throw new UsernameNotFoundException("User not authorized.");
+        }
+        System.out.println(userVo.getPassword());
+        return userVo;
+    }
+
+    @Override
+    public boolean isEmailUnique(String user_email) {
+        return userMapper.findByEmail(user_email) == null;
     }
 }

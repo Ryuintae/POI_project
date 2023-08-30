@@ -868,8 +868,33 @@
             // 초기에 대분류 목록을 불러옵니다.
             loadLCLASCD();
             // showPois();
+
+            // 로그인 실패시 실행되는 jQuery
+            let errorMessage = $("#valid span").text();
+            if (errorMessage !== "") {
+                showErrorModal(errorMessage);
+            }
+
+            // 모달 닫힐 때 에러 메시지를 지웁니다.
+            $(".modal").on("hidden.bs.modal", function () {
+                $("#valid span").text("");
+            });
+
+            // 오류 메시지를 모달 내에서 보여주는 함수
+            function showErrorModal(message) {
+                $("#valid span").text(message);
+                $("#loginModal").modal("show");
+            }
         });
 
+    </script>
+    <!--  회원가입 성공, 이메일 중복시 출력 메시지  -->
+    <script th:inline="javascript">
+        let message = [[${message}]];
+
+        if (message) {
+            alert(message);
+        }
     </script>
 </head>
 </html>

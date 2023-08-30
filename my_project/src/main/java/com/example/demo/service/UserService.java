@@ -1,11 +1,23 @@
 package com.example.demo.service;
 
-import com.example.demo.dto.User;
+import com.example.demo.dto.UserVo;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.List;
 
-public interface UserService {
-    List<User> findAll();
+public interface UserService extends UserDetailsService {
+    List<UserVo> findAll();
 
-    User getUserById(Long userId);
+    UserVo getUserById(Long userId);
+
+    void joinUser(UserVo userVo);
+
+    PasswordEncoder passwordEncoder();
+
+    @Override
+    UserVo loadUserByUsername(String user_email);
+
+    boolean isEmailUnique(String user_email);
+
 }

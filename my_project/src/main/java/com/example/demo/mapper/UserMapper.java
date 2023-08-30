@@ -1,17 +1,28 @@
 package com.example.demo.mapper;
 
-import com.example.demo.dto.User;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
+import com.example.demo.dto.UserVo;
+import org.apache.ibatis.annotations.*;
 
 import java.util.List;
 
 @Mapper
 public interface UserMapper {
     @Select("SELECT * FROM public.user")
-    List<User> findAll();
+    List<UserVo> findAll();
 
-    User getUserById(@Param("userId") Long userId);
+    UserVo getUserById(@Param("userId") Long userId);
+
+    // 로그인
+    @Select("SELECT * FROM public.user WHERE user_email = #{user_password}")
+    UserVo getUserAccount(@Param("user_password") String user_password);
+
+    // 회원가입
+    @Insert("INSERT INTO public.user (user_email, user_password, user_name, user_auth) " +
+            "VALUES (#{user_email}, #{user_password}, #{user_name}, #{user_auth})")
+    void saveUser(UserVo userVo);
+
+    // 이메일 중복 체크
+    @Select("SELECT * FROM public.user WHERE user_email = #{user_email}")
+    UserVo findByEmail(@Param("user_email") String email);
 
 }
