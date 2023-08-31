@@ -144,10 +144,12 @@
                     </div>
 
                     <div class="modal-body">
-                        <form action="/register" method="post">
+                        <form action="/register" method="post" enctype="multipart/form-data">
                             <div style="max-height: 444px; overflow-y: auto">
-                                <label for="userId">User ID:</label>
-                                <input type="text" id="userId" name="user_id" required>
+                                <!--                                <label for="userId">User ID:</label>-->
+                                <!--                                <input type="text" id="userId" name="user_id"-->
+                                <!--                                       th:value="${loggedInUser != null ? loggedInUser.user_id : ''}"-->
+                                <!--                                       readonly>-->
                                 <br>
                                 <div class="mb-3">
                                     <label for="placeName">장소이름</label>

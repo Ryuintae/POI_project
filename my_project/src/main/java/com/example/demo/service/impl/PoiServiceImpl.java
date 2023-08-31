@@ -30,7 +30,7 @@ public class PoiServiceImpl implements PoiService {
         return poiMapper.findByName(poiName);
     }
 
-    public Poi findById(Long id) {
+    public Poi findById(int id) {
         return poiMapper.findById(id);
     }
 

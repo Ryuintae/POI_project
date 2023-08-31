@@ -9,7 +9,7 @@ public interface PoiService {
 
     List<Poi> findByName(String poiName);
 
-    Poi findById(Long id);
+    Poi findById(int id);
 
     void registerPoi(Poi poi);
 

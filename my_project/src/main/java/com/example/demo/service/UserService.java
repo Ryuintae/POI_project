@@ -9,7 +9,7 @@ import java.util.List;
 public interface UserService extends UserDetailsService {
     List<UserVo> findAll();
 
-    UserVo getUserById(Long userId);
+    UserVo getUserById(Long user_id);
 
     void joinUser(UserVo userVo);
 

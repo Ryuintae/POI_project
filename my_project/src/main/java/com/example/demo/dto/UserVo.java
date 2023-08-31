@@ -10,7 +10,7 @@ import java.util.Collections;
 
 @Data
 public class UserVo implements UserDetails {
-    private Long user_id;
+    private int user_id;
     private String user_name;
     private int user_age;
     private String user_email;
@@ -32,7 +32,7 @@ public class UserVo implements UserDetails {
     // -> 따라서 얘는 인증할 때 id를 봄
     @Override
     public String getUsername() {
-        return this.user_email;
+        return String.valueOf(this.user_id);
     }
 
     // Vo의 userName !

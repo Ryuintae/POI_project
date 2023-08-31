@@ -11,7 +11,7 @@ public interface PoiMapper {
     List<Poi> findAll();
 
     @Select("SELECT * FROM public.poi_data where poi_num=#{poi_num};")
-    Poi findById(Long poi_num);
+    Poi findById(int poi_num);
 
     // POI 정보 등록
     @Insert("INSERT INTO public.poi_data (user_id, category_code, poi_name, iclas, mlsfc, sclas, dclas, tel_no, memo, lon, lat, address, zip_code) " +

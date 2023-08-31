@@ -11,11 +11,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Controller
 public class ImageController {
@@ -31,12 +31,12 @@ public class ImageController {
 
     @PostMapping("/insert")
     public ResponseEntity<String> insertImage(
-            @RequestParam("userId") Long userId,
+            @RequestParam("userId") int userId,
             @RequestParam("file") MultipartFile file
     ) {
         try {
             String originalFilename = file.getOriginalFilename();
-            String fileExtension = originalFilename.substring(originalFilename.lastIndexOf(".") + 1);
+            String fileExtension = Objects.requireNonNull(originalFilename).substring(originalFilename.lastIndexOf(".") + 1);
             long fileSize = file.getSize();
 
             // 파일을 저장할 경로를 Path 객체로 생성
