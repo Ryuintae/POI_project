@@ -17,4 +17,6 @@ public interface PoiService {
 
     void deleteByUserIdAndPoiNum(int user_id, int poi_num);
 
+    void updateByUserIdAndPoiNum(Poi poi);
+
 }

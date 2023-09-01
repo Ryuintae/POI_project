@@ -18,14 +18,6 @@ public interface PoiMapper {
     @Options(useGeneratedKeys = true, keyProperty = "poi_num")
     void register(Poi poi);
 
-    // POI 정보 수정
-    @Update("UPDATE public.poi_data SET user_id=#{user_id}, category_code=#{category_code}, poi_name=#{poi_name}, iclas=#{iclas}, mlsfc=#{mlsfc}, sclas=#{sclas}, dclas=#{dclas}, tel_no=#{tel_no}, memo=#{memo}, lon=#{lon}, lat=#{lat} " + "WHERE poi_num=#{poi_num};")
-    void update(Poi poi);
-
-    // POI 정보 삭제
-    @Delete("DELETE FROM public.poi_data WHERE poi_num=#{poi_num};")
-    void delete(int poi_num);
-
     // POI 이름 검색
     @Select("SELECT * FROM public.poi_data WHERE poi_name like '%${poi_name}%';")
     List<Poi> findByName(String poi_name);
@@ -37,4 +29,9 @@ public interface PoiMapper {
     // user_id에 해당하고 poi_num이 일치한 데이터 삭제
     @Delete("DELETE FROM public.poi_data WHERE poi_num=#{poi_num} AND user_id=#{user_id};")
     void deleteByUserIdAndPoiNum(int user_id, int poi_num);
+
+    // user_id에 해당하고 poi_num이 일치한 POI 정보 업데이트
+    @Update("UPDATE public.poi_data SET category_code=#{category_code}, poi_name=#{poi_name}, iclas=#{iclas}, mlsfc=#{mlsfc}, sclas=#{sclas}, dclas=#{dclas}, tel_no=#{tel_no}, memo=#{memo}, lon=#{lon}, lat=#{lat}, address = #{address} , zip_code = #{zip_code} WHERE poi_num = #{poi_num} AND user_id = #{user_id};")
+    void updateByUserIdAndPoiNum(Poi poi);
+
 }

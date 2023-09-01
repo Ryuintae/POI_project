@@ -123,4 +123,23 @@ public class PoiController {
         }
         return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
     }
+
+    @PutMapping("/pois/{poiId}")
+    public String updatePois(@AuthenticationPrincipal UserVo loggedInUser,
+                             @PathVariable("poiId") int poi_num,
+                             @ModelAttribute Poi updatedPoi) {   // 업데이트된 POI 데이터를 가져오기
+        if (loggedInUser != null) {
+            int user_id = loggedInUser.getUser_id();
+            updatedPoi.setUser_id(user_id);
+            try {
+                this.poiService.updateByUserIdAndPoiNum(updatedPoi);
+                return "redirect:/";
+            } catch (Exception e) {
+                return "error";
+            }
+        }
+        return "login";
+
+
+    }
 }

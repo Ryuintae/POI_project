@@ -926,14 +926,16 @@
             $('#categoryCode').val(categoryCode);
         }
 
-        //  user id 로 회원이 등록한 poi 조회
+        //  user id 로 회원이 등록한 poi 조회 후 수정하기
         function modifyloadPois(userId) {
+            // 서버에서 POI 목록을 가져오는 AJAX 요청
             $.ajax({
                 url: '/pois',
                 success: function (data) {
                     const tbody = $('.table tbody');
                     tbody.empty();
 
+                    // 각각의 POI에 대해 테이블 행을 생성하고 "수정하기" 버튼 추가
                     $.each(data, function (index, poi) {
                         let row = $('<tr>');
                         row.append($('<td>').text(poi.poi_name));
@@ -943,10 +945,48 @@
                         row.append($('<td>').text(poi.memo));
 
                         const button = $('<button class="btn btn-primary">수정하기</button>');
-                        button.attr('data-bs-toggle', 'modal');
-                        button.attr('data-bs-target', '#placeRegister');
 
+                        // "수정하기" 버튼 클릭 이벤트 핸들러 추가
                         button.on('click', function () {
+                            $('#placeRegister').modal('show');
+
+                            // 클릭된 POI의 데이터로 폼 필드 채우기
+                            $('#placeName').val(poi.poi_name);
+                            $('#gen').val(poi.tel_no);
+                            $('#address').val(poi.address);
+                            $('#zip_code').val(poi.zip_code);
+                            $('#memo').val(poi.memo);
+
+                            // 기타 필드도 마찬가지로 채우기
+                            $('input[name="iclas"]').val(poi.iclas);
+                            $('input[name="mlsfc"]').val(poi.mlsfc);
+                            $('input[name="sclas"]').val(Poi.sclas);
+                            $('input[name="dclas"]').val(Poi.dclas);
+
+                            const form = $("#placeRegister form");
+
+                            if (form.length > 0) {
+                                form.off('submit');
+
+                                form.on('submit', function (e) {
+                                    e.preventDefault();
+
+                                    $.ajax({
+                                        url: `/pois/${poi.poi_num}`,
+                                        type: 'PUT',
+                                        data: $(this).serialize(),
+                                        success: function (response) {
+                                            console.log(response);
+                                            location.reload();
+                                            alert("업데이트를 성공하였습니다")
+                                        },
+                                        error: function (error) {
+                                            console.error(error);
+                                            alert("업데이트 오류");
+                                        }
+                                    });
+                                });
+                            }
                         });
 
                         let td = $('<td>');
@@ -954,7 +994,7 @@
 
                         row.append(td);
 
-                        tbody.append(row);
+                        tbody.append(row);  // 완성된 행을 테이블에 추가
                     });
                 }
             });

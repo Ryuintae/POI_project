@@ -43,4 +43,9 @@ public class PoiServiceImpl implements PoiService {
     public void deleteByUserIdAndPoiNum(int user_id, int poi_num) {
         this.poiMapper.deleteByUserIdAndPoiNum(user_id, poi_num);
     }
+
+    @Override
+    public void updateByUserIdAndPoiNum(Poi poi) {
+        this.poiMapper.updateByUserIdAndPoiNum(poi);
+    }
 }
