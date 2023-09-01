@@ -926,6 +926,83 @@
             $('#categoryCode').val(categoryCode);
         }
 
+        //  user id 로 회원이 등록한 poi 조회
+        function modifyloadPois(userId) {
+            $.ajax({
+                url: '/pois',
+                success: function (data) {
+                    const tbody = $('.table tbody');
+                    tbody.empty();
+
+                    $.each(data, function (index, poi) {
+                        let row = $('<tr>');
+                        row.append($('<td>').text(poi.poi_name));
+                        row.append($('<td>').text(poi.tel_no));
+                        row.append($('<td>').text(poi.address));
+                        row.append($('<td>').text(poi.zip_code));
+                        row.append($('<td>').text(poi.memo));
+
+                        const button = $('<button class="btn btn-primary">수정하기</button>');
+                        button.attr('data-bs-toggle', 'modal');
+                        button.attr('data-bs-target', '#placeRegister');
+
+                        button.on('click', function () {
+                        });
+
+                        let td = $('<td>');
+                        td.append(button);
+
+                        row.append(td);
+
+                        tbody.append(row);
+                    });
+                }
+            });
+        }
+
+        //  user id 로 회원이 등록한 poi 조회
+        function deleteloadPois(userId) {
+            $.ajax({
+                url: '/pois',
+                success: function (data) {
+                    const tbody = $('.table tbody');
+                    tbody.empty();
+
+                    $.each(data, function (index, poi) {
+                        let row = $('<tr>');
+                        row.append($('<td>').text(poi.poi_name));
+                        row.append($('<td>').text(poi.tel_no));
+                        row.append($('<td>').text(poi.address));
+                        row.append($('<td>').text(poi.zip_code));
+                        row.append($('<td>').text(poi.memo));
+
+                        const button = $('<button class="btn btn-danger">삭제하기</button>');
+                        button.attr('data-bs-toggle', 'modal');
+                        button.attr('data-bs-target', '#delete');
+
+                        button.on('click', function () {
+
+                        });
+
+                        let td = $('<td>');
+                        td.append(button);
+
+                        row.append(td);
+
+                        tbody.append(row);
+                    });
+                }
+            });
+        }
+
+        $('#modifyButton').click(function () {
+            modifyloadPois();
+        });
+        $('#deleteButton').click(function () {
+            deleteloadPois();
+        });
+
+
         $(document).ready(function () {
             init();
             searchPoi();

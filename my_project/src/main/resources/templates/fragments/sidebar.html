@@ -23,14 +23,16 @@
                 </button>
 
                 <div class="spacer"></div> <!-- 간격을 띄우기 위한 빈 div 엘리먼트 -->
-                <button class="btn btn-outline-secondary d-block text-start my-1" type="button" data-bs-toggle="modal"
+                <button id="modifyButton" class="btn btn-outline-secondary d-block text-start my-1" type="button"
+                        data-bs-toggle="modal"
                         th:data-bs-target="'#placeModify'">
                     장소 수정
                 </button>
 
                 <div class="spacer"></div> <!-- 간격을 띄우기 위한 빈 div 엘리먼트 -->
 
-                <button class="btn btn-outline-danger d-block text-start my-1" type="button" data-bs-toggle="modal"
+                <button id="deleteButton" class="btn btn-outline-danger d-block text-start my-1" type="button"
+                        data-bs-toggle="modal"
                         th:data-bs-target="'#placeDelete'">장소 삭제
                 </button>
                 <div class="spacer"></div> <!-- 간격을 띄우기 위한 빈 div 엘리먼트 -->
@@ -80,50 +82,18 @@
                     </div>
                     <!-- 테이블에 부트스트랩 적용 -->
                     <table class="table">
-                        <thead class="table-dark">
+                        <thead class="table-dark"
+                               style="text-align: center">
                         <tr>
-                            <th>ID</th>
                             <th>장소 이름</th>
                             <th>대표 번호</th>
                             <th>주소</th>
+                            <th>우편번호</th>
+                            <th>메모</th>
                             <th></th>
                         </tr>
                         </thead>
                         <tbody>
-                        <tr>
-                            <td>1</td>
-                            <td>맛나식당</td>
-                            <td>010-1111-2222</td>
-                            <td>좌표값을 주소명으로 변환해야함</td>
-                            <td>
-                                <!-- 부트스트랩 버튼 적용 -->
-                                <button class="btn btn-primary" onclick="showDetails(1)" data-bs-toggle="modal"
-                                        data-bs-target="#placeRegister">수정하기
-                                </button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>2</td>
-                            <td>메가커피</td>
-                            <td>02-123-1234</td>
-                            <td>좌표값을 주소명으로 변환해야함</td>
-                            <td>
-                                <button class="btn btn-primary" onclick="showDetails(2)" data-bs-toggle="modal"
-                                        data-bs-target="#placeRegister">수정하기
-                                </button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>3</td>
-                            <td>gs편의점</td>
-                            <td>02-123-4321</td>
-                            <td>좌표값을 주소명으로 변환해야함</td>
-                            <td>
-                                <button class="btn btn-primary" onclick="showDetails(3)" data-bs-toggle="modal"
-                                        data-bs-target="#placeRegister">수정하기
-                                </button>
-                            </td>
-                        </tr>
                         </tbody>
                     </table>
                 </div>
@@ -242,44 +212,18 @@
                     </div>
                     <!-- 테이블에 부트스트랩 적용 -->
                     <table class="table">
-                        <thead class="table-dark">
+                        <thead class="table-dark"
+                               style="text-align: center">
                         <tr>
-                            <th>ID</th>
                             <th>장소 이름</th>
                             <th>대표 번호</th>
                             <th>주소</th>
+                            <th>우편번호</th>
+                            <th>메모</th>
                             <th></th>
                         </tr>
                         </thead>
                         <tbody>
-                        <tr>
-                            <td>1</td>
-                            <td>맛나식당</td>
-                            <td>010-1111-2222</td>
-                            <td>좌표값을 주소명으로 변환해야함</td>
-                            <td>
-                                <!-- 부트스트랩 버튼 적용 -->
-                                <button class="btn btn-danger" onclick="showDetails(1)">삭제하기</button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>2</td>
-                            <td>메가커피</td>
-                            <td>02-123-1234</td>
-                            <td>좌표값을 주소명으로 변환해야함</td>
-                            <td>
-                                <button class="btn btn-danger" onclick="showDetails(2)">삭제하기</button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>3</td>
-                            <td>gs편의점</td>
-                            <td>02-123-4321</td>
-                            <td>좌표값을 주소명으로 변환해야함</td>
-                            <td>
-                                <button class="btn btn-danger" onclick="showDetails(3)">삭제하기</button>
-                            </td>
-                        </tr>
                         </tbody>
                     </table>
                 </div>

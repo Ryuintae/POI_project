@@ -34,5 +34,9 @@ public class PoiServiceImpl implements PoiService {
         return poiMapper.findById(id);
     }
 
+    @Override
+    public List<Poi> findByUserId(int userId) {
+        return poiMapper.findByUserId(userId);
+    }
 
 }

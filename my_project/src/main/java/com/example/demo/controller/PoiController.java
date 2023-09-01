@@ -17,6 +17,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 
 @Controller
@@ -96,4 +97,13 @@ public class PoiController {
         return poiService.findById(id);
     }
 
+    @GetMapping("/pois")
+    @ResponseBody
+    public List<Poi> getPoisByUserId(@AuthenticationPrincipal UserVo loggedInUser) {
+        if (loggedInUser != null) {
+            int userId = loggedInUser.getUser_id();
+            return poiService.findByUserId(userId);
+        }
+        return Collections.emptyList();
+    }
 }

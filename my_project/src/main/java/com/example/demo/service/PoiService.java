@@ -13,4 +13,6 @@ public interface PoiService {
 
     void registerPoi(Poi poi);
 
+    List<Poi> findByUserId(int userId);
+
 }
