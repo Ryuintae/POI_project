@@ -11,7 +11,8 @@ import java.time.LocalDateTime;
 @Builder
 public class Image {
     private int image_id;
-    private int user_id;
+    //private int user_id;
+    private int poi_num;
     private LocalDateTime save_date;
     private String file_name;
     private String file_extention;

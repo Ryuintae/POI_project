@@ -28,7 +28,7 @@ public class PoiController {
     private final String uploadPath;
 
     @Autowired
-    public PoiController(PoiService poiService, ImageService imageService, @Value("C:\\uploads") String uploadPath) {
+    public PoiController(PoiService poiService, ImageService imageService, @Value("${upload.path}") String uploadPath) {
         this.poiService = poiService;
         this.imageService = imageService;
         this.uploadPath = uploadPath;
@@ -58,13 +58,13 @@ public class PoiController {
                     Files.write(path, file.getBytes());
 
                     // 파일명에서 확장자를 제거하여 저장
-                    String fileNameWithoutExtension = originalFilename.substring(0, originalFilename.lastIndexOf("."));
+                    //String fileNameWithoutExtension = originalFilename.substring(0, originalFilename.lastIndexOf("."));
 
                     Image image = new Image();
-                    image.setUser_id(userId); // 토큰으로 가져와야 함
+                    image.setPoi_num(poi.getPoi_num());// poi_num 을 주입하는 부분
                     image.setSave_date(LocalDateTime.now());
-                    image.setFile_name(fileNameWithoutExtension);
-                    image.setFile_extention(fileExtention); // 수정된 부분
+                    image.setFile_name(originalFilename);
+                    image.setFile_extention(fileExtention);
                     image.setFile_size(fileSize);
                     image.setFile_path(uploadPath + "/" + originalFilename);
 
@@ -95,11 +95,5 @@ public class PoiController {
     public Poi getPoiByLatitudeAndLongitude(@RequestParam("id") int id) {
         return poiService.findById(id);
     }
-
-    @GetMapping("/poi-page")
-    public String userPage() {
-        return "index2";
-    }
-
 
 }

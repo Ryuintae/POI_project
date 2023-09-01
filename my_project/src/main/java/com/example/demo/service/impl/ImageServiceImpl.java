@@ -15,9 +15,24 @@ public class ImageServiceImpl implements ImageService {
         this.imageMapper = imageMapper;
     }
 
-
+    @Override
+    public Image getImageByPoiNum(int poi_num) {
+        return imageMapper.getImageByPoiNum(poi_num);
+    }
     @Override
     public void insertImageInfo(Image image) {
         imageMapper.insertImage(image);
     }
+
+    @Override
+    public Image getImageByUserId(int user_id) {
+        return imageMapper.getImageByUserId(user_id);
+    }
+
+    @Override
+    public Image getImageByUserIdAndPoiName(int user_id, String poi_name) {
+        return imageMapper.getImageByUserIdAndPoiName(user_id, poi_name);
+    }
+
+
 }

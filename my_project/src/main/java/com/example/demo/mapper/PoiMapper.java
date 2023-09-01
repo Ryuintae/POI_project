@@ -16,10 +16,12 @@ public interface PoiMapper {
     // POI 정보 등록
     @Insert("INSERT INTO public.poi_data (user_id, category_code, poi_name, iclas, mlsfc, sclas, dclas, tel_no, memo, lon, lat, address, zip_code) " +
             "VALUES (#{user_id}, #{category_code}, #{poi_name}, #{iclas}, #{mlsfc}, #{sclas}, #{dclas}, #{tel_no}, #{memo}, #{lon}, #{lat}, #{address}, #{zip_code});")
+    @Options(useGeneratedKeys=true,keyProperty="poi_num")
+
     void register(Poi poi);
 
     // POI 정보 수정
-    @Update("UPDATE public.poi_data SET user_id=#{user_id}, category_code=#{category_code}, poi_name=#{poi_name}, Iclas=#{Iclas}, mlsfc=#{mlsfc}, sclas=#{sclas}, dclas=#{dclas}, tel_no=#{tel_no}, memo=#{memo}, lon=#{lon}, lat=#{lat} " +
+    @Update("UPDATE public.poi_data SET user_id=#{user_id}, category_code=#{category_code}, poi_name=#{poi_name}, iclas=#{iclas}, mlsfc=#{mlsfc}, sclas=#{sclas}, dclas=#{dclas}, tel_no=#{tel_no}, memo=#{memo}, lon=#{lon}, lat=#{lat} " +
             "WHERE poi_num=#{poi_num};")
     void update(Poi poi);
 
