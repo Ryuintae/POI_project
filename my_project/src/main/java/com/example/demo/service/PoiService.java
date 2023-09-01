@@ -15,4 +15,6 @@ public interface PoiService {
 
     List<Poi> findByUserId(int userId);
 
+    void deleteByUserIdAndPoiNum(int user_id, int poi_num);
+
 }

@@ -960,7 +960,7 @@
             });
         }
 
-        //  user id 로 회원이 등록한 poi 조회
+        //  user id 로 회원이 등록한 poi 조회해서 삭제하기
         function deleteloadPois(userId) {
             $.ajax({
                 url: '/pois',
@@ -970,6 +970,7 @@
 
                     $.each(data, function (index, poi) {
                         let row = $('<tr>');
+                        row.data('poiId', poi.poi_num); // poi_num을 저장하기
                         row.append($('<td>').text(poi.poi_name));
                         row.append($('<td>').text(poi.tel_no));
                         row.append($('<td>').text(poi.address));
@@ -981,7 +982,20 @@
                         button.attr('data-bs-target', '#delete');
 
                         button.on('click', function () {
+                            const r = $(this).closest('tr');
+                            const poiId = r.data('poiId');
 
+                            $.ajax({
+                                url: '/pois/' + poiId,
+                                type: 'DELETE',
+                                success: function (result) {
+                                    r.remove();
+                                    alert("성공적으로 삭제되었습니다");
+                                },
+                                error: function (jqXHR, textStatus, errorThrown) {
+                                    alert("Error deleting POI: " + errorThrown);
+                                }
+                            });
                         });
 
                         let td = $('<td>');

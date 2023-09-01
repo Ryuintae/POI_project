@@ -33,4 +33,8 @@ public interface PoiMapper {
     // user_id에 해당하는 모든 POI 정보 조회
     @Select("SELECT * FROM public.poi_data WHERE user_id = #{user_id};")
     List<Poi> findByUserId(int user_id);
+
+    // user_id에 해당하고 poi_num이 일치한 데이터 삭제
+    @Delete("DELETE FROM public.poi_data WHERE poi_num=#{poi_num} AND user_id=#{user_id};")
+    void deleteByUserIdAndPoiNum(int user_id, int poi_num);
 }
