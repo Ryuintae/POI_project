@@ -675,7 +675,7 @@
                                 $('#roadSearch').offcanvas('show'); // 출발지 버튼 클릭 시 offcanvas를 열도록 추가
                                 $('#startLon').val(poi.lon + ',' + poi.lat);
                             }),
-                        $('<button id="dest-btn" class="btn btn-outline-warning btn-sm ms-2">도착지</button>')
+                        $('<button id="dest-btn" class="btn btn-outline-danger btn-sm ms-2">도착지</button>')
                             .on('click', function () {
                                 $('#end').val(poi.poi_name);
                                 $('#poiModal').modal('hide'); // 출발지 버튼 클릭 시 모달을 닫도록 추가
@@ -1115,9 +1115,9 @@
                     // 응답을 roadResult 요소에 출력하기 전에 이전 내용 초기화
                     $('#roadResult').empty();
                     // 응답을 roadResult 요소에 출력
-                    const tollFareText = "톨게이트 비용: " + routeInfo.tollFare + " 원";
-                    const taxiFareText = "택시비용: " + routeInfo.taxiFare + "원";
-                    const fuelPriceText = "연료 가격:" + routeInfo.fuelPrice + " 원";
+                    const tollFareText = "톨게이트 비용 : " + routeInfo.tollFare + " 원";
+                    const taxiFareText = "택시비용 : " + routeInfo.taxiFare + "원";
+                    const fuelPriceText = "연료 가격 : " + routeInfo.fuelPrice + " 원";
 
                     // 경로 정보 추가
                     $('#roadResult').append("<div class='card mb-3'><div class='card-header'>" +
