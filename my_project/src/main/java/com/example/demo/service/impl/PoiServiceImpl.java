@@ -4,6 +4,7 @@ import com.example.demo.dto.Poi;
 import com.example.demo.mapper.PoiMapper;
 import com.example.demo.service.PoiService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -45,6 +46,7 @@ public class PoiServiceImpl implements PoiService {
     }
 
     @Override
+    @Transactional
     public void updateByUserIdAndPoiNum(Poi poi) {
         this.poiMapper.updateByUserIdAndPoiNum(poi);
     }

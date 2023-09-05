@@ -45,7 +45,6 @@ public class PoiController {
             int userId = loggedInUser.getUser_id();
             // 사용자 정보를 폼에 넣기
             poi.setUser_id(userId);
-
             poiService.registerPoi(poi);
 
             if (file != null && !file.isEmpty()) {
@@ -124,22 +123,50 @@ public class PoiController {
         return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
     }
 
-    @PutMapping("/pois/{poiId}")
-    public String updatePois(@AuthenticationPrincipal UserVo loggedInUser,
-                             @PathVariable("poiId") int poi_num,
-                             @ModelAttribute Poi updatedPoi) {   // 업데이트된 POI 데이터를 가져오기
-        if (loggedInUser != null) {
-            int user_id = loggedInUser.getUser_id();
-            updatedPoi.setUser_id(user_id);
-            try {
-                this.poiService.updateByUserIdAndPoiNum(updatedPoi);
-                return "redirect:/";
-            } catch (Exception e) {
-                return "error";
-            }
+    @PutMapping(value = "/pois/{poi_num}")
+    public @ResponseBody ResponseEntity<Void> updatePoi(
+            @AuthenticationPrincipal UserVo loggedInUser,
+            @PathVariable("poi_num") int poi_num,
+            @RequestParam("poi_name") String poi_name,
+            @RequestParam("tel_no") String tel_no,
+            @RequestParam("iclas") String iclas,
+            @RequestParam("mlsfc") String mlsfc,
+            @RequestParam("sclas") String sclas,
+            @RequestParam("dclas") String dclas,
+            @RequestParam("memo") String memo,
+            @RequestParam("address") String address,
+            @RequestParam("zip_code") int zip_code) {
+
+        if (loggedInUser == null)
+            new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+
+        int user_id = loggedInUser.getUser_id();
+
+        // Poi 객체 생성 및 필드 설정
+        Poi poi = new Poi();
+        poi.setPoi_name(poi_name);
+        poi.setTel_no(tel_no);
+        poi.setIclas(iclas);
+        poi.setMlsfc(mlsfc);
+        poi.setSclas(sclas);
+        poi.setDclas(dclas);
+        poi.setMemo(memo);
+        poi.setAddress(address);
+        poi.setZip_code(zip_code);
+        poi.setUser_id(user_id);
+        //poi.setPoi_num(poi_num);
+        System.out.println(poi_num);
+
+        if (user_id != poi.getUser_id())
+            throw new RuntimeException("해당 유저의 POI가 아닙니다.");
+
+        try {
+            System.out.println(poi_num);
+            System.out.println(poi.getUser_id());
+            this.poiService.updateByUserIdAndPoiNum(poi);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        return "login";
-
-
     }
 }

@@ -31,7 +31,7 @@ public interface PoiMapper {
     void deleteByUserIdAndPoiNum(int user_id, int poi_num);
 
     // user_id에 해당하고 poi_num이 일치한 POI 정보 업데이트
-    @Update("UPDATE public.poi_data SET category_code=#{category_code}, poi_name=#{poi_name}, iclas=#{iclas}, mlsfc=#{mlsfc}, sclas=#{sclas}, dclas=#{dclas}, tel_no=#{tel_no}, memo=#{memo}, lon=#{lon}, lat=#{lat}, address = #{address} , zip_code = #{zip_code} WHERE poi_num = #{poi_num} AND user_id = #{user_id};")
+    @Update("UPDATE public.poi_data SET poi_name=#{poi_name},  tel_no=#{tel_no}, iclas=#{iclas}, mlsfc=#{mlsfc}, sclas=#{sclas}, dclas=#{dclas}, memo=#{memo}, address=#{address} ,zip_code=#{zip_code} ,lon=#{lon}, lat=#{lat},   category_code=#{category_code} WHERE poi_num=#{poi_num} AND user_id=#{user_id};")
     void updateByUserIdAndPoiNum(Poi poi);
 
 }

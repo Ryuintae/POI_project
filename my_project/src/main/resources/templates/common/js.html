@@ -333,12 +333,11 @@
                         let addressParts = response.display_name.split(', ');
 
                         // 우편번호 및 '대한민국' 제외하고 주소 가공
-                        let formattedAddress = addressParts.slice(1).filter(part => !part.match(/^\d+$/) && part !== '대한민국').reverse().join(', ');
+                        let formattedAddress = addressParts.slice(1).filter(part => !part.match(/^\d+$/) && part !== '대한민국').reverse().join(' ');
 
                         // 클릭한 좌표의 경도와 위도 값을 폼 필드에 자동으로 채우기
                         $('#lon').val(lonLat[0]);
                         $('#lat').val(lonLat[1]);
-
 
                         // 주소와 우편번호 입력란에 값을 자동으로 채우기
                         $('#address').val(formattedAddress);
@@ -668,6 +667,20 @@
                             .text('로드뷰로 보기')
                             .on('click', function () {
                                 moveToPoi(poi);
+                            }),
+                        $('<button id="start-btn" class="btn btn-outline-success btn-sm ms-2">출발지</button>')
+                            .on('click', function () {
+                                $('#start').val(poi.poi_name);
+                                $('#poiModal').modal('hide'); // 출발지 버튼 클릭 시 모달을 닫도록 추가
+                                $('#roadSearch').offcanvas('show'); // 출발지 버튼 클릭 시 offcanvas를 열도록 추가
+
+                            }),
+                        $('<button id="dest-btn" class="btn btn-outline-warning btn-sm ms-2">도착지</button>')
+                            .on('click', function () {
+                                $('#destination').val(poi.poi_name);
+                                $('#poiModal').modal('hide'); // 출발지 버튼 클릭 시 모달을 닫도록 추가
+                                $('#roadSearch').offcanvas('show'); // 도착지 버튼 클릭 시 offcanvas를 열도록 추가
+
                             })
                     )
                 ),
@@ -963,24 +976,27 @@
                             $('#zip_code').val(poi.zip_code);
                             $('#memo').val(poi.memo);
 
-                            // 기타 필드도 마찬가지로 채우기
-                            $('input[name="iclas"]').val(poi.iclas);
-                            $('input[name="mlsfc"]').val(poi.mlsfc);
-                            $('input[name="sclas"]').val(Poi.sclas);
-                            $('input[name="dclas"]').val(Poi.dclas);
-
                             const form = $("#placeRegister form");
 
                             if (form.length > 0) {
                                 form.off('submit');
+                                // form.append(`<input type="hidden" name="poi_num" value="${poi.poi_num}" />`);
 
                                 form.on('submit', function (e) {
                                     e.preventDefault();
 
+                                    // action 속성 변경
+                                    $(this).attr('action', `/pois/${poi.poi_num}`);
                                     $.ajax({
-                                        url: `/pois/${poi.poi_num}`,
+                                        url: $(this).attr('action'),
                                         type: 'PUT',
                                         data: $(this).serialize(),
+                                        xhrFields: {
+                                            withCredentials: true
+                                        },
+                                        headers: {
+                                            "Content-Type": "application/x-www-form-urlencoded"
+                                        },
                                         success: function (response) {
                                             console.log(response);
                                             location.reload();
@@ -988,6 +1004,9 @@
                                         },
                                         error: function (error) {
                                             console.error(error);
+                                            console.error('HTTP status code:', error.status);
+                                            console.error('Status text:', error.statusText);
+                                            console.error('Response text:', error.responseText);
                                             alert("업데이트 오류");
                                         }
                                     });
@@ -1031,19 +1050,21 @@
                             const r = $(this).closest('tr');
                             const poiId = r.data('poiId');
 
-                            $.ajax({
-                                url: '/pois/' + poiId,
-                                type: 'DELETE',
-                                success: function (result) {
-                                    r.remove();
-                                    alert("성공적으로 삭제되었습니다");
-                                },
-                                error: function (jqXHR, textStatus, errorThrown) {
-                                    alert("Error deleting POI: " + errorThrown);
-                                }
-                            });
+                            // 삭제 확인을 위한 경고창 표시
+                            if (confirm("정말로 삭제 하시겠습니까?")) {
+                                $.ajax({
+                                    url: `/pois/${poi.poi_num}`, // 이 부분에 poi_num을 추가
+                                    type: 'DELETE',
+                                    success: function (result) {
+                                        r.remove();
+                                        alert("성공적으로 삭제되었습니다");
+                                    },
+                                    error: function (jqXHR, textStatus, errorThrown) {
+                                        alert("Error deleting POI: " + errorThrown);
+                                    }
+                                });
+                            }
                         });
-
                         let td = $('<td>');
                         td.append(button);
 
@@ -1055,6 +1076,7 @@
             });
         }
 
+
         $('#modifyButton').click(function () {
             modifyloadPois();
         });
@@ -1062,6 +1084,23 @@
             deleteloadPois();
         });
 
+
+        $("#addWaypoint").click(function () {
+            if ($("#waypointsGroup").length === 0) {
+                // waypointsGroup 요소가 없으면 동적으로 추가
+                let waypointsGroup = $('<div class="form-group" id="waypointsGroup"></div>');
+                let label = $('<label for="waypoints" class="form-label">경유지</label>');
+                let input = $('<input type="text" class="form-control" id="waypoints" name="waypoints" placeholder="경유지 입력">');
+
+                waypointsGroup.append(label);
+                waypointsGroup.append(input);
+
+                $("#start").parent().after(waypointsGroup);
+            } else {
+                // 이미 존재하는 경우 보이도록 설정
+                $("#waypointsGroup").show();
+            }
+        });
 
         $(document).ready(function () {
             init();
