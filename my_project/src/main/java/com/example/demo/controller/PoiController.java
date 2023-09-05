@@ -135,6 +135,9 @@ public class PoiController {
             @RequestParam("dclas") String dclas,
             @RequestParam("memo") String memo,
             @RequestParam("address") String address,
+            @RequestParam("lon") double lon,
+            @RequestParam("lat") double lat,
+            @RequestParam("category_code") int category_code,
             @RequestParam("zip_code") int zip_code) {
 
         if (loggedInUser == null)
@@ -146,15 +149,25 @@ public class PoiController {
         Poi poi = new Poi();
         poi.setPoi_name(poi_name);
         poi.setTel_no(tel_no);
+
         poi.setIclas(iclas);
         poi.setMlsfc(mlsfc);
         poi.setSclas(sclas);
         poi.setDclas(dclas);
+
+        poi.setCategory_code(category_code);
+
         poi.setMemo(memo);
         poi.setAddress(address);
+
+        poi.setLon(lon);
+        poi.setLat(lat);
+
         poi.setZip_code(zip_code);
         poi.setUser_id(user_id);
-        //poi.setPoi_num(poi_num);
+        poi.setPoi_num(poi_num);
+
+
         System.out.println(poi_num);
 
         if (user_id != poi.getUser_id())
@@ -166,6 +179,7 @@ public class PoiController {
             this.poiService.updateByUserIdAndPoiNum(poi);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (Exception e) {
+            e.printStackTrace();
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
