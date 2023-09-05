@@ -673,13 +673,14 @@
                                 $('#start').val(poi.poi_name);
                                 $('#poiModal').modal('hide'); // 출발지 버튼 클릭 시 모달을 닫도록 추가
                                 $('#roadSearch').offcanvas('show'); // 출발지 버튼 클릭 시 offcanvas를 열도록 추가
-
+                                $('#startLon').val(poi.lon + ',' + poi.lat);
                             }),
                         $('<button id="dest-btn" class="btn btn-outline-warning btn-sm ms-2">도착지</button>')
                             .on('click', function () {
-                                $('#destination').val(poi.poi_name);
+                                $('#end').val(poi.poi_name);
                                 $('#poiModal').modal('hide'); // 출발지 버튼 클릭 시 모달을 닫도록 추가
                                 $('#roadSearch').offcanvas('show'); // 도착지 버튼 클릭 시 offcanvas를 열도록 추가
+                                $('#endLon').val(poi.lon + ',' + poi.lat);
 
                             })
                     )

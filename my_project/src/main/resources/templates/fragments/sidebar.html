@@ -338,18 +338,18 @@
         <hr>
         <!-- 사이드바 안에서 검색창 -->
         <div class="container">
-            <form id="naverMapForm" class="mb-3">
+            <form action="/directions" id="naverMapForm" class="mb-3">
                 <div class="form-group">
                     <label for="start" class="form-label">출발지</label>
-                    <input type="text" class="form-control" id="start" name="start" placeholder="출발지 입력">
+                    <input type="text" class="form-control" id="start" placeholder="출발지 입력">
+                    <!-- 출발지 위도, 경도 저장 -->
+                    <input type='hidden' id='startLon' name='start'>
                 </div>
-                <!--                <div class="form-group" id="waypointsGroup" style="display: none;">-->
-                <!--                    <label for="waypoints" class="form-label">경유지</label>-->
-                <!--                    <input type="text" class="form-control" id="waypoints" name="waypoints" placeholder="경유지 입력">-->
-                <!--                </div>-->
                 <div class="form-group">
-                    <label for="destination" class="form-label">도착지</label>
-                    <input type="text" class="form-control" id="destination" name="destination" placeholder="도착지 입력">
+                    <label for="end" class="form-label">도착지</label>
+                    <input type="text" class="form-control" id=end placeholder=도착지 입력>
+                    <!-- 도착지 위도, 경도 저장 -->
+                    <input type='hidden' id='endLon' name='end'>
                 </div>
                 <button type="submit" class="btn btn-outline-success">길찾기</button>
                 <button type="button" class="btn btn-outline-warning" id="addWaypoint">경로 추가</button>
