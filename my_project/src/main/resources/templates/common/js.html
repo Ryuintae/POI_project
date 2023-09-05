@@ -1085,7 +1085,41 @@
             deleteloadPois();
         });
 
+        // ================================== 길 찾기 =============================================
 
+        // json 형태로 값 보내기
+        $('#naverMapForm').submit(function (event) {
+            event.preventDefault();
+
+            let start = $('#startLon').val();
+            let end = $('#endLon').val();
+
+            console.log(start);
+            console.log(end);
+
+            let data = {
+                start: start,
+                end: end
+            };
+
+            $.ajax({
+                url: '/directions',
+                method: 'GET',
+                data: data,
+                success: function (response) {
+                    // 성공적으로 응답을 받았을 때의 처리 로직
+                    console.log(response);
+                    // 응답을 roadResult 요소에 출력
+                    $('#roadResult').text(response);
+                },
+                error: function (error) {
+                    // 에러 발생 시의 처리 로직
+                    console.log(error);
+                }
+            });
+        });
+
+        // 경유지 버튼 시 동적으로 div 생성
         $("#addWaypoint").click(function () {
             if ($("#waypointsGroup").length === 0) {
                 // waypointsGroup 요소가 없으면 동적으로 추가
