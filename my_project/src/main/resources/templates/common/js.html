@@ -1107,13 +1107,40 @@
                 method: 'GET',
                 data: data,
                 success: function (response) {
-                    // 성공적으로 응답을 받았을 때의 처리 로직
-                    console.log(response);
+                    response = JSON.parse(response);
+
+                    const routeInfo = response.route.traoptimal[0].summary;
+                    console.log(routeInfo);
+
+                    // 응답을 roadResult 요소에 출력하기 전에 이전 내용 초기화
+                    $('#roadResult').empty();
                     // 응답을 roadResult 요소에 출력
-                    $('#roadResult').text(response);
+                    const tollFareText = "톨게이트 비용: " + routeInfo.tollFare + " 원";
+                    const taxiFareText = "택시비용: " + routeInfo.taxiFare + "원";
+                    const fuelPriceText = "연료 가격:" + routeInfo.fuelPrice + " 원";
+
+                    // 경로 정보 추가
+                    $('#roadResult').append("<div class='card mb-3'><div class='card-header'>" +
+                        "<h5 class='mb-0 text-center'>경로 정보</h5></div><ul class='list-group list-group-flush'>" +
+                        "<li class='list-group-item'>" + tollFareText + "</li>" +
+                        "<li class='list-group-item'>" + taxiFareText + "</li>" +
+                        "<li class='list-group-item'>" + fuelPriceText + "</li></ul></div>");
+
+                    // guide의 모든 instructions 추출 및 추가
+                    const guides = response.route.traoptimal[0].guide;
+                    for (let i = 0; i < guides.length; i++) {
+                        const instructionText = guides[i].instructions;
+                        $('#roadResult').append("<div class='card mb-3'><ul class='list-group list-group-flush'>" +
+                            "<li class='list-group-item'>" + instructionText + "</li></ul></div>");
+
+                        // 마지막 안내 메시지 뒤에는 아이콘을 추가하지 않음
+                        if (i < guides.length - 1) {
+                            $('#roadResult').append("<div class='text-center my-3'><img src='img/down_arrow.png' alt='아래쪽 화살표'></div>");
+                        }
+                    }
+                    $('#roadResult').append("<div class='d-flex justify-content-end'><button type='button' class='btn btn-primary'>경로 저장</button></div>");
                 },
                 error: function (error) {
-                    // 에러 발생 시의 처리 로직
                     console.log(error);
                 }
             });
