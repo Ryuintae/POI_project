@@ -313,7 +313,8 @@
 
     <!--    --------------------------------  -->
     <!-- 모달 컴포넌트 -->
-    <div class="modal fade" id="poiModal" tabindex="-1" aria-labelledby="poiModalLabel" aria-hidden="true" data-bs-backdrop="false">
+    <div class="modal fade" id="poiModal" tabindex="-1" aria-labelledby="poiModalLabel" aria-hidden="true"
+         data-bs-backdrop="false">
         <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
             <div class="modal-content">
                 <div class="modal-header">
@@ -351,8 +352,14 @@
                     <!-- 도착지 위도, 경도 저장 -->
                     <input type='hidden' id='endLon' name='end'>
                 </div>
+                <div class="form-group">
+                    <label for="waypoints" class="form-label">경유지</label>
+                    <input type="text" class="form-control" id=waypoints>
+                    <!-- 경유지 위도, 경도 저장 -->
+                    <input type='hidden' id='waypointsLon' name='waypoints'>
+                </div>
                 <button type="submit" class="btn btn-outline-success">길찾기</button>
-                <button type="button" class="btn btn-outline-warning" id="addWaypoint">경로 추가</button>
+                <!--                <button type="button" class="btn btn-outline-warning" id="addWaypoint">경로 추가</button>-->
             </form>
         </div>
         <hr>

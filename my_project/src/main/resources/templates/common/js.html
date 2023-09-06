@@ -664,30 +664,64 @@
                     $('<div class="col-4 fw-bold"></div>').text('장소 이름'),
                     $('<div class="col-8"></div>').text(poi.poi_name)
                 ),
-                $('<div class="row"></div>').append(
+                $('<div class="row mb-2"></div>').append(
                     $('<div class="col-4 fw-bold"></div>').text('위치'),
                     $('<div class="col-8"></div>').append(
-                        $('<button class="btn btn-outline-warning btn-sm"></button>')
-                            .text('로드뷰로 보기')
+                        $('<button class="btn btn-outline-info btn-sm">로드뷰로 보기</button>')
                             .on('click', function () {
                                 moveToPoi(poi);
-                            }),
-                        $('<button id="start-btn" class="btn btn-outline-success btn-sm ms-2">출발지</button>')
+                            })
+                    )
+                ),
+                $('<div class="row mb-2"></div>').append(
+                    $('<div class="col-4 fw-bold"></div>'),
+                    $('<div class="col-8"></div>').append(
+                        $('<button id="start-btn" class="btn btn-outline-success btn-sm ms-0">출발지</button>')
                             .on('click', function () {
+                                // label 안에 poi 이름 추가
                                 $('#start').val(poi.poi_name);
-                                $('#poiModal').modal('hide'); // 출발지 버튼 클릭 시 모달을 닫도록 추가
-                                $('#roadSearch').offcanvas('show'); // 출발지 버튼 클릭 시 offcanvas를 열도록 추가
+                                // 도착지와 경유지 문자열 값 과 name 을 초기화합니다.
+                                $('#end').val('');
+                                $('#waypoints').val('');
+                                $('#endLon').val('');
+                                $('#waypointsLon').val('');
+
+                                // 모달 창을 닫고 사이드 바로 넘어가기
+                                $('#poiModal').modal('hide');
+                                $('#roadSearch').offcanvas('show');
+                                // hiden 으로 name 안에 좌표값 실어서 서버에 보내기
                                 $('#startLon').val(poi.lon + ',' + poi.lat);
                             }),
+                        // 도착지 버튼 수정
                         $('<button id="dest-btn" class="btn btn-outline-danger btn-sm ms-2">도착지</button>')
                             .on('click', function () {
                                 $('#end').val(poi.poi_name);
-                                $('#poiModal').modal('hide'); // 출발지 버튼 클릭 시 모달을 닫도록 추가
-                                $('#roadSearch').offcanvas('show'); // 도착지 버튼 클릭 시 offcanvas를 열도록 추가
-                                $('#endLon').val(poi.lon + ',' + poi.lat);
 
+                                $('#waypoints').val('');
+                                $('#waypointsLon').val('');
+
+                                $('#poiModal').modal('hide');
+                                $('#roadSearch').offcanvas('show');
+                                $('#endLon').val(poi.lon + ',' + poi.lat);
+                            }),
+                        // 경유지 버튼 추가
+                        $('<button id="waypoint-btn" class="btn btn-outline-warning btn-sm ms-2">경유지</button>')
+                            .on('click', function () {
+                                // let waypointField = $('#waypointsLon');
+                                //
+                                // if (waypointField.val()) {
+                                //     waypointField.val(waypointField.val() + ',');
+                                // }
+                                $('#waypoints').val(poi.poi_name);
+                                $('#poiModal').modal('hide');
+                                $('#roadSearch').offcanvas('show');
+                                $('#waypointsLon').val(poi.lon + ',' + poi.lat);
+
+                                // waypointField.val(waypointField.val() + (poi.lon + ',' + poi.lat));
+
+                                $('#poiModal').modal('hide');
                             })
-                    )
+                    ),
                 ),
                 $('<hr>'),
                 $('<div class="row"></div>').append(
@@ -1097,11 +1131,16 @@
 
             let start = $('#startLon').val();
             let end = $('#endLon').val();
+            let waypoints = $('#waypointsLon').val();
 
             console.log(start);
             console.log(end);
 
-            let data = {
+            let data = waypoints ? {
+                start: start,
+                end: end,
+                waypoints: waypoints
+            } : {
                 start: start,
                 end: end
             };
@@ -1111,7 +1150,7 @@
                 method: 'GET',
                 data: data,
                 success: function (response) {
-                    response = JSON.parse(response);
+                    route_response = JSON.parse(response);
 
                     // 기존 마커 레이어 삭제
                     if (markerLayer) {
@@ -1119,7 +1158,7 @@
                     }
 
                     // 경로 그리기 시작
-                    let path = response.route.traoptimal[0].path;
+                    let path = route_response.route.traoptimal[0].path;
 
                     // 경로 좌표들을 담을 배열 생성
                     let coordinates = [];
@@ -1127,8 +1166,6 @@
                     for (let i = 0; i < path.length; i++) {
                         let point = ol.proj.fromLonLat([path[i][0], path[i][1]]);
                         coordinates.push(point);
-                        console.log("포인트@@@@@@@@@@@" + point);
-
                     }
 
                     // LineString 생성 및 벡터 소스에 추가
@@ -1142,20 +1179,35 @@
                     let startFeature = new ol.Feature(new ol.geom.Point(coordinates[0]));
                     let endFeature = new ol.Feature(new ol.geom.Point(coordinates[coordinates.length - 1]));
 
+
+                    if (waypoints) {
+                        let waypointCoordinates = waypoints.split(',');
+                        for (let i = 0; i < waypointCoordinates.length; i += 2) {
+                            let lon = parseFloat(waypointCoordinates[i]);
+                            let lat = parseFloat(waypointCoordinates[i + 1]);
+                            if ((lon === start[0] && lat === start[1]) || (lon === end[0] && lat === end[1])) continue;
+                            let waypointPoint = ol.proj.fromLonLat([lon, lat]);
+                            let waypointFeature = new ol.Feature(new ol.geom.Point(waypointPoint));
+                            routeSource.addFeature(waypointFeature);
+                        }
+                    }
+
                     routeSource.addFeatures([startFeature, endFeature]);
 
                     // 새로운 벡터 레이어 생성하고 지도에 추가
+
                     routeLayer = new ol.layer.Vector({
                         source: routeSource,
                         style: function (feature) {
                             if (feature.getGeometry().getType() === 'Point') {
-                                // 시작점과 도착점 구분하기
-                                let imgSrc = feature === startFeature ? '/img/start_maker.png' : '/img/end_maker.png';
+                                var imgSrc = feature === startFeature ? '/img/start_maker.png' :
+                                    feature === endFeature ? '/img/end_maker.png' :
+                                        '/img/pin_maker.png';
 
                                 return new ol.style.Style({
                                     image: new ol.style.Icon({
                                         src: imgSrc,
-                                        scale: 0.7  // 스케일은 필요에 따라 조정하세요.
+                                        scale: 0.7
                                     })
                                 });
                             } else {
@@ -1171,7 +1223,7 @@
                     // 응답을 roadResult 요소에 출력하기 전에 이전 내용 초기화
                     $('#roadResult').empty();
 
-                    const routeInfo = response.route.traoptimal[0].summary;
+                    const routeInfo = route_response.route.traoptimal[0].summary;
                     // console.log(routeInfo);
                     // 응답을 roadResult 요소에 출력
                     const tollFareText = "톨게이트 비용 : " + routeInfo.tollFare + " 원";
@@ -1186,7 +1238,7 @@
                         "<li class='list-group-item'>" + fuelPriceText + "</li></ul></div>");
 
                     // guide의 모든 instructions 추출 및 추가
-                    const guides = response.route.traoptimal[0].guide;
+                    const guides = route_response.route.traoptimal[0].guide;
                     for (let i = 0; i < guides.length; i++) {
                         const instructionText = guides[i].instructions;
                         $('#roadResult').append("<div class='card mb-3'><ul class='list-group list-group-flush'>" +
@@ -1205,23 +1257,41 @@
             });
         });
 
+        // // 경유지 버튼 시 동적으로 div 생성
+        // $("#addWaypoint").click(function () {
+        //     if ($("#waypointsGroup").length === 0) {
+        //         // waypointsGroup 요소가 없으면 동적으로 추가
+        //         let waypointsGroup = $('<div class="form-group" id="waypointsGroup"></div>');
+        //         let label = $('<label for="waypoints" class="form-label">경유지</label>');
+        //         let input = $('<input type="text" class="form-control" id="waypoints" name="waypoints" placeholder="경유지 입력">');
+        //
+        //         waypointsGroup.append(label);
+        //         waypointsGroup.append(input);
+        //
+        //         $("#start").parent().after(waypointsGroup);
+        //     } else {
+        //         // 이미 존재하는 경우 보이도록 설정
+        //         $("#waypointsGroup").show();
+        //     }
+        // });
+
         // 경유지 버튼 시 동적으로 div 생성
-        $("#addWaypoint").click(function () {
-            if ($("#waypointsGroup").length === 0) {
-                // waypointsGroup 요소가 없으면 동적으로 추가
-                let waypointsGroup = $('<div class="form-group" id="waypointsGroup"></div>');
-                let label = $('<label for="waypoints" class="form-label">경유지</label>');
-                let input = $('<input type="text" class="form-control" id="waypoints" name="waypoints" placeholder="경유지 입력">');
-
-                waypointsGroup.append(label);
-                waypointsGroup.append(input);
-
-                $("#start").parent().after(waypointsGroup);
-            } else {
-                // 이미 존재하는 경우 보이도록 설정
-                $("#waypointsGroup").show();
-            }
-        });
+        // $("#waypoint-btn").click(function () {
+        //     if ($("#waypointsGroup").length === 0) {
+        //         // waypointsGroup 요소가 없으면 동적으로 추가
+        //         let waypointsGroup = $('<div class="form-group" id="waypointsGroup"></div>');
+        //         let label = $('<label for="waypoints" class="form-label">경유지</label>');
+        //         let input = $('<input type="hidden" class="form-control" id="waypointsLon" name="waypoints" placeholder="경유지 입력">');
+        //
+        //         waypointsGroup.append(label);
+        //         waypointsGroup.append(input);
+        //
+        //         $("#start").parent().after(waypointsGroup);
+        //     } else {
+        //         // 이미 존재하는 경우 보이도록 설정
+        //         $("#waypointsGroup").show();
+        //     }
+        // });
 
         $(document).ready(function () {
             init();

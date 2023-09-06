@@ -19,22 +19,28 @@ public class NaverMapService {
     @Value("${naver.api.key.secret}")
     private String NAVER_API_KEY_SECRET;
 
-    public String getDirections(String start, String end) {
+    public String getDirections(String start, String end, String waypoints) {
         String apiUrl = "https://naveropenapi.apigw.ntruss.com/map-direction/v1/driving";
         String url = apiUrl + "?start=" + start + "&goal=" + end;
 
+        if (waypoints != null && !waypoints.isEmpty()) {
+            url += "&waypoints=" + waypoints;
+        }
+
         RestTemplate restTemplate = new RestTemplate();
-        // 네이버 API 요청에 필요한 헤더 설정
-        HttpHeaders headers = new HttpHeaders(); // 올바른 HttpHeaders 클래스 사용
+
+        HttpHeaders headers = new HttpHeaders();
         headers.set("X-NCP-APIGW-API-KEY-ID", NAVER_API_KEY_ID);
         headers.set("X-NCP-APIGW-API-KEY", NAVER_API_KEY_SECRET);
+
         HttpEntity<String> entity = new HttpEntity<>(headers);
 
+
         ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
+
         if (response.getStatusCode() == HttpStatus.OK) {
             return response.getBody();
         } else {
-            // 에러 처리 로직 추가
             return "Error occurred";
         }
     }
