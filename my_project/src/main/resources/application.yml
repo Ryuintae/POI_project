@@ -1,0 +1,27 @@
+server:
+  port: 8181
+
+# PostgreSQL database
+spring:
+  datasource:
+    hikari:
+      maximum-pool-size: 4
+    username: postgres
+    jdbc-url: jdbc:postgresql://localhost:5432/intaeaver
+    password: '0000'
+    driver-class-name: org.postgresql.Driver
+
+# MyBatis configuration
+mybatis:
+  type-aliases-package: com.example.demo
+  mapper-locations: mybatis/mapper/**/*.xml
+
+# Upload configuration
+upload:
+  path: C:\\uploads
+
+naver:
+  api:
+    key:
+      id: vp0ergko70
+      secret: kpslqsz3sNcoTq6evsrz6UqpsDebJdyWWpaf3zd1
