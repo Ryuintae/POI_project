@@ -313,7 +313,7 @@
 
     <!--    --------------------------------  -->
     <!-- 모달 컴포넌트 -->
-    <div class="modal fade" id="poiModal" tabindex="-1" aria-labelledby="poiModalLabel" aria-hidden="true">
+    <div class="modal fade" id="poiModal" tabindex="-1" aria-labelledby="poiModalLabel" aria-hidden="true" data-bs-backdrop="false">
         <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
             <div class="modal-content">
                 <div class="modal-header">
@@ -341,13 +341,13 @@
             <form id="naverMapForm" class="mb-3">
                 <div class="form-group">
                     <label for="start" class="form-label">출발지</label>
-                    <input type="text" class="form-control" id="start" placeholder="출발지 입력">
+                    <input type="text" class="form-control" id="start">
                     <!-- 출발지 위도, 경도 저장 -->
                     <input type='hidden' id='startLon' name='start'>
                 </div>
                 <div class="form-group">
                     <label for="end" class="form-label">도착지</label>
-                    <input type="text" class="form-control" id=end placeholder=도착지 입력>
+                    <input type="text" class="form-control" id=end>
                     <!-- 도착지 위도, 경도 저장 -->
                     <input type='hidden' id='endLon' name='end'>
                 </div>

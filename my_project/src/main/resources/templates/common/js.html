@@ -48,6 +48,10 @@
             })
         });
 
+        // 경로 레이어와 소스
+        let routeLayer;
+        let routeSource
+
         function init() {
             mapOverlay = new ol.Overlay(({element: hover_container.get(0)})); //Overlay 생성, 요소는 컨테이너의 첫 번째 요소(Native DOM element)
             map = new ol.Map({
@@ -727,7 +731,7 @@
                     }
                 },
                 error: function (jqXHR, textStatus, errorThrown) {
-                    console.error('Error fetching image data:', textStatus, ', Details:', errorThrown);
+                    // console.error('Error fetching image data:', textStatus, ', Details:', errorThrown);
                     poiModalBody.append(
                         $('<div class="row"></div>').append(
                             $('<div class="col-4 fw-bold"></div>').text('대표사진'),
@@ -1109,14 +1113,69 @@
                 success: function (response) {
                     response = JSON.parse(response);
 
-                    const routeInfo = response.route.traoptimal[0].summary;
-                    console.log(routeInfo);
+                    // 기존 마커 레이어 삭제
+                    if (markerLayer) {
+                        markerLayer.getSource().clear();
+                    }
+
+                    // 경로 그리기 시작
+                    let path = response.route.traoptimal[0].path;
+
+                    // 경로 좌표들을 담을 배열 생성
+                    let coordinates = [];
+
+                    for (let i = 0; i < path.length; i++) {
+                        let point = ol.proj.fromLonLat([path[i][0], path[i][1]]);
+                        coordinates.push(point);
+                        console.log("포인트@@@@@@@@@@@" + point);
+
+                    }
+
+                    // LineString 생성 및 벡터 소스에 추가
+                    let lineString = new ol.geom.LineString(coordinates);
+
+                    // 새로운 벡터 소스 생성하고 피처 추가
+                    routeSource = new ol.source.Vector();
+                    routeSource.addFeature(new ol.Feature(lineString));
+
+                    // 출발지와 도착지 포인트 생성 및 벡터 소스에 추가
+                    let startFeature = new ol.Feature(new ol.geom.Point(coordinates[0]));
+                    let endFeature = new ol.Feature(new ol.geom.Point(coordinates[coordinates.length - 1]));
+
+                    routeSource.addFeatures([startFeature, endFeature]);
+
+                    // 새로운 벡터 레이어 생성하고 지도에 추가
+                    routeLayer = new ol.layer.Vector({
+                        source: routeSource,
+                        style: function (feature) {
+                            if (feature.getGeometry().getType() === 'Point') {
+                                // 시작점과 도착점 구분하기
+                                let imgSrc = feature === startFeature ? '/img/start_maker.png' : '/img/end_maker.png';
+
+                                return new ol.style.Style({
+                                    image: new ol.style.Icon({
+                                        src: imgSrc,
+                                        scale: 0.7  // 스케일은 필요에 따라 조정하세요.
+                                    })
+                                });
+                            } else {
+                                return new ol.style.Style({
+                                    stroke: new ol.style.Stroke({color: [0, 0, 255, 1], width: 2})
+                                });
+                            }
+                        }
+                    });
+
+                    map.addLayer(routeLayer);
 
                     // 응답을 roadResult 요소에 출력하기 전에 이전 내용 초기화
                     $('#roadResult').empty();
+
+                    const routeInfo = response.route.traoptimal[0].summary;
+                    // console.log(routeInfo);
                     // 응답을 roadResult 요소에 출력
                     const tollFareText = "톨게이트 비용 : " + routeInfo.tollFare + " 원";
-                    const taxiFareText = "택시비용 : " + routeInfo.taxiFare + "원";
+                    const taxiFareText = "택시비용 : " + routeInfo.taxiFare + " 원";
                     const fuelPriceText = "연료 가격 : " + routeInfo.fuelPrice + " 원";
 
                     // 경로 정보 추가

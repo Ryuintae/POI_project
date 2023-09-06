@@ -84,6 +84,10 @@
 
         // 검색 버튼에 대한 이벤트 핸들러
         $("#search").on("click", function () {
+            // 기존 경로 레이어 삭제
+            if (routeLayer) {
+                routeLayer.getSource().clear();
+            }
             let lclascd = $("#lclascd").val();
             let mlsfccd = $("#mlsfccd").val();
             let sclascd = $("#sclascd").val();

@@ -106,7 +106,7 @@ public class ImageController {
         if (image != null) {
             return new ResponseEntity<>(image, HttpStatus.OK);
         } else {
-            return new ResponseEntity<>("Image not found", HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 
