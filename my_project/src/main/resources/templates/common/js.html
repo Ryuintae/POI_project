@@ -53,6 +53,10 @@
         let routeSource
 
         function init() {
+            routeSource = new ol.source.Vector();
+            routeLayer = new ol.layer.Vector({
+                source: routeSource,
+            });
             mapOverlay = new ol.Overlay(({element: hover_container.get(0)})); //Overlay 생성, 요소는 컨테이너의 첫 번째 요소(Native DOM element)
             map = new ol.Map({
                 target: 'map',
@@ -60,6 +64,7 @@
                     new ol.layer.Tile({
                         source: new ol.source.OSM(),
                     }),
+                    routeLayer
                 ],
                 overlays: [mapOverlay],
                 view: new ol.View({
@@ -680,6 +685,9 @@
                             .on('click', function () {
                                 // label 안에 poi 이름 추가
                                 $('#start').val(poi.poi_name);
+
+                                $("input[name='start']").val(poi.poi_name);
+
                                 // 도착지와 경유지 문자열 값 과 name 을 초기화합니다.
                                 $('#end').val('');
                                 $('#waypoints').val('');
@@ -695,7 +703,10 @@
                         // 도착지 버튼 수정
                         $('<button id="dest-btn" class="btn btn-outline-danger btn-sm ms-2">도착지</button>')
                             .on('click', function () {
-                                $('#end').val(poi.poi_name);
+                                $('#end_point').val(poi.poi_name);
+
+                                $("input[name='end_point']").val(poi.poi_name);
+
 
                                 $('#waypoints').val('');
                                 $('#waypointsLon').val('');
@@ -713,6 +724,8 @@
                                 //     waypointField.val(waypointField.val() + ',');
                                 // }
                                 $('#waypoints').val(poi.poi_name);
+                                $("input[name='waypoints']").val(poi.poi_name);
+
                                 $('#poiModal').modal('hide');
                                 $('#roadSearch').offcanvas('show');
                                 $('#waypointsLon').val(poi.lon + ',' + poi.lat);
@@ -986,83 +999,85 @@
 
         //  user id 로 회원이 등록한 poi 조회 후 수정하기
         function modifyloadPois(userId) {
-            // 서버에서 POI 목록을 가져오는 AJAX 요청
             $.ajax({
                 url: '/pois',
                 success: function (data) {
                     const tbody = $('.table tbody');
                     tbody.empty();
 
-                    // 각각의 POI에 대해 테이블 행을 생성하고 "수정하기" 버튼 추가
-                    $.each(data, function (index, poi) {
+                    if (data.length === 0) { // 데이터가 없을 경우
                         let row = $('<tr>');
-                        row.append($('<td>').text(poi.poi_name));
-                        row.append($('<td>').text(poi.tel_no));
-                        row.append($('<td>').text(poi.address));
-                        row.append($('<td>').text(poi.zip_code));
-                        row.append($('<td>').text(poi.memo));
+                        let cell = $('<td>').text('등록된 정보가 없습니다!').attr('colspan', 6);
+                        row.append(cell);
+                        tbody.append(row);
+                    } else { // 데이터가 있을 경우
+                        $.each(data, function (index, poi) {
+                            let row = $('<tr>');
+                            row.append($('<td>').text(poi.poi_name));
+                            row.append($('<td>').text(poi.tel_no));
+                            row.append($('<td>').text(poi.address));
+                            row.append($('<td>').text(poi.zip_code));
+                            row.append($('<td>').text(poi.memo));
 
-                        const button = $('<button class="btn btn-primary">수정하기</button>');
+                            const button = $('<button class="btn btn-primary">수정하기</button>');
 
-                        // "수정하기" 버튼 클릭 이벤트 핸들러 추가
-                        button.on('click', function () {
-                            $('#placeRegister').modal('show');
+                            button.on('click', function () {
+                                $('#placeRegister').modal('show');
 
-                            // 클릭된 POI의 데이터로 폼 필드 채우기
-                            $('#placeName').val(poi.poi_name);
-                            $('#gen').val(poi.tel_no);
-                            $('#address').val(poi.address);
-                            $('#zip_code').val(poi.zip_code);
-                            $('#memo').val(poi.memo);
+                                $('#placeName').val(poi.poi_name);
+                                $('#gen').val(poi.tel_no);
+                                $('#address').val(poi.address);
+                                $('#zip_code').val(poi.zip_code);
+                                $('#memo').val(poi.memo);
 
-                            const form = $("#placeRegister form");
+                                const form = $("#placeRegister form");
 
-                            if (form.length > 0) {
-                                form.off('submit');
-                                // form.append(`<input type="hidden" name="poi_num" value="${poi.poi_num}" />`);
+                                if (form.length > 0) {
+                                    form.off('submit');
 
-                                form.on('submit', function (e) {
-                                    e.preventDefault();
+                                    form.on('submit', function (e) {
+                                        e.preventDefault();
 
-                                    // action 속성 변경
-                                    $(this).attr('action', `/pois/${poi.poi_num}`);
-                                    $.ajax({
-                                        url: $(this).attr('action'),
-                                        type: 'PUT',
-                                        data: $(this).serialize(),
-                                        xhrFields: {
-                                            withCredentials: true
-                                        },
-                                        headers: {
-                                            "Content-Type": "application/x-www-form-urlencoded"
-                                        },
-                                        success: function (response) {
-                                            console.log(response);
-                                            location.reload();
-                                            alert("업데이트를 성공하였습니다")
-                                        },
-                                        error: function (error) {
-                                            console.error(error);
-                                            console.error('HTTP status code:', error.status);
-                                            console.error('Status text:', error.statusText);
-                                            console.error('Response text:', error.responseText);
-                                            alert("업데이트 오류");
-                                        }
+                                        $(this).attr('action', `/pois/${poi.poi_num}`);
+                                        $.ajax({
+                                            url: $(this).attr('action'),
+                                            type: 'PUT',
+                                            data: $(this).serialize(),
+                                            xhrFields: {
+                                                withCredentials: true
+                                            },
+                                            headers: {
+                                                "Content-Type": "application/x-www-form-urlencoded"
+                                            },
+                                            success: function (response) {
+                                                console.log(response);
+                                                location.reload();
+                                                alert("업데이트를 성공하였습니다")
+                                            },
+                                            error: function (error) {
+                                                console.error(error);
+                                                console.error('HTTP status code:', error.status);
+                                                console.error('Status text:', error.statusText);
+                                                console.error('Response text:', error.responseText);
+                                                alert("업데이트 오류");
+                                            }
+                                        });
                                     });
-                                });
-                            }
+                                }
+                            });
+
+                            let td = $('<td>');
+                            td.append(button);
+
+                            row.append(td);
+
+                            tbody.append(row);
                         });
-
-                        let td = $('<td>');
-                        td.append(button);
-
-                        row.append(td);
-
-                        tbody.append(row);  // 완성된 행을 테이블에 추가
-                    });
+                    }
                 }
             });
         }
+
 
         //  user id 로 회원이 등록한 poi 조회해서 삭제하기
         function deleteloadPois(userId) {
@@ -1072,45 +1087,52 @@
                     const tbody = $('.table tbody');
                     tbody.empty();
 
-                    $.each(data, function (index, poi) {
+                    if (data.length === 0) { // 데이터가 없을 경우
                         let row = $('<tr>');
-                        row.data('poiId', poi.poi_num); // poi_num을 저장하기
-                        row.append($('<td>').text(poi.poi_name));
-                        row.append($('<td>').text(poi.tel_no));
-                        row.append($('<td>').text(poi.address));
-                        row.append($('<td>').text(poi.zip_code));
-                        row.append($('<td>').text(poi.memo));
-
-                        const button = $('<button class="btn btn-danger">삭제하기</button>');
-                        button.attr('data-bs-toggle', 'modal');
-                        button.attr('data-bs-target', '#delete');
-
-                        button.on('click', function () {
-                            const r = $(this).closest('tr');
-                            const poiId = r.data('poiId');
-
-                            // 삭제 확인을 위한 경고창 표시
-                            if (confirm("정말로 삭제 하시겠습니까?")) {
-                                $.ajax({
-                                    url: `/pois/${poi.poi_num}`, // 이 부분에 poi_num을 추가
-                                    type: 'DELETE',
-                                    success: function (result) {
-                                        r.remove();
-                                        alert("성공적으로 삭제되었습니다");
-                                    },
-                                    error: function (jqXHR, textStatus, errorThrown) {
-                                        alert("Error deleting POI: " + errorThrown);
-                                    }
-                                });
-                            }
-                        });
-                        let td = $('<td>');
-                        td.append(button);
-
-                        row.append(td);
-
+                        let cell = $('<td>').text('등록된 정보가 없습니다!').attr('colspan', 6);
+                        row.append(cell);
                         tbody.append(row);
-                    });
+                    } else { // 데이터가 있을 경우
+                        $.each(data, function (index, poi) {
+                            let row = $('<tr>');
+                            row.data('poiId', poi.poi_num); // poi_num을 저장하기
+                            row.append($('<td>').text(poi.poi_name));
+                            row.append($('<td>').text(poi.tel_no));
+                            row.append($('<td>').text(poi.address));
+                            row.append($('<td>').text(poi.zip_code));
+                            row.append($('<td>').text(poi.memo));
+
+                            const button = $('<button class="btn btn-danger">삭제하기</button>');
+                            button.attr('data-bs-toggle', 'modal');
+                            button.attr('data-bs-target', '#delete');
+
+                            button.on('click', function () {
+                                const r = $(this).closest('tr');
+                                const poiId = r.data('poiId');
+
+                                // 삭제 확인을 위한 경고창 표시
+                                if (confirm("정말로 삭제 하시겠습니까?")) {
+                                    $.ajax({
+                                        url: `/pois/${poi.poi_num}`, // 이 부분에 poi_num을 추가
+                                        type: 'DELETE',
+                                        success: function (result) {
+                                            r.remove();
+                                            alert("성공적으로 삭제되었습니다");
+                                        },
+                                        error: function (jqXHR, textStatus, errorThrown) {
+                                            alert("Error deleting POI: " + errorThrown);
+                                        }
+                                    });
+                                }
+                            });
+                            let td = $('<td>');
+                            td.append(button);
+
+                            row.append(td);
+
+                            tbody.append(row);
+                        });
+                    }
                 }
             });
         }
@@ -1249,7 +1271,19 @@
                             $('#roadResult').append("<div class='text-center my-3'><img src='img/down_arrow.png' alt='아래쪽 화살표'></div>");
                         }
                     }
-                    $('#roadResult').append("<div class='d-flex justify-content-end'><button type='button' class='btn btn-primary'>경로 저장</button></div>");
+
+                    // display-none 삭제 해서 성공시 보이도록
+                    $('.js-route-save-btn').removeClass('d-none');
+
+                    // routeSaveForm 채워주는 공간
+
+                    // 각 input field에 값을 설정
+                    $("input[name='route']").val(JSON.stringify(coordinates));
+                    $("input[name='tollFare']").val(routeInfo.tollFare + " 원");
+                    $("input[name='taxiFare']").val(routeInfo.taxiFare + " 원");
+                    $("input[name='fuelPrice']").val(routeInfo.fuelPrice + " 원");
+
+                    // $('#roadResult').append("<div class='d-flex justify-content-end'><button type='button' class='btn btn-primary'>경로 저장</button></div>");
                 },
                 error: function (error) {
                     console.log(error);
@@ -1317,7 +1351,10 @@
                 $("#loginModal").modal("show");
             }
         });
-
+        // 장소 검색 버튼 클릭 시 모달 열기
+        $('#placeSearchButton').click(function () {
+            $('#category_search_toggle').collapse('toggle');
+        });
     </script>
     <!--  회원가입 성공, 이메일 중복시 출력 메시지  -->
     <script th:inline="javascript">

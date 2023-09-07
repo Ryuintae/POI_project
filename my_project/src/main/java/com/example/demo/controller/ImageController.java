@@ -70,7 +70,6 @@ public class ImageController {
     @GetMapping("/getImageByUserId/{user_id}")
     public ResponseEntity<Image> getImageByUserId(@PathVariable("user_id") int user_id) {
         // 이미지 정보 가져오기
-        // (여기서 발생하는 모든 예외는 적절하게 처리되어야 함)
         try {
             var imgData = Optional.ofNullable(imageService.getImageByUserId(user_id));
             if (imgData.isPresent()) {
