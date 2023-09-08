@@ -37,7 +37,8 @@
                 </button>
                 <div class="spacer"></div> <!-- 간격을 띄우기 위한 빈 div 엘리먼트 -->
 
-                <button class="btn btn-outline-secondary d-block text-start my-1" type="button" data-bs-toggle="modal"
+                <button id="routeButton" class="btn btn-outline-secondary d-block text-start my-1" type="button"
+                        data-bs-toggle="modal"
                         th:data-bs-target="'#pathCheck'">
                     저장한 경로 확인하기
                 </button>
@@ -66,30 +67,28 @@
     <!-- 저장한 경로 확인하기 Modal -->
     <div class="container">
         <div class="modal fade" id="pathCheck" tabindex="-1" aria-labelledby="pathCheckLabel" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered modal-xl">
+            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
                 <div class="modal-content">
                     <div class="modal-header" style="text-align:center;">
                         <h5 class="modal-title" id="pathCheckLabel">저장한 경로 확인하기</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <!-- 테이블에 부트스트랩 적용 -->
-                    <table class="table">
-                        <thead class="table-dark"
-                               style="text-align: center">
-                        <tr>
-                            <th>작성자</th>
-                            <th>제목</th>
-                            <th>설명</th>
-                            <th>저장 시간</th>
-                            <th>출발지</th>
-                            <th>도착지</th>
-                            <th>경유지</th>
-                            <th></th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        </tbody>
-                    </table>
+                    <div class="modal-body">
+                        <!-- 테이블에 부트스트랩 적용 -->
+                        <table class="table">
+                            <thead class="table-dark" style="text-align: center; white-space: nowrap">
+                            <tr>
+                                <th>제목</th>
+                                <th>출발지</th>
+                                <th>도착지</th>
+                                <th></th>
+                                <th></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
@@ -413,7 +412,7 @@
     </div>
 
     <!--    --------------------------------  -->
-    <!-- 모달 컴포넌트 -->
+    <!-- poi 상세정보 모달 컴포넌트 -->
     <div class="modal fade" id="poiModal" tabindex="-1" aria-labelledby="poiModalLabel" aria-hidden="true"
          data-bs-backdrop="false">
         <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
@@ -473,6 +472,22 @@
 
         <div class="offcanvas-body">
             <p id="roadResult">검색 결과가 여기에 표시됩니다.</p>
+        </div>
+    </div>
+
+    <!-- 경로 상세정보 모달 컴포넌트 -->
+    <div class="modal fade" id="routeModal" tabindex="-1" aria-labelledby="routeModalLabel" aria-hidden="true"
+         data-bs-backdrop="false">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="routeModalLabel">상세정보</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="routeModalBody">
+                    <!--상세정보 입력-->
+                </div>
+            </div>
         </div>
     </div>
 </th:block>

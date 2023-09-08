@@ -188,7 +188,7 @@
                                 hovering = hover.values_.poi_num; // 마우스가 위치한 feature 저장
                             },
                             error: (error) => {
-                                console.error('Error fetching data from API', error);
+                                // console.error('Error fetching data from API', error);
                                 ajaxInProgress = false; // 에러 발생 시에도 AJAX 상태 업데이트
                             }
                         });
@@ -214,7 +214,7 @@
                             hovering = null; // 클릭 후 hovering 초기화
                         },
                         error: (error) => {
-                            console.error('Error fetching data from API', error);
+                            // console.error('Error fetching data from API', error);
                         }
                     });
                 }
@@ -257,10 +257,10 @@
 
             box.getGeometry().transform(current_projection, new_projection);
             vectorsource.addFeatures([box]);
-            console.log("bottomLeft", bottomLeft);
-            console.log("topRight", topRight);
-            console.log("bottomRight", bottomRight);
-            console.log("topLeft", topLeft);
+            // console.log("bottomLeft", bottomLeft);
+            // console.log("topRight", topRight);
+            // console.log("bottomRight", bottomRight);
+            // console.log("topLeft", topLeft);
         }
 
         // -------------------------------------------------------------------------
@@ -655,7 +655,7 @@
                     });
                 },
                 error: function (error) {
-                    console.error('Error fetching data from API', error);
+                    // console.error('Error fetching data from API', error);
                 }
             });
         }
@@ -1188,6 +1188,7 @@
                     for (let i = 0; i < path.length; i++) {
                         let point = ol.proj.fromLonLat([path[i][0], path[i][1]]);
                         coordinates.push(point);
+                        console.log([path[i][0], path[i][1]])
                     }
 
                     // LineString 생성 및 벡터 소스에 추가
@@ -1222,7 +1223,7 @@
                         source: routeSource,
                         style: function (feature) {
                             if (feature.getGeometry().getType() === 'Point') {
-                                var imgSrc = feature === startFeature ? '/img/start_maker.png' :
+                                let imgSrc = feature === startFeature ? '/img/start_maker.png' :
                                     feature === endFeature ? '/img/end_maker.png' :
                                         '/img/pin_maker.png';
 
@@ -1289,6 +1290,159 @@
                     console.log(error);
                 }
             });
+        });
+
+        function loadRoutes() {
+            $.ajax({
+                url: '/routes',
+                success: function (data) {
+                    const tbody = $('.table tbody');
+                    tbody.empty();
+
+                    if (data.length === 0) { // 데이터가 없을 경우
+                        let row = $('<tr>');
+                        let cell = $('<td>').text('등록된 정보가 없습니다!').attr('colspan', 4);
+                        row.append(cell);
+                        tbody.append(row);
+                    } else { // 데이터가 있을 경우
+                        $.each(data, function (index, route) {
+                            let row = $('<tr>');
+                            row.append($('<td>').text(route.title));
+                            row.append($('<td>').text(route.start));
+                            row.append($('<td>').text(route.end_point));
+                            const viewRouteButton = $('<button class="btn btn-outline-info mr-2" style="width: max-content">경로 보기</button>');
+
+                            viewRouteButton.on('click', function () {
+                                let pathStr = route.route.slice(11, -1); // 괄호와 LINESTRING 문자 제거
+                                let pathArr = pathStr.split(','); // 쉼표 기준으로 분리
+
+                                let coordinates = [];
+                                for (let i = 0; i < pathArr.length; i++) {
+                                    let lonLatStrs = pathArr[i].split(' '); // 공백 기준으로 분리하여 위도와 경도 구분
+                                    let pointLonLatFloats = lonLatStrs.map(coord => parseFloat(coord));
+
+                                    let pointWGS84Coords = ol.proj.toLonLat(pointLonLatFloats);
+                                    console.log(pointWGS84Coords);
+                                    coordinates.push(pointWGS84Coords);
+                                }
+
+                                // LineString 생성 및 벡터 소스에 추가
+                                let transformedCoordinates = coordinates.map(coord => ol.proj.fromLonLat(coord));
+                                let asdf = new ol.geom.LineString(transformedCoordinates);
+                                let routeSaveSource = new ol.source.Vector();
+                                let lineFeature = new ol.Feature(asdf);
+                                routeSaveSource.addFeature(lineFeature);
+
+
+                                // if (route.waypoints) {
+                                //     let waypointsStr = route.waypoints.slice(11, -1); // 괄호와 LINESTRING 문자 제거
+                                //     let waypointsArr = waypointsStr.split(','); // 쉼표 기준으로 분리
+                                //
+                                //     for (let i = 0; i < waypointsArr.length; i++) {
+                                //         let lonLatStrs = waypointsArr[i].trim().split(' '); // 공백 기준으로 분리하여 위도와 경도 구분
+                                //         let pointLonLatFloats = lonLatStrs.map(coord => parseFloat(coord));
+                                //         if ((pointLonLatFloats[0] === start[0] && pointLonLatFloats[1] === start[1]) ||
+                                //             (pointLonLatFloats[0] === end[0] && pointLonLatFloats[1] === end[1])) continue;
+                                //
+                                //         let waypointPoint = ol.proj.fromLonLat(pointLonLatFloats);
+                                //         let waypointFeature = new ol.Feature(new ol.geom.Point(waypointPoint));
+                                //         routeSource.addFeature(waypointFeature);
+                                //     }
+                                // }
+                                // 출발지와 도착지 포인트 생성 및 벡터 소스에 추가
+                                let startFeature = new ol.Feature(new ol.geom.Point(ol.proj.fromLonLat(coordinates[0])));
+                                let endFeature = new ol.Feature(new ol.geom.Point(ol.proj.fromLonLat(coordinates[coordinates.length - 1])));
+
+                                routeSaveSource.addFeatures([startFeature, endFeature]);
+
+                                // 새로운 벡터 레이어 생성하고 지도에 추가
+                                let routeSaveLayer = new ol.layer.Vector({
+                                    source: routeSaveSource,
+                                    style: function (feature) {
+                                        if (feature.getGeometry() instanceof ol.geom.LineString) {
+                                            return new ol.style.Style({
+                                                stroke: new ol.style.Stroke({color: 'red', width: 2})
+                                            });
+                                        } else {
+                                            return new ol.style.Style({
+                                                image: new ol.style.Circle({
+                                                    radius: 7,
+                                                    fill: new ol.style.Fill({color: 'blue'})
+                                                })
+                                            });
+                                        }
+                                    }
+                                });
+                                if (map.getLayers().getArray().includes(routeSaveLayer)) {
+                                    map.removeLayer(routeSaveLayer);
+                                }
+
+                                map.addLayer(routeSaveLayer);
+                            });
+
+                            const detailButton = $('<button class="btn btn-outline-primary mr-2" style="width: max-content">상세보기</button>');
+
+                            detailButton.on('click', function () {
+                                $('#routeModal').modal('show');
+                                $('#routeModalLabel').html(`${route.title}`);
+                                $('#routeModalBody').empty();
+
+                                const table = $(`
+        <table class="table">
+            <tbody>
+                <tr><th scope="row">작성자</th><td>${route.user_name}</td></tr>
+                <tr><th scope="row">제목</th><td>${route.title}</td></tr>
+                <tr><th scope="row">설명</th><td>${route.explain}</td></tr>
+                <tr><th scope="row">저장 시간</th><td>${route.save_time}</td></tr>
+                <tr><th scope="row">출발지</th><td>${route.start}</td></tr>
+                <tr><th scope="row">도착지</th><td>${route.end_point}</td></tr>
+                <tr><th scope="row">경유지</th><td>${route.waypoints}</td></tr>
+                <tr><th scope="row">톨게이트 비용</th><td>${route.tollFare}</td></tr>
+                <tr><th scope="row">택시비용</th><td>${route.taxiFare}</td></tr>
+                <tr><th scope="row">연료 가격</th><td>${route.fuelPrice}</td></tr>
+                <tr><th scope="row">테스트 사진</th><td><img src="https://source.unsplash.com/random" alt="예시" style="width: 300px; height: 300px;"></td></tr>
+            </tbody>
+        </table>`);
+
+                                $('#routeModalBody').append(table);
+
+                                // const viewRouteButton = $('<button class="btn btn-outline-info">경로 보기</button>');
+                                // viewRouteButton.on('click', function () {
+                                //     // 경로 보기 로직 구현 필요
+                                // });
+
+                                // 수정하기, 삭제하기 버튼 추가
+                                const modifyButton = $('<button class="btn btn-outline-primaryy mr-2">수정하기</button>');
+                                modifyButton.on('click', function () {
+                                    // 수정 로직 구현
+                                });
+
+
+                                const deleteButton = $('<button class="btn btn-outline-danger">삭제하기</button>');
+
+                                deleteButton.on('click', function () {
+                                    // 삭제 로직 구현
+                                });
+
+
+                                let buttonGroup = $('<div>').addClass("d-flex justify-content-end");
+                                buttonGroup.append(modifyButton);
+                                buttonGroup.append(deleteButton);
+
+                                $('#routeModalBody').append(buttonGroup);
+                            });
+                            row.append($('<td>').append(detailButton));
+                            row.append($('<td>').append(viewRouteButton));
+                            tbody.append(row);
+                        });
+                    }
+                }
+            });
+        }
+
+        // 저장한 경로 확인 버튼 클릭시 실행되는 함수
+        $('#routeButton').click(function () {
+            loadRoutes();
         });
 
         // // 경유지 버튼 시 동적으로 div 생성

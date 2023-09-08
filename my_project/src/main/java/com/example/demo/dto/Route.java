@@ -13,6 +13,7 @@ public class Route {
     private LocalDateTime save_time;
     private int route_id;
     private int user_id;
+    private String user_name;
     private String title;
     private String explain;
     private String route;

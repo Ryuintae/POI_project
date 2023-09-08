@@ -37,4 +37,11 @@ public class RouteServiceImpl implements RouteService {
     public List<Route> selectRouteById(int route_id, int user_id) {
         return routeMapper.selectRouteById(route_id, user_id);
     }
+
+    @Override
+    public List<Route> getRoutesWithUserNameByUserId(int user_id) {
+        List<Route> routes = routeMapper.getRoutesWithUserNameByUserId(user_id);
+        //routes.forEach(e -> System.out.println(e.getRoute()));
+        return routes;
+    }
 }

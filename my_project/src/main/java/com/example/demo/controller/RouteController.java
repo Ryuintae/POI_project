@@ -58,13 +58,21 @@ public class RouteController {
             route.setTaxiFare(route.getTaxiFare());
             route.setFuelPrice(route.getFuelPrice());
             route.setSave_time(LocalDateTime.now());
-            System.out.println(route.getUser_id());
-            System.out.println("시간@@@@@@@@@@@" + route.getSave_time());
             // Service layer를 사용하여 데이터베이스에 데이터를 저장
             routeService.registerRoute(route);
 
             return ResponseEntity.ok().build();
 
+        }
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+    }
+
+    @GetMapping
+    public ResponseEntity<List<Route>> getRoutesByLoggedInUser(@AuthenticationPrincipal UserVo loggedInUser) {
+        if (loggedInUser != null) {
+            int user_id = loggedInUser.getUser_id();
+            List<Route> routes = routeService.getRoutesWithUserNameByUserId(user_id);
+            return ResponseEntity.ok(routes);
         }
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
