@@ -320,7 +320,7 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
 
-                    <form action="/routes/register" method="post">
+                    <form action="/routes/register" method="post" enctype="multipart/form-data">
                         <div class="modal-body">
                             <div class="form-group mb-3">
                                 <label>제목</label>
@@ -369,8 +369,8 @@
                                        readonly>
                             </div>
                             <div class="form-group mb-3">
-                                <label for="file">이미지 첨부</label>
-                                <input type="file" class="form-control" accept=".jpg, .png" id="file1" name="file">
+                                <label for="file2">이미지 첨부</label>
+                                <input type="file" class="form-control" accept=".jpg, .png" id="file2" name="file2">
                             </div>
                         </div>
                         <div class="modal-footer">

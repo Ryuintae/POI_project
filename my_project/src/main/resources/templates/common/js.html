@@ -14,6 +14,13 @@
             integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm"
             crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <!-- NaverMAp JS file -->
+    <!-- 네이버 지도 및 파노라마 API 로드 -->
+    <script type="text/javascript"
+            src="https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=q7hekmkiuh"></script>
+    <script type="text/javascript"
+            src="https://oapi.map.naver.com/openapi/v3/maps.js?ncpClientId=q7hekmkiuh&submodules=panorama"></script>
+
     <script>
         let map;
         let markerLayer;
@@ -672,9 +679,9 @@
                 $('<div class="row mb-2"></div>').append(
                     $('<div class="col-4 fw-bold"></div>').text('위치'),
                     $('<div class="col-8"></div>').append(
-                        $('<button class="btn btn-outline-info btn-sm">로드뷰로 보기</button>')
+                        $('<button id="loadRoadViewButton" class="btn btn-outline-info btn-sm">로드뷰로 보기</button>')
                             .on('click', function () {
-                                moveToPoi(poi);
+                                moveToRoadView(poi);
                             })
                     )
                 ),
@@ -754,13 +761,41 @@
                 )
             );
 
-            console.log(`Requesting image for poi_num: ${poi.poi_num}`); // 값 출력
+            // console.log(`Requesting image for poi_num: ${poi.poi_num}`); // 값 출력
+
+
+            function moveToRoadView(poi) {
+
+                let naverMap = new naver.maps.Map('roadview', {
+                    center: new naver.maps.LatLng(37.5665, 126.9780),
+                    zoom: 10
+                });
+
+                let latitude = poi.lat;
+                let longitude = poi.lon;
+
+
+                let position = new naver.maps.LatLng(latitude, longitude);
+
+                let panorama = new naver.maps.Panorama({
+                    position: position,
+                    pov: {
+                        pan: -30,
+                        tilt: -10,
+                        fov: 120
+                    }
+                });
+
+                // 로드뷰를 지도에 추가합니다.
+                panorama.setMap(naverMap);
+            }
+
 
             $.ajax({
                 url: `/pois/${poi.poi_num}`,
                 type: 'GET',
                 success: function (data) { //
-                    console.log('성공은 일단 성공')
+                    // console.log('성공은 일단 성공')
                     if (data.file_name) { // 서버에서 받아온 데이터의 file_path 필드가 있는 경우
                         const imageUrl = `/uploads/${data.file_name}`; // 이미지 파일 경로
                         poiModalBody.append(
@@ -1333,25 +1368,31 @@
                                 let lineFeature = new ol.Feature(asdf);
                                 routeSaveSource.addFeature(lineFeature);
 
+                                let start = coordinates[0];
+                                let end = coordinates[coordinates.length - 1];
 
-                                // if (route.waypoints) {
-                                //     let waypointsStr = route.waypoints.slice(11, -1); // 괄호와 LINESTRING 문자 제거
-                                //     let waypointsArr = waypointsStr.split(','); // 쉼표 기준으로 분리
-                                //
-                                //     for (let i = 0; i < waypointsArr.length; i++) {
-                                //         let lonLatStrs = waypointsArr[i].trim().split(' '); // 공백 기준으로 분리하여 위도와 경도 구분
-                                //         let pointLonLatFloats = lonLatStrs.map(coord => parseFloat(coord));
-                                //         if ((pointLonLatFloats[0] === start[0] && pointLonLatFloats[1] === start[1]) ||
-                                //             (pointLonLatFloats[0] === end[0] && pointLonLatFloats[1] === end[1])) continue;
-                                //
-                                //         let waypointPoint = ol.proj.fromLonLat(pointLonLatFloats);
-                                //         let waypointFeature = new ol.Feature(new ol.geom.Point(waypointPoint));
-                                //         routeSource.addFeature(waypointFeature);
-                                //     }
-                                // }
+                                if (route.waypoints) {
+                                    let waypointsStr = route.waypoints.slice(11, -1); // 괄호와 LINESTRING 문자 제거
+                                    let waypointsArr = waypointsStr.split(','); // 쉼표 기준으로 분리
+
+                                    for (let i = 0; i < waypointsArr.length; i++) {
+                                        let lonLatStrs = waypointsArr[i].trim().split(' '); // 공백 기준으로 분리하여 위도와 경도 구분
+                                        let pointLonLatFloats = lonLatStrs.map(coord => parseFloat(coord));
+                                        if ((pointLonLatFloats[0] === start[0] && pointLonLatFloats[1] === start[1]) ||
+                                            (pointLonLatFloats[0] === end[0] && pointLonLatFloats[1] === end[1])) continue;
+
+                                        let waypointFeature = new ol.Feature(new ol.geom.Point(pointLonLatFloats));
+                                        waypointFeature.set('type', 'waypoint');  // set a property to distinguish the feature as a waypoint
+                                        routeSaveSource.addFeature(waypointFeature);
+                                    }
+                                }
                                 // 출발지와 도착지 포인트 생성 및 벡터 소스에 추가
                                 let startFeature = new ol.Feature(new ol.geom.Point(ol.proj.fromLonLat(coordinates[0])));
+                                startFeature.set('type', 'start');
+
                                 let endFeature = new ol.Feature(new ol.geom.Point(ol.proj.fromLonLat(coordinates[coordinates.length - 1])));
+                                endFeature.set('type', 'end');
+
 
                                 routeSaveSource.addFeatures([startFeature, endFeature]);
 
@@ -1364,26 +1405,40 @@
                                                 stroke: new ol.style.Stroke({color: 'red', width: 2})
                                             });
                                         } else {
+                                            let imgSrc;
+                                            switch (feature.get('type')) {  // determine image source based on the type property
+                                                case 'start':
+                                                    imgSrc = '/img/start_maker.png';
+                                                    break;
+                                                case 'end':
+                                                    imgSrc = '/img/end_maker.png';
+                                                    break;
+                                                case 'waypoint':
+                                                    imgSrc = '/img/pin_maker.png';
+                                                    break;
+                                                default:
+                                                    imgSrc = '/img/default_marker.png';  // default marker image
+                                            }
+
                                             return new ol.style.Style({
-                                                image: new ol.style.Circle({
-                                                    radius: 7,
-                                                    fill: new ol.style.Fill({color: 'blue'})
+                                                image: new ol.style.Icon({
+                                                    src: imgSrc,
+                                                    scale: 0.7
                                                 })
                                             });
                                         }
                                     }
                                 });
-                                if (map.getLayers().getArray().includes(routeSaveLayer)) {
-                                    map.removeLayer(routeSaveLayer);
-                                }
 
                                 map.addLayer(routeSaveLayer);
+
                             });
 
                             const detailButton = $('<button class="btn btn-outline-primary mr-2" style="width: max-content">상세보기</button>');
 
                             detailButton.on('click', function () {
                                 $('#routeModal').modal('show');
+
                                 $('#routeModalLabel').html(`${route.title}`);
                                 $('#routeModalBody').empty();
 
@@ -1405,14 +1460,9 @@
         </table>`);
 
                                 $('#routeModalBody').append(table);
-
-                                // const viewRouteButton = $('<button class="btn btn-outline-info">경로 보기</button>');
-                                // viewRouteButton.on('click', function () {
-                                //     // 경로 보기 로직 구현 필요
-                                // });
-
                                 // 수정하기, 삭제하기 버튼 추가
-                                const modifyButton = $('<button class="btn btn-outline-primaryy mr-2">수정하기</button>');
+                                const modifyButton = $('<button class="btn btn-outline-primary mr-2">수정하기</button>');
+                                modifyButton.css('margin-right', '10px');
                                 modifyButton.on('click', function () {
                                     // 수정 로직 구현
                                 });
@@ -1421,7 +1471,20 @@
                                 const deleteButton = $('<button class="btn btn-outline-danger">삭제하기</button>');
 
                                 deleteButton.on('click', function () {
-                                    // 삭제 로직 구현
+                                    var confirmDelete = confirm("정말로 삭제하시겠습니까?");
+                                    if (confirmDelete) {
+                                        $.ajax({
+                                            url: '/routes/' + route.route_id,
+                                            type: 'DELETE',
+                                            success: function (result) {
+                                                row.remove();
+                                                alert('삭제되었습니다.');
+                                            },
+                                            error: function (request, msg, error) {
+                                                alert('삭제 중 오류가 발생하였습니다.');
+                                            }
+                                        });
+                                    }
                                 });
 
 

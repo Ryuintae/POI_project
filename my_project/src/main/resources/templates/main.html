@@ -7,6 +7,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
 </head>
+<!-- 네이버 지도 및 파노라마 API 로드 -->
+<script type="text/javascript"
+        src="https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=q7hekmkiuh"></script>
+<script type="text/javascript"
+        src="https://oapi.map.naver.com/openapi/v3/maps.js?ncpClientId=q7hekmkiuh&submodules=panorama"></script>
 <body>
 
 <!--지도 생성-->
@@ -15,6 +20,9 @@
     <a href="#" id="popup-closer" class="ol-popup-closer"></a>
     <div id="popup-content"></div>
 </div>
+
+<div id="roadview" style="width: 50%; height: 50%;"></div>
+
 <div th:id="hover">
     <div th:id="hover-content"></div>
 </div>

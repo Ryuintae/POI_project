@@ -1,41 +1,59 @@
 package com.example.demo.controller;
 
+import com.example.demo.dto.Image;
 import com.example.demo.dto.Route;
 import com.example.demo.dto.UserVo;
+import com.example.demo.service.ImageService;
 import com.example.demo.service.RouteService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+
+import org.springframework.web.multipart.MultipartFile;
+
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
+
 
 // Jackson 라이브러리 임포트
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.core.type.TypeReference;
 
-@RestController
+@Controller
 @RequestMapping("/routes")
 public class RouteController {
 
     private final RouteService routeService;
+    private final ImageService imageService;
+    private final String uploadPath;
 
     @Autowired
-    public RouteController(RouteService routeService) {
+    public RouteController(RouteService routeService, ImageService imageService, @Value("${upload.path}") String uploadPath) {
         this.routeService = routeService;
+        this.imageService = imageService;
+        this.uploadPath = uploadPath;
     }
 
     @PostMapping("/register")
-    public ResponseEntity<Void> registerRoute(@ModelAttribute Route route, @AuthenticationPrincipal UserVo loggedInUser) throws Exception {
+    public String registerRoute(@ModelAttribute Route route,
+                                @RequestParam(name = "file2", required = false) MultipartFile file,
+                                @AuthenticationPrincipal UserVo loggedInUser) throws Exception {
         if (loggedInUser != null) {
             // 현재 로그인한 사용자의 user_id를 가져옴
             int user_id = loggedInUser.getUser_id();
             // 사용자 정보를 폼에 넣기
             route.setUser_id(user_id);
-            //route.setRoute_id(1);
+
             // 'route' 필드의 좌표 데이터를 WKT 형식의 문자열로 변환
             ObjectMapper mapper = new ObjectMapper();
             List<List<Double>> coordinates = mapper.readValue(route.getRoute(), new TypeReference<List<List<Double>>>() {
@@ -48,24 +66,44 @@ public class RouteController {
             wkt = "LINESTRING (" + wkt + ")";
 
             // 변환된 WKT 문자열을 'route' 필드에 설정
-            route.setTitle(route.getTitle());
-            route.setExplain(route.getExplain());
             route.setRoute(wkt);
-            route.setStart(route.getStart());
-            route.setEnd_point(route.getEnd_point());
-            route.setWaypoints(route.getWaypoints());
-            route.setTollFare(route.getTollFare());
-            route.setTaxiFare(route.getTaxiFare());
-            route.setFuelPrice(route.getFuelPrice());
-            route.setSave_time(LocalDateTime.now());
-            // Service layer를 사용하여 데이터베이스에 데이터를 저장
+
+            // Route 등록 및 route_id 값 생성
             routeService.registerRoute(route);
 
-            return ResponseEntity.ok().build();
+            // 이미지 처리 부분
+            if (file != null && !file.isEmpty()) {
+                try {
+                    String originalFilename = file.getOriginalFilename();
+                    String fileExtention = originalFilename.substring(originalFilename.lastIndexOf(".") + 1);
+                    long fileSize = file.getSize();
 
+                    Path path = Paths.get(uploadPath + "/" + originalFilename);
+
+                    Files.write(path, file.getBytes());
+
+                    Image image = new Image();
+
+                    System.out.println(route.getRoute_id());
+
+                    image.setRoute_id(route.getRoute_id());   // Route id 값을 주입하는 부분
+                    image.setSave_date(LocalDateTime.now());
+                    image.setFile_name(originalFilename);
+                    image.setFile_extention(fileExtention);
+                    image.setFile_size(fileSize);
+                    image.setFile_path(uploadPath + "/" + originalFilename);
+
+                    imageService.insertImageByRouteId(image);  // 이미지 정보를 DB에 저장합니다.
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            return "redirect:/";
         }
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        return "redirect:/login";
     }
+
 
     @GetMapping
     public ResponseEntity<List<Route>> getRoutesByLoggedInUser(@AuthenticationPrincipal UserVo loggedInUser) {
@@ -75,6 +113,20 @@ public class RouteController {
             return ResponseEntity.ok(routes);
         }
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+    }
+
+    @DeleteMapping("/{routeId}")
+    public ResponseEntity<Void> deleteRoute(@AuthenticationPrincipal UserVo loggedInUser, @PathVariable("routeId") int route_id) {
+        if (loggedInUser != null) {
+            int user_id = loggedInUser.getUser_id();
+            try {
+                this.routeService.deleteRoute(route_id, user_id);
+                return new ResponseEntity<>(HttpStatus.OK);
+            } catch (Exception e) {
+                return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        }
+        return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
     }
 }
 

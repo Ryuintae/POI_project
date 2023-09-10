@@ -15,6 +15,11 @@ public interface ImageMapper {
             "VALUES (#{poi_num}, #{save_date}, #{file_name}, #{file_extention}, #{file_size}, #{file_path})")
     void insertImage(Image image);
 
+    // Route ID로 이미지 정보 삽입
+    @Insert("INSERT INTO public.image(route_id, save_date, file_name, file_extention, file_size, file_path) " +
+            "VALUES (#{route_id}, #{save_date}, #{file_name}, #{file_extention}, #{file_size}, #{file_path})")
+    void insertImageByRouteId(Image image);
+
     @Select("SELECT public.poi_data.*, public.image.file_path AS image_path FROM public.poi_data LEFT JOIN public.image ON public.poi_data.user_id = public.image.user_id WHERE public.poi_data.user_id = #{user_id}")
     Image getImageByUserId(@Param("user_id") int user_id);
 

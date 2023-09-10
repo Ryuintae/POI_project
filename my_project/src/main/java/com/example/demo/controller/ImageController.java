@@ -99,7 +99,7 @@ public class ImageController {
         }
     }
 
-    @GetMapping("/pois/{poi_num}")
+    @GetMapping("/getImageByUserId{poi_num}")
     public ResponseEntity<?> getImage(@PathVariable int poi_num) {
         Image image = imageService.getImageByPoiNum(poi_num);
         if (image != null) {
