@@ -1,11 +1,13 @@
 package com.example.demo.controller;
 
 import com.example.demo.dto.Image;
+import com.example.demo.dto.UserVo;
 import com.example.demo.service.ImageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -99,14 +101,28 @@ public class ImageController {
         }
     }
 
-    @GetMapping("/getImageByUserId{poi_num}")
+    @GetMapping("/pois/{poi_num}")
     public ResponseEntity<?> getImage(@PathVariable int poi_num) {
         Image image = imageService.getImageByPoiNum(poi_num);
         if (image != null) {
             return new ResponseEntity<>(image, HttpStatus.OK);
         } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
+    }
+
+    @GetMapping("/images/{route_id}")
+    public ResponseEntity<String> getImageFileName(@PathVariable int route_id, @AuthenticationPrincipal UserVo loggedInUser) {
+        if (loggedInUser != null) {
+            int user_id = loggedInUser.getUser_id();
+            String fileName = imageService.getImageFileNameByRouteIdAndUserId(route_id, user_id);
+
+            if (fileName != null) {
+                return new ResponseEntity<>(fileName, HttpStatus.OK);
+            }
+        }
+
+        return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
     }
 
 }

@@ -40,5 +40,8 @@ public class ImageServiceImpl implements ImageService {
         return imageMapper.getImageByUserIdAndPoiName(user_id, poi_name);
     }
 
-
+    @Override
+    public String getImageFileNameByRouteIdAndUserId(int route_id, int user_id) {
+        return imageMapper.getImageFileNameByRouteIdAndUserId(route_id, user_id);
+    }
 }

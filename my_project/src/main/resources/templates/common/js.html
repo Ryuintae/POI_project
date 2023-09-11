@@ -19,7 +19,7 @@
     <script type="text/javascript"
             src="https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=q7hekmkiuh"></script>
     <script type="text/javascript"
-            src="https://oapi.map.naver.com/openapi/v3/maps.js?ncpClientId=q7hekmkiuh&submodules=panorama"></script>
+            src="https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=q7hekmkiuh&submodules=panorama"></script>
 
     <script>
         let map;
@@ -171,7 +171,7 @@
                     return true;
                 });
 
-                if (hover) {
+                if (hover && hover.values_.poi_num) {
                     if (!ajaxInProgress && hovering !== hover.values_.poi_num) {
                         ajaxInProgress = true; // AJAX 요청 시작
 
@@ -761,49 +761,20 @@
                 )
             );
 
-            // console.log(`Requesting image for poi_num: ${poi.poi_num}`); // 값 출력
-
-
-            function moveToRoadView(poi) {
-
-                let naverMap = new naver.maps.Map('roadview', {
-                    center: new naver.maps.LatLng(37.5665, 126.9780),
-                    zoom: 10
-                });
-
-                let latitude = poi.lat;
-                let longitude = poi.lon;
-
-
-                let position = new naver.maps.LatLng(latitude, longitude);
-
-                let panorama = new naver.maps.Panorama({
-                    position: position,
-                    pov: {
-                        pan: -30,
-                        tilt: -10,
-                        fov: 120
-                    }
-                });
-
-                // 로드뷰를 지도에 추가합니다.
-                panorama.setMap(naverMap);
-            }
-
-
+            // poi 모달에서 대표사진이 있을 경우 추가하는 코드
             $.ajax({
                 url: `/pois/${poi.poi_num}`,
                 type: 'GET',
-                success: function (data) { //
-                    // console.log('성공은 일단 성공')
-                    if (data.file_name) { // 서버에서 받아온 데이터의 file_path 필드가 있는 경우
+                success: function (data) {
+                    // 서버에서 받아온 데이터가 정의되어 있고, file_name 프로퍼티가 있는 경우
+                    if (data && data.file_name) {
                         const imageUrl = `/uploads/${data.file_name}`; // 이미지 파일 경로
                         poiModalBody.append(
                             '<hr>',
                             $('<h6></h6>').text('대표사진').css('font-weight', 'bold'),
                             `<img src="${imageUrl}" alt="대표사진" style='width:100%; height:100%;'>`
                         );
-                    } else {  // 파일 경로가 없는 경우
+                    } else { // 데이터가 없거나 file_name 프로퍼티가 없는 경우
                         poiModalBody.append(
                             $('<div class="row"></div>').append(
                                 $('<div class="col-4 fw-bold"></div>').text('대표사진'),
@@ -813,7 +784,7 @@
                     }
                 },
                 error: function (jqXHR, textStatus, errorThrown) {
-                    // console.error('Error fetching image data:', textStatus, ', Details:', errorThrown);
+                    // 에러 발생 시도 등록된 사진이 없다고 표시
                     poiModalBody.append(
                         $('<div class="row"></div>').append(
                             $('<div class="col-4 fw-bold"></div>').text('대표사진'),
@@ -822,7 +793,44 @@
                     );
                 }
             });
+
             $('#poiModal').modal('show');
+        }
+
+        function moveToRoadView(poi) {
+
+            // let naverMap = new naver.maps.Map('roadview', {
+            //     center: new naver.maps.LatLng(37.5665, 126.9780),
+            //     zoom: 10
+            // });
+
+            let latitude = poi.lat;
+            let longitude = poi.lon;
+
+            let pano = new naver.maps.Panorama(document.getElementById("roadView"),
+                {
+                    position: new naver.maps.LatLng(poi.lat, poi.lon),
+                    size: new naver.maps.Size(screen.width - 143, screen.height - 111),
+                    pov: {
+                        pan: -135,
+                        tilt: 29,
+                        fov: 100
+                    }
+                });
+
+            // let position = new naver.maps.LatLng(latitude, longitude);
+            //
+            // let panorama = new naver.maps.Panorama({
+            //     position: position,
+            //     pov: {
+            //         pan: -30,
+            //         tilt: -10,
+            //         fov: 120
+            //     }
+            // });
+
+            // 로드뷰를 지도에 추가합니다.
+            panorama.setMap(naverMap);
         }
 
 
@@ -1455,11 +1463,31 @@
                 <tr><th scope="row">톨게이트 비용</th><td>${route.tollFare}</td></tr>
                 <tr><th scope="row">택시비용</th><td>${route.taxiFare}</td></tr>
                 <tr><th scope="row">연료 가격</th><td>${route.fuelPrice}</td></tr>
-                <tr><th scope="row">테스트 사진</th><td><img src="https://source.unsplash.com/random" alt="예시" style="width: 300px; height: 300px;"></td></tr>
+                <tr id="image-row"><th scope="row">등록 된 사진</th><td id="image-cell"></td></tr>
             </tbody>
         </table>`);
 
                                 $('#routeModalBody').append(table);
+
+                                $.ajax({
+                                    url: `/images/${route.route_id}`,
+                                    type: 'GET',
+                                    success: function (data) {
+                                        let imageElement;
+                                        if (data) { // 서버에서 받아온 데이터가 있는 경우
+                                            const imageUrl = `/uploads/${data}`; // 이미지 파일 경로
+                                            imageElement = `<img src="${imageUrl}" alt="등록 된 사진 사진" style='width:300px; height:300px;'>`;
+                                        } else {  // 데이터가 없는 경우
+                                            imageElement = "등록된 사진이 없습니다.";
+                                        }
+
+                                        $("#image-cell").html(imageElement);
+                                    },
+                                    error: function () {
+                                        $("#image-cell").html("등록된 사진이 없습니다.");
+                                    }
+                                });
+
                                 // 수정하기, 삭제하기 버튼 추가
                                 const modifyButton = $('<button class="btn btn-outline-primary mr-2">수정하기</button>');
                                 modifyButton.css('margin-right', '10px');
@@ -1471,7 +1499,7 @@
                                 const deleteButton = $('<button class="btn btn-outline-danger">삭제하기</button>');
 
                                 deleteButton.on('click', function () {
-                                    var confirmDelete = confirm("정말로 삭제하시겠습니까?");
+                                    let confirmDelete = confirm("정말로 삭제하시겠습니까?");
                                     if (confirmDelete) {
                                         $.ajax({
                                             url: '/routes/' + route.route_id,

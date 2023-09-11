@@ -20,11 +20,16 @@ public interface ImageMapper {
             "VALUES (#{route_id}, #{save_date}, #{file_name}, #{file_extention}, #{file_size}, #{file_path})")
     void insertImageByRouteId(Image image);
 
+    @Select("SELECT i.file_name " +
+            "FROM public.image i " +
+            "INNER JOIN public.route_save rs ON i.route_id = rs.route_id " +
+            "WHERE i.route_id = #{route_id} AND rs.user_id = #{user_id}")
+    String getImageFileNameByRouteIdAndUserId(@Param("route_id") int route_id, @Param("user_id") int user_id);
+
     @Select("SELECT public.poi_data.*, public.image.file_path AS image_path FROM public.poi_data LEFT JOIN public.image ON public.poi_data.user_id = public.image.user_id WHERE public.poi_data.user_id = #{user_id}")
     Image getImageByUserId(@Param("user_id") int user_id);
 
     @Select("SELECT public.image.file_name FROM public.image INNER JOIN public.poi_data ON public.image.poi_num = public.poi_data.poi_num")
     Image getImageByUserIdAndPoiName(@Param("poi_num") int user_id, @Param("poi_name") String poi_name);
-
 
 }
