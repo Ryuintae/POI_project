@@ -9,10 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.nio.file.Files;
@@ -54,7 +51,6 @@ public class ImageController {
 
             Image image = new Image();
             //image.setPoi_num(image.getPoi_num());
-            image.setSave_date(LocalDateTime.now());
             image.setFile_name(originalFilename);
             image.setFile_extention(fileExtension);
             image.setFile_size(fileSize);
@@ -125,5 +121,24 @@ public class ImageController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
+    @DeleteMapping("/{poi_num}")
+    public ResponseEntity<Void> deleteImageByPoiNum(@PathVariable("poi_num") int poi_num) {
+        try {
+            imageService.deleteImageByPoiNum(poi_num);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @DeleteMapping("/{route_id}")
+    public ResponseEntity<Void> deleteRouteById(@PathVariable("route_id") int route_id) {
+        try {
+            imageService.deleteRouteById(route_id);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }
 

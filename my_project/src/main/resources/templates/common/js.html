@@ -1092,17 +1092,22 @@
                                     form.on('submit', function (e) {
                                         e.preventDefault();
 
+                                        let formData = new FormData(this);
+
+
                                         $(this).attr('action', `/pois/${poi.poi_num}`);
                                         $.ajax({
                                             url: $(this).attr('action'),
                                             type: 'PUT',
-                                            data: $(this).serialize(),
+                                            data: formData,
                                             xhrFields: {
                                                 withCredentials: true
                                             },
-                                            headers: {
-                                                "Content-Type": "application/x-www-form-urlencoded"
-                                            },
+                                            contentType: false,
+                                            processData: false,
+                                            // headers: {
+                                            //     "Content-Type": "application/x-www-form-urlencoded"
+                                            // },
                                             success: function (response) {
                                                 console.log(response);
                                                 location.reload();
@@ -1355,7 +1360,7 @@
 
                     if (data.length === 0) { // 데이터가 없을 경우
                         let row = $('<tr>');
-                        let cell = $('<td>').text('등록된 정보가 없습니다!').attr('colspan', 4);
+                        let cell = $('<td>').text('등록된 정보가 없습니다!').attr('colspan', 6);
                         row.append(cell);
                         tbody.append(row);
                     } else { // 데이터가 있을 경우
@@ -1503,9 +1508,56 @@
                                 const modifyButton = $('<button class="btn btn-outline-primary mr-2">수정하기</button>');
                                 modifyButton.css('margin-right', '10px');
                                 modifyButton.on('click', function () {
-                                    // 수정 로직 구현
-                                });
+                                    // 현재 경로 정보를 입력 필드에 채워넣기
+                                    $('input[name="title"]').val(route.title);
+                                    $('input[name="explain"]').val(route.explain);
+                                    $('input[name="route"]').val(route.route);
+                                    $('input[name="start"]').val(route.start);
+                                    $('input[name="end_point"]').val(route.end_point);
+                                    $('input[name="waypoints"]').val(route.waypoints);
+                                    $('input[name="tollFare"]').val(route.tollFare);
+                                    $('input[name="taxiFare"]').val(route.taxiFare);
+                                    $('input[name="fuelPrice"]').val(route.fuelPrice);
 
+                                    // 모달 보이기
+                                    $('#routeSave').modal('show');
+
+                                    const form = $("#routeSave form");
+
+                                    if (form.length > 0) {
+                                        form.off('submit');
+
+                                        form.on('submit', function (e) {
+                                            e.preventDefault();
+
+                                            let formData = new FormData(this);
+                                            $(this).attr('action', `/routes/${route.route_id}`);
+
+                                            $.ajax({
+                                                url: $(this).attr('action'),
+                                                type: 'PUT',
+                                                data: formData,
+                                                xhrFields: {
+                                                    withCredentials: true
+                                                },
+                                                contentType: false,
+                                                processData: false,
+                                                success: function (response) {
+                                                    console.log(response);
+                                                    location.reload();
+                                                    alert("경로 업데이트를 성공하였습니다.")
+                                                },
+                                                error: function (error) {
+                                                    console.error(error);
+                                                    console.error('HTTP status code:', error.status);
+                                                    console.error('Status text:', error.statusText);
+                                                    console.error('Response text:', error.responseText);
+                                                    alert("경로 업데이트 오류");
+                                                }
+                                            });
+                                        });
+                                    }
+                                });
 
                                 const deleteButton = $('<button class="btn btn-outline-danger">삭제하기</button>');
 

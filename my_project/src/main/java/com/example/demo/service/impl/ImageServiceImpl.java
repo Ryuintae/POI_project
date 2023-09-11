@@ -36,6 +36,11 @@ public class ImageServiceImpl implements ImageService {
     }
 
     @Override
+    public Image getImageByRouteId(int route_id) {
+        return imageMapper.getImageByRouteId(route_id);
+    }
+
+    @Override
     public Image getImageByUserIdAndPoiName(int user_id, String poi_name) {
         return imageMapper.getImageByUserIdAndPoiName(user_id, poi_name);
     }
@@ -44,4 +49,16 @@ public class ImageServiceImpl implements ImageService {
     public String getImageFileNameByRouteIdAndUserId(int route_id, int user_id) {
         return imageMapper.getImageFileNameByRouteIdAndUserId(route_id, user_id);
     }
+
+    @Override
+    public void deleteImageByPoiNum(int poi_num) {
+        imageMapper.deleteImageByPoiNum(poi_num);
+    }
+
+    @Override
+    public void deleteRouteById(int route_id) {
+        imageMapper.deleteRouteById(route_id);
+
+    }
+
 }

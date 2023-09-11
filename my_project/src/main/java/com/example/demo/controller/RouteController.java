@@ -45,9 +45,7 @@ public class RouteController {
     }
 
     @PostMapping("/register")
-    public String registerRoute(@ModelAttribute Route route,
-                                @RequestParam(name = "file2", required = false) MultipartFile file,
-                                @AuthenticationPrincipal UserVo loggedInUser) throws Exception {
+    public String registerRoute(@ModelAttribute Route route, @RequestParam(name = "file2", required = false) MultipartFile file, @AuthenticationPrincipal UserVo loggedInUser) throws Exception {
         if (loggedInUser != null) {
             // 현재 로그인한 사용자의 user_id를 가져옴
             int user_id = loggedInUser.getUser_id();
@@ -59,9 +57,7 @@ public class RouteController {
             List<List<Double>> coordinates = mapper.readValue(route.getRoute(), new TypeReference<List<List<Double>>>() {
             });
 
-            String wkt = coordinates.stream()
-                    .map(coord -> coord.get(0) + " " + coord.get(1))
-                    .collect(Collectors.joining(", "));
+            String wkt = coordinates.stream().map(coord -> coord.get(0) + " " + coord.get(1)).collect(Collectors.joining(", "));
 
             wkt = "LINESTRING (" + wkt + ")";
 
@@ -87,7 +83,6 @@ public class RouteController {
                     System.out.println(route.getRoute_id());
 
                     image.setRoute_id(route.getRoute_id());   // Route id 값을 주입하는 부분
-                    image.setSave_date(LocalDateTime.now());
                     image.setFile_name(originalFilename);
                     image.setFile_extention(fileExtention);
                     image.setFile_size(fileSize);
@@ -128,5 +123,76 @@ public class RouteController {
         }
         return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
     }
+
+    @PutMapping("/{route_id}")
+    public @ResponseBody ResponseEntity<Void> updateRoute
+            (@AuthenticationPrincipal UserVo loggedInUser, @PathVariable("route_id") int route_id,
+             @RequestParam("title") String title, @RequestParam("explain") String explain,
+             @RequestParam(name = "file2", required = false) MultipartFile file) {
+
+        if (loggedInUser == null) return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+
+        int user_id = loggedInUser.getUser_id();
+
+        // Route 객체 생성 및 필드 설정
+        Route route = new Route();
+        route.setTitle(title);
+        route.setExplain(explain);
+        System.out.println("title!!!!!!!!!!!!!!!!!" + title);
+        System.out.println("explain@@@@@@@@@@" + explain);
+
+        route.setUser_id(user_id);
+        route.setRoute_id(route_id);
+
+        System.out.println("user_id!!!!!!!!!!!!!!!!!" + user_id);
+        System.out.println("route_id@@@@@@@@@@" + route_id);
+
+        if (user_id != route.getUser_id()) throw new RuntimeException("해당 유저의 경로가 아닙니다.");
+
+        try {
+            this.routeService.updateRoute(route);
+            try {
+                if (file != null && !file.isEmpty()) {
+
+                    // 기존 이미지가 있으면 삭제.
+                    Image oldImage = imageService.getImageByRouteId(route.getRoute_id());
+                    if (oldImage != null) {
+                        imageService.deleteRouteById(route.getRoute_id());
+                    }
+
+                    String originalFilename = file.getOriginalFilename();
+                    String fileExtention = originalFilename.substring(originalFilename.lastIndexOf(".") + 1);
+                    long fileSize = file.getSize();
+
+                    // 파일을 저장할 경로를 Path 객체로 생성
+                    Path path = Paths.get(uploadPath + "/" + originalFilename);
+
+                    // 파일을 저장하는 로직
+                    Files.write(path, file.getBytes());
+
+                    Image image = new Image();
+                    image.setRoute_id(route.getRoute_id());// route_Id 을 주입하는 부분
+                    image.setFile_name(originalFilename);
+                    image.setFile_extention(fileExtention);
+                    image.setFile_size(fileSize);
+                    image.setFile_path(uploadPath + "/" + originalFilename);
+
+                    // 이미지 정보 DB에 삽입
+                    this.imageService.insertImageByRouteId(image);
+                } else {
+                    // 클라이언트가 새로운 파일을 제공하지 않은 경우 기존의 이미지는 그대로 유지됩니다.
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+                return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+
 }
 

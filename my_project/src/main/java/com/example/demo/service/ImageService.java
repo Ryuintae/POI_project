@@ -14,6 +14,12 @@ public interface ImageService {
 
     Image getImageByPoiNum(int poi_num);
 
+    Image getImageByRouteId(int route_id);
+
     String getImageFileNameByRouteIdAndUserId(int route_id, int user_id);
+
+    void deleteImageByPoiNum(int poi_num);
+
+    void deleteRouteById(int route_id);
 
 }

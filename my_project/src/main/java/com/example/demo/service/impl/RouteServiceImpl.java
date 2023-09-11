@@ -24,8 +24,8 @@ public class RouteServiceImpl implements RouteService {
     }
 
     @Override
-    public void updateRoute(int user_id, Route route) {
-        routeMapper.updateRoute(user_id, route);
+    public void updateRoute(Route route) {
+        routeMapper.updateRoute(route);
     }
 
     @Override

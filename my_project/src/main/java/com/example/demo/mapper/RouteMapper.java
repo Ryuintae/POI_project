@@ -16,8 +16,9 @@ public interface RouteMapper {
 
 
     // user_id에 해당하고 route_id 가 일치한 데이터 업데이트
-    @Update("UPDATE public.route_save SET title = #{title}, explain = #{explain}, route = ST_GeomFromText(#{route}), start=#{start} , end=#{end} , waypoints=#{waypoints} , tollFare=#{tollFare} , taxiFare=#{taxiFare} , fuelPrice=#{fuelPrice} WHERE route_id = #{route_id} AND user_id=#{user_id}")
-    void updateRoute(@Param("user_id") int user_id, @Param("route") Route route);
+    @Update("UPDATE public.route_save SET title = #{title}, explain = #{explain} WHERE route_id = #{route_id} AND user_id=#{user_id}")
+    void updateRoute(Route route);
+
 
     // user_id에 해당하고 route_id 가 일치한 데이터 삭제
     @Delete("DELETE FROM public.route_save WHERE route_id = #{route_id} AND user_id = #{user_id}")

@@ -64,7 +64,6 @@ public class PoiController {
 
                     Image image = new Image();
                     image.setPoi_num(poi.getPoi_num());// poi_num 을 주입하는 부분
-                    image.setSave_date(LocalDateTime.now());
                     image.setFile_name(originalFilename);
                     image.setFile_extention(fileExtention);
                     image.setFile_size(fileSize);
@@ -137,6 +136,7 @@ public class PoiController {
             @RequestParam("address") String address,
             @RequestParam("lon") double lon,
             @RequestParam("lat") double lat,
+            @RequestParam(name = "file", required = false) MultipartFile file,
             @RequestParam("category_code") int category_code,
             @RequestParam("zip_code") int zip_code) {
 
@@ -174,9 +174,48 @@ public class PoiController {
             throw new RuntimeException("해당 유저의 POI가 아닙니다.");
 
         try {
-            System.out.println(poi_num);
-            System.out.println(poi.getUser_id());
             this.poiService.updateByUserIdAndPoiNum(poi);
+            try {
+                System.out.println("기존 이미지 없음!!!!!!!!!!");
+                System.out.println(poi.getPoi_num());
+
+                if (file != null && !file.isEmpty()) {
+                    System.out.println("기존 이미지 있음!!!!!!!!");
+                    // 기존 이미지가 있으면 삭제.
+                    Image oldImage = imageService.getImageByPoiNum(poi.getPoi_num());
+                    if (oldImage != null) {
+                        //Path oldImagePath = Paths.get(oldImage.getFile_path());
+                        //Files.deleteIfExists(oldImagePath); // 기존 이미지 파일 삭제
+                        imageService.deleteImageByPoiNum(poi.getPoi_num());
+                    }
+
+                    String originalFilename = file.getOriginalFilename();
+                    System.out.println(file.getOriginalFilename());
+                    String fileExtention = originalFilename.substring(originalFilename.lastIndexOf(".") + 1);
+                    long fileSize = file.getSize();
+
+                    // 파일을 저장할 경로를 Path 객체로 생성
+                    Path path = Paths.get(uploadPath + "/" + originalFilename);
+
+                    // 파일을 저장하는 로직
+                    Files.write(path, file.getBytes());
+
+                    Image image = new Image();
+                    image.setPoi_num(poi.getPoi_num());// poi_num 을 주입하는 부분
+                    image.setFile_name(originalFilename);
+                    image.setFile_extention(fileExtention);
+                    image.setFile_size(fileSize);
+                    image.setFile_path(uploadPath + "/" + originalFilename);
+                    imageService.insertImageInfo(image);
+
+                } else {
+                    // 클라이언트가 새로운 파일을 제공하지 않은 경우
+                    // 아무런 작업도 수행하지 않으므로, 기존의 이미지는 그대로 유지됩니다.
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+                return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            }
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (Exception e) {
             e.printStackTrace();

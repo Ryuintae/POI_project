@@ -2,7 +2,6 @@ package com.example.demo.dto;
 
 import lombok.*;
 
-import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -14,7 +13,6 @@ public class Image {
     //private int user_id;
     private int route_id;
     private int poi_num;
-    private LocalDateTime save_date;
     private String file_name;
     private String file_extention;
     private Long file_size;
