@@ -401,30 +401,41 @@
         });
 
         function showPois() {
-            // AJAX 요청을 이용하여 서버로부터 POI 데이터를 비동기적으로 요청합니다.
             $.ajax({
-                type: "GET", // HTTP GET 요청 메서드를 사용합니다.
-                url: "/poi", // 요청할 URL 주소입니다.
-                success: function (data) { // 성공적인 요청 시의 콜백 함수입니다.
-                    let features = []; // 배열을 생성합니다.
-                    // POI 데이터 배열에 대해 반복합니다.
+                type: "GET",
+                url: "/poi",
+                success: function (data) {
+                    let features = [];
+                    // 현재 지도의 화면 영역
+                    let mapViewExtent = map.getView().calculateExtent(map.getSize());
                     data.forEach(function (poi) {
-                        let feature = new ol.Feature({ // 새로운 Feature 객체를 만듭니다.
-                            // POI의 좌표를 이용하여 새로운 Point 객체를 생성합니다.
-                            geometry: new ol.geom.Point(ol.proj.fromLonLat([poi.lon, poi.lat])),
-                            // POI 이름을 갖는 속성 값을 추가합니다.
-                            name: poi.poi_name,
-                            id: poi.poi_num
-                        });
-                        features.push(feature); // 생성한 Feature 객체를 배열에 추가합니다.
+                        // POI의 좌표를 OpenLayers 좌표로 변환
+                        let lonLat = ol.proj.fromLonLat([poi.lon, poi.lat]);
+
+                        // 현재 지도 화면 영역에 해당 좌표가 포함되는지 확인
+                        if (ol.extent.containsCoordinate(mapViewExtent, lonLat)) {
+                            let feature = new ol.Feature({
+                                geometry: new ol.geom.Point(lonLat),
+                                name: poi.poi_name,
+                                poi_num: poi.poi_num
+                            });
+                            features.push(feature);
+                        }
                     });
-                    addMarkersToMap(features); // addMarkersToMap 함수에 Feature 배열을 넘겨 마커를 추가합니다.
+
+                    // 이전 마커들을 제거하기 위해 categoryMarkerSource의 clear() 호출
+                    if (categoryMarkerSource) {
+                        categoryMarkerSource.clear();
+                    }
+
+                    addMarkersToMap(features);
                 },
-                error: function (jqXHR, textStatus, errorThrown) { // 요청이 실패한 경우의 콜백 함수입니다.
+                error: function (jqXHR, textStatus, errorThrown) {
                     console.error("Failed to load POIs: " + textStatus + " " + errorThrown);
                 }
             });
         }
+
 
         // ================ 조인 함수 ==================
         function showLPois(lclascd) {

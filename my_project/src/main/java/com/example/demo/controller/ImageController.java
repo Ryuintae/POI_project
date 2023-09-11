@@ -122,7 +122,7 @@ public class ImageController {
             }
         }
 
-        return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
 }
