@@ -19,4 +19,7 @@ public interface PoiService {
 
     void updateByUserIdAndPoiNum(Poi poi);
 
+    //    ========================================================
+    List<Poi> getAllUserPois();
+
 }

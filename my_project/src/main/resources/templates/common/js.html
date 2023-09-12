@@ -647,11 +647,36 @@
                 success: function (data) {
                     const poiList = $('#poi-list');
                     poiList.empty();
+
+                    moveSource.clear();
+
                     $.each(data, function (index, poi) {
                         const itemContainer = $('<div>').addClass('poi-item');
 
                         const poiInfo = $('<span>').text(`${poi.poi_name} `);
                         itemContainer.append(poiInfo);
+
+                        console.log(poi.lon);
+                        console.log(poi.lat);
+
+                        const coords = ol.proj.fromLonLat([poi.lon, poi.lat]);
+
+                        // POI 마커 추가
+                        const markerFeature = new ol.Feature({
+                            geometry: new ol.geom.Point(coords),
+                            poi_num: poi.poi_num
+                        });
+
+                        markerFeature.setStyle(searchMaker);
+                        moveSource.addFeature(markerFeature);
+
+                        // 마커 레이어 생성 및 추가
+                        markerLayer = new ol.layer.Vector({
+                            source: moveSource,
+                            style: searchMaker
+                        });
+
+                        map.addLayer(markerLayer);
 
                         itemContainer.append(
                             $('<button>')
@@ -1477,7 +1502,7 @@
                                 $('#routeModalLabel').html(`${route.title}`);
                                 $('#routeModalBody').empty();
                                 const saveTime = new Date(route.save_time);
-                                const formattedSaveTime = `${saveTime.getFullYear()}-${saveTime.getMonth()+1}-${saveTime.getDate()} ${saveTime.getHours()}:${saveTime.getMinutes()}:${saveTime.getSeconds()}`;
+                                const formattedSaveTime = `${saveTime.getFullYear()}-${saveTime.getMonth() + 1}-${saveTime.getDate()} ${saveTime.getHours()}:${saveTime.getMinutes()}:${saveTime.getSeconds()}`;
 
                                 const table = $(`
         <table class="table">
@@ -1691,6 +1716,8 @@
         if (message) {
             alert(message);
         }
+        //     ==============================================================================================
+
     </script>
 </head>
 </html>

@@ -34,4 +34,10 @@ public interface PoiMapper {
     @Update("UPDATE public.poi_data SET poi_name=#{poi_name},  tel_no=#{tel_no}, iclas=#{iclas}, mlsfc=#{mlsfc}, sclas=#{sclas}, dclas=#{dclas}, memo=#{memo}, address=#{address} ,zip_code=#{zip_code} ,lon=#{lon}, lat=#{lat},   category_code=#{category_code} WHERE poi_num=#{poi_num} AND user_id=#{user_id};")
     void updateByUserIdAndPoiNum(Poi poi);
 
+    // ====================================================================
+
+    // 모든 사용자가 등록한 POI 정보 조회 (관리자용)
+    @Select("SELECT * FROM public.poi_data WHERE user_id IS NOT NULL;")
+    List<Poi> findAllUserPoisForAdmin();
+
 }

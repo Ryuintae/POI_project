@@ -50,4 +50,10 @@ public class PoiServiceImpl implements PoiService {
     public void updateByUserIdAndPoiNum(Poi poi) {
         this.poiMapper.updateByUserIdAndPoiNum(poi);
     }
+
+    //    =========================================================
+    @Override
+    public List<Poi> getAllUserPois() {
+        return poiMapper.findAllUserPoisForAdmin();
+    }
 }

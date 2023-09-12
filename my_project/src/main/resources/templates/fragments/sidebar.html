@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
 <head>
     <script src="https://use.fontawesome.com/releases/v5.2.0/js/all.js"></script>
     <title>sideBar</title>
@@ -57,6 +57,8 @@
                 <button class="btn btn-outline-danger d-block text-start my-1" type="button" data-bs-toggle="modal"
                         th:data-bs-target="'#'">로그 아웃
                 </button>
+
+
             </div>
         </div>
     </div>
@@ -408,6 +410,13 @@
             <h5 class="offcanvas-title" style="margin-right: 20px" id="placeSearchLabel">장소 검색</h5>
             <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
         </div>
+<!-- 이 부분 실패 -->
+<!--        <div sec:authorize="hasRole('ADMIN')">-->
+<!--            <button id="modifyAllUserPoisButton" class="btn btn-outline-danger d-block text-start my-1"-->
+<!--                    type="button" data-bs-toggle="modal"-->
+<!--                    th:data-bs-target="'#'"> 모든 유저 장소 수정-->
+<!--            </button>-->
+<!--        </div>-->
         <hr>
 
         <!-- 사이드바 안에서 검색창 -->
