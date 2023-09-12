@@ -54,10 +54,10 @@ public class RouteController {
 
             // 'route' 필드의 좌표 데이터를 WKT 형식의 문자열로 변환
             ObjectMapper mapper = new ObjectMapper();
-            List<List<Double>> coordinates = mapper.readValue(route.getRoute(), new TypeReference<List<List<Double>>>() {
+            List<List<Double>> routeCoordinates = mapper.readValue(route.getRoute(), new TypeReference<List<List<Double>>>() {
             });
 
-            String wkt = coordinates.stream().map(coord -> coord.get(0) + " " + coord.get(1)).collect(Collectors.joining(", "));
+            String wkt = routeCoordinates.stream().map(coord -> coord.get(0) + " " + coord.get(1)).collect(Collectors.joining(", "));
 
             wkt = "LINESTRING (" + wkt + ")";
 
@@ -186,6 +186,7 @@ public class RouteController {
                 e.printStackTrace();
                 return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
             }
+
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (Exception e) {
             e.printStackTrace();

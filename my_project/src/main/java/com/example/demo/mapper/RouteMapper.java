@@ -9,7 +9,7 @@ import java.util.List;
 public interface RouteMapper {
 
     // user_id 를 컨트롤러에서 넣어주고 경로 등록
-    @Insert("INSERT INTO public.route_save(user_id, title, explain, route, start, end_point, waypoints, tollFare, taxiFare, fuelPrice) VALUES(#{user_id}, #{title}, #{explain}, ST_GeomFromText(#{route}), #{start}, #{end_point}, #{waypoints}, #{tollFare}, #{taxiFare}, #{fuelPrice})")
+    @Insert("INSERT INTO public.route_save(user_id, title, explain, route, start, end_point, waypoints, tollFare, taxiFare, fuelPrice) VALUES(#{user_id}, #{title}, #{explain}, ST_SetSRID(ST_GeomFromText(#{route}), 4326), #{start}, #{end_point}, #{waypoints}, #{tollFare}, #{taxiFare}, #{fuelPrice})")
     @Options(useGeneratedKeys = true, keyProperty = "route_id,save_time", keyColumn = "route_id,save_time")
     // 키를 2개를 지정해줌
     void registerRoute(Route route);
