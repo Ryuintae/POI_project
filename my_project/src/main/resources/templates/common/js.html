@@ -1238,7 +1238,7 @@
                     for (let i = 0; i < path.length; i++) {
                         let point = ol.proj.fromLonLat([path[i][0], path[i][1]]);
                         coordinates.push(point);
-                        routeCoordinates.push(path[0]);
+                        routeCoordinates.push([path[i][0], path[i][1]]);
                         console.log([path[i][0], path[i][1]])
                     }
 
@@ -1399,7 +1399,7 @@
                                         if ((pointLonLatFloats[0] === start[0] && pointLonLatFloats[1] === start[1]) ||
                                             (pointLonLatFloats[0] === end[0] && pointLonLatFloats[1] === end[1])) continue;
 
-                                        let transformedWaypointCoords = ol.proj.fromLonlat(pointLonLatFloats);
+                                        let transformedWaypointCoords = new ol.proj.fromLonLat(pointLonLatFloats);
                                         console.log("변환된값" + transformedWaypointCoords);
 
                                         let waypointFeature = new ol.Feature(new ol.geom.Point(transformedWaypointCoords));

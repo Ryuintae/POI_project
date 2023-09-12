@@ -20,4 +20,5 @@ public interface UserService extends UserDetailsService {
 
     boolean isEmailUnique(String user_email);
 
+    void createAdminUser();
 }

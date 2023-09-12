@@ -31,6 +31,24 @@ public class UserServiceImpl implements UserService {
     }
 
     @Transactional
+    public void createAdminUser() {
+        UserVo admin = new UserVo();
+        admin.setUser_name("admin");
+        admin.setUser_age(30);
+        admin.setUser_email("admin@test.com");
+
+        String hashedPassword = passwordEncoder().encode("password");
+
+        admin.setUser_password(hashedPassword);
+
+        admin.setUser_phone("010-1234-5678");
+
+        admin.setUser_auth("ADMIN");
+
+        userMapper.saveUser(admin);
+    }
+
+    @Transactional
     public void joinUser(UserVo userVo) {
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         userVo.setUser_password(passwordEncoder.encode(userVo.getPassword()));

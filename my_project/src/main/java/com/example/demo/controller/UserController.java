@@ -28,6 +28,12 @@ public class UserController {
         this.imageService = imageService;
     }
 
+    @GetMapping("/createAdmin")
+    public String createAdmin() {
+        userService.createAdminUser();
+        return "/"; // 관리자 계정이 성공적으로 생성된 후 보여줄 페이지입니다.
+    }
+
     @GetMapping("/users")
     @ResponseBody
     public List<UserVo> getUsers() {
