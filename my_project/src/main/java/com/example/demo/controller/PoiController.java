@@ -228,17 +228,17 @@ public class PoiController {
     }
 
     //    ====================================================================
-    //@GetMapping("/list")
-    //@PreAuthorize("hasAuthority('ADMIN')")
-    //public String getPois(Model model) {
-    //    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    //    UserVo loggedInUser = (UserVo) authentication.getPrincipal();
-    //
-    //    model.addAttribute("loggedInUser", loggedInUser);
-    //
-    //    List<Poi> pois = poiService.getAllUserPois();
-    //    model.addAttribute("pois", pois);
-    //
-    //    return "poi-list";
-    //}
+    @GetMapping("/list")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public String getPois(Model model) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserVo loggedInUser = (UserVo) authentication.getPrincipal();
+
+        model.addAttribute("loggedInUser", loggedInUser);
+
+        List<Poi> pois = poiService.getAllUserPois();
+        model.addAttribute("pois", pois);
+
+        return "poi-list";
+    }
 }

@@ -57,7 +57,7 @@
     <button type="button" id="search" class="custom-btn btn-12"><span>클릭!</span><span>검색하기</span></button>
 </div>
 
-<div class="collapse" id="category_search_toggle">
+<div class="d-none" id="category_search_toggle">
     <div class="category_search">
         <div class="form-group">
             <label for="lclascd" id="lclascd-label">대분류:</label>
@@ -81,6 +81,7 @@
             <label for="bclascd" id="bclascd-label">브랜드 분류:</label>
             <select class="form-select" id="bclascd"></select>
         </div>
+        <button type='button' class="btn btn-outline-info" id='resetButton' style="margin-right: 110px;">초기화</button>
     </div>
 </div>
 
@@ -144,6 +145,10 @@
             } else {
                 showDPois(lclascd, mlsfccd, sclascd, dclascd);
             }
+        });
+        // 초기화 버튼
+        $('#resetButton').click(function () {
+            $('select.form-select').prop('selectedIndex', 0); // 모든 select 박스를 첫 번째 옵션으로 설정
         });
     });
 

@@ -411,12 +411,12 @@
             <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
         </div>
 <!-- 이 부분 실패 -->
-<!--        <div sec:authorize="hasRole('ADMIN')">-->
-<!--            <button id="modifyAllUserPoisButton" class="btn btn-outline-danger d-block text-start my-1"-->
-<!--                    type="button" data-bs-toggle="modal"-->
-<!--                    th:data-bs-target="'#'"> 모든 유저 장소 수정-->
-<!--            </button>-->
-<!--        </div>-->
+        <div sec:authorize="hasRole('ADMIN')">
+            <button id="modifyAllUserPoisButton" class="btn btn-outline-danger d-block text-start my-1"
+                    type="button" data-bs-toggle="modal"
+                    th:data-bs-target="'#'"> 모든 유저 장소 수정
+            </button>
+        </div>
         <hr>
 
         <!-- 사이드바 안에서 검색창 -->

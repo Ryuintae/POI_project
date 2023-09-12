@@ -1456,6 +1456,7 @@
 
                                 routeSaveSource.addFeatures([startFeature, endFeature]);
 
+
                                 // 새로운 벡터 레이어 생성하고 지도에 추가
                                 routeSaveLayer = new ol.layer.Vector({
                                     source: routeSaveSource,
@@ -1492,6 +1493,12 @@
 
                                 map.addLayer(routeSaveLayer);
 
+                                const lastCoords = coordinates[coordinates.length - 1];
+
+                                map.getView().animate({center: lastCoords, zoom: 19});
+
+                                $('#poiModal').modal('hide');
+                                $('#placeSearch').offcanvas('hide');
                             });
 
                             const detailButton = $('<button class="btn btn-outline-primary mr-2" style="width: max-content">상세보기</button>');
@@ -1698,13 +1705,28 @@
             }
         });
         // 장소 검색 버튼 클릭 시 모달 열기
-        // 열리고 실행 되도록 하려고 했으나 그래도 딜레이 생김
-        // $('#placeSearchButton').on('shown.bs.offcanvas', function () {
-        //     $('#category_search_toggle').collapse('toggle');
-        // });
-        $('#placeSearchButton').click(function () {
+
+        // 사이드 바가 열리고 실행 되도록 하려고 했으나 그래도 딜레이 생김
+        $('#placeSearchButton').on('shown.bs.offcanvas', function () {
             $('#category_search_toggle').collapse('toggle');
         });
+
+        // 딜레이를 줬지만 적용이 안됨
+        $('#placeSearchButton').click(function () {
+            $('#category_search_toggle').collapse('show', {
+                duration: 7000
+            });
+        });
+
+        $('#placeSearchButton').click(function () {
+            // $('#category_search_toggle').collapse('toggle');
+            if($('#category_search_toggle').hasClass("d-none")) {
+                $('#category_search_toggle').removeClass("d-none")
+            }else {
+                $('#category_search_toggle').addClass("d-none")
+            }
+        });
+
         $('#placeSearch').on('hide.bs.offcanvas', function () {
             $('#category_search_toggle').collapse('hide');
         });
