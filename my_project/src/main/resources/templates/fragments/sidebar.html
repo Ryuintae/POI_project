@@ -307,7 +307,21 @@
             </div>
         </div>
     </div>
-
+    <!-- 경로 상세정보 모달 컴포넌트 -->
+    <div class="modal fade" id="routeModal" tabindex="-1" aria-labelledby="routeModalLabel" aria-hidden="true"
+         data-bs-backdrop="false">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="routeModalLabel">상세정보</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="routeModalBody">
+                    <!--상세정보 입력-->
+                </div>
+            </div>
+        </div>
+    </div>
     <!-- 경로 저장 Modal -->
     <div class="container">
         <div class="modal fade" id="routeSave" tabindex="-1" aria-labelledby="routeSaveLabel" aria-hidden="true">
@@ -474,21 +488,7 @@
         </div>
     </div>
 
-    <!-- 경로 상세정보 모달 컴포넌트 -->
-    <div class="modal fade" id="routeModal" tabindex="-1" aria-labelledby="routeModalLabel" aria-hidden="true"
-         data-bs-backdrop="false">
-        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="routeModalLabel">상세정보</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body" id="routeModalBody">
-                    <!--상세정보 입력-->
-                </div>
-            </div>
-        </div>
-    </div>
+
 </th:block>
 </body>
 </html>
