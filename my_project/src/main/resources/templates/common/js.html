@@ -1397,7 +1397,9 @@
                                 if (markerLayer) {
                                     markerLayer.getSource().clear();
                                 }
-
+                                if (routeSaveLayer) {
+                                    routeSaveLayer.getSource().clear();
+                                }
                                 let pathStr = route.route.slice(11, -1); // 괄호와 LINESTRING 문자 제거
                                 let pathArr = pathStr.split(','); // 쉼표 기준으로 분리
 
@@ -1492,13 +1494,12 @@
                                 });
 
                                 map.addLayer(routeSaveLayer);
+                                let extent = routeSaveSource.getExtent();
 
-                                const lastCoords = coordinates[coordinates.length - 1];
+                                map.getView().fit(extent, {padding: [50, 50, 50, 50], duration: 1000});
 
-                                map.getView().animate({center: lastCoords, zoom: 19});
 
-                                $('#poiModal').modal('hide');
-                                $('#placeSearch').offcanvas('hide');
+                                $('#pathCheck').modal('hide');
                             });
 
                             const detailButton = $('<button class="btn btn-outline-primary mr-2" style="width: max-content">상세보기</button>');
@@ -1720,9 +1721,9 @@
 
         $('#placeSearchButton').click(function () {
             // $('#category_search_toggle').collapse('toggle');
-            if($('#category_search_toggle').hasClass("d-none")) {
+            if ($('#category_search_toggle').hasClass("d-none")) {
                 $('#category_search_toggle').removeClass("d-none")
-            }else {
+            } else {
                 $('#category_search_toggle').addClass("d-none")
             }
         });
