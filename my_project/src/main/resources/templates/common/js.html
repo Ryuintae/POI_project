@@ -60,6 +60,9 @@
         let routeLayer;
         let routeSource
 
+        let routeSaveLayer
+        let routeSaveSource
+
         function init() {
             routeSource = new ol.source.Vector();
             routeLayer = new ol.layer.Vector({
@@ -581,15 +584,12 @@
         }
 
         function clearMarkersFromMap() {
-            // 마커 레이어가 있는지 확인하고 있으면 제거합니다.
             if (markerLayer) {
                 map.removeLayer(markerLayer);
             }
 
-            // 기존의 features 배열을 초기화합니다.
             features = [];
 
-            // 마커 레이어를 새로 생성하지 않고 기존 레이어의 소스에 빈 feature 배열을 적용하여 마커를 지웁니다.
             if (markerSource) {
                 markerSource.clear();
             }
@@ -1206,6 +1206,8 @@
 
             console.log("시이작" + start);
             console.log(end);
+            console.log("경유지@@@@" + waypoints);
+
 
             let data = waypoints ? {
                 start: start,
@@ -1335,7 +1337,8 @@
                     $("input[name='tollFare']").val(routeInfo.tollFare + " 원");
                     $("input[name='taxiFare']").val(routeInfo.taxiFare + " 원");
                     $("input[name='fuelPrice']").val(routeInfo.fuelPrice + " 원");
-
+                    //  경유지 좌표값 입력하는 부분
+                    $("input[name='waypoints_route']").val(routeInfo.waypoints[0].location);
                     // $('#roadResult').append("<div class='d-flex justify-content-end'><button type='button' class='btn btn-primary'>경로 저장</button></div>");
                 },
                 error: function (error) {
@@ -1365,6 +1368,11 @@
                             const viewRouteButton = $('<button class="btn btn-outline-info mr-2" style="width: max-content">경로 보기</button>');
 
                             viewRouteButton.on('click', function () {
+                                // 기존 마커 레이어 삭제
+                                if (markerLayer) {
+                                    markerLayer.getSource().clear();
+                                }
+
                                 let pathStr = route.route.slice(11, -1); // 괄호와 LINESTRING 문자 제거
                                 let pathArr = pathStr.split(','); // 쉼표 기준으로 분리
 
@@ -1379,27 +1387,31 @@
                                 let transformedCoordinates = coordinates.map(coord => ol.proj.fromLonLat(coord));
 
                                 let asdf = new ol.geom.LineString(transformedCoordinates);
-                                let routeSaveSource = new ol.source.Vector();
+                                routeSaveSource = new ol.source.Vector();
                                 let lineFeature = new ol.Feature(asdf);
                                 routeSaveSource.addFeature(lineFeature);
                                 console.log("라인스트링@@@@@" + transformedCoordinates);
 
                                 let start = coordinates[0];
                                 let end = coordinates[coordinates.length - 1];
+                                console.log("route.waypoints_route@@@@@" + route.waypoints_route);
 
-                                if (route.route) {
-                                    let waypointsStr = route.route.slice(11, -1); // 괄호와 LINESTRING 문자 제거
+                                if (route.waypoints_route) {
+                                    let waypointsStr = route.waypoints_route; // waypoints_route 사용
                                     let waypointsArr = waypointsStr.split(','); // 쉼표 기준으로 분리
 
-                                    for (let i = 0; i < waypointsArr.length; i++) {
-                                        let lonLatStrs = waypointsArr[i].trim().split(' '); // 공백 기준으로 분리하여 위도와 경도 구분
-                                        // console.log(lonLatStrs)
-                                        let pointLonLatFloats = lonLatStrs.map(coord => parseFloat(coord)); // 문자열을 숫자로 변환
+                                    console.log("waypointsStr@@@@@" + waypointsStr);
+                                    console.log("waypointsArr@@@@@" + waypointsArr);
+
+
+                                    for (let i = 0; i < waypointsArr.length; i += 2) { // 위도와 경도는 쌍으로 이루어져 있으므로 2씩 증가
+                                        let lonLatStrs = [waypointsArr[i], waypointsArr[i + 1]];
+                                        let pointLonLatFloats = lonLatStrs.map(coord => parseFloat(coord));
 
                                         if ((pointLonLatFloats[0] === start[0] && pointLonLatFloats[1] === start[1]) ||
                                             (pointLonLatFloats[0] === end[0] && pointLonLatFloats[1] === end[1])) continue;
 
-                                        let transformedWaypointCoords = new ol.proj.fromLonLat(pointLonLatFloats);
+                                        let transformedWaypointCoords = ol.proj.fromLonLat(pointLonLatFloats);
                                         console.log("변환된값" + transformedWaypointCoords);
 
                                         let waypointFeature = new ol.Feature(new ol.geom.Point(transformedWaypointCoords));
@@ -1420,12 +1432,12 @@
                                 routeSaveSource.addFeatures([startFeature, endFeature]);
 
                                 // 새로운 벡터 레이어 생성하고 지도에 추가
-                                let routeSaveLayer = new ol.layer.Vector({
+                                routeSaveLayer = new ol.layer.Vector({
                                     source: routeSaveSource,
                                     style: function (feature) {
                                         if (feature.getGeometry() instanceof ol.geom.LineString) {
                                             return new ol.style.Style({
-                                                stroke: new ol.style.Stroke({color: 'red', width: 2})
+                                                stroke: new ol.style.Stroke({color: 'blue', width: 2})
                                             });
                                         } else {
                                             let imgSrc;

@@ -17,6 +17,7 @@ public class Route {
     private String title;
     private String explain;
     private String route;
+    private String waypoints_route;
     private String start;
     private String end_point;
     private String waypoints;
