@@ -19,6 +19,10 @@ public interface PoiService {
 
     void updateByUserIdAndPoiNum(Poi poi);
 
+
+    List<Poi> findByNameAndCategory(String poi_name, Integer lclascd, Integer mlsfccd, Integer sclascd, Integer dclascd, Integer bclascd);
+
+
     //    ========================================================
     List<Poi> getAllUserPois();
 

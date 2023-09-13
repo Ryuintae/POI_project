@@ -89,11 +89,33 @@ public class PoiController {
         return poiService.findAll();
     }
 
+    //@GetMapping("/poi/search")
+    //@ResponseBody
+    //public List<Poi> searchByName(
+    //        @RequestParam("name") String poiName,
+    //        @RequestParam(value = "lclascd", required = false) String lclascd,
+    //        @RequestParam(value = "mlsfccd", required = false) String mlsfccd,
+    //        @RequestParam(value = "sclascd", required = false) String sclascd
+    //) {
+    //    System.out.println("@@@@@@@");
+    //    System.out.println(lclascd);
+    //    System.out.println(mlsfccd);
+    //    return poiService.findByName(poiName);
+    //}
+
     @GetMapping("/poi/search")
     @ResponseBody
-    public List<Poi> searchByName(@RequestParam("name") String poiName) {
-        return poiService.findByName(poiName);
+    public List<Poi> searchByNameAndCategory(
+            @RequestParam("name") String poiName,
+            @RequestParam(value = "lclascd", required = false) Integer lclascd,
+            @RequestParam(value = "mlsfccd", required = false) Integer mlsfccd,
+            @RequestParam(value = "sclascd", required = false) Integer sclascd,
+            @RequestParam(value = "dclascd", required = false) Integer dclascd,
+            @RequestParam(value = "bclascd", required = false) Integer bclascd
+    ) {
+        return poiService.findByNameAndCategory(poiName, lclascd, mlsfccd, sclascd, dclascd, bclascd);
     }
+
 
     @GetMapping("/poi/hover")
     @ResponseBody
@@ -229,8 +251,8 @@ public class PoiController {
 
     //    ====================================================================
     @GetMapping("/list")
-    @PreAuthorize("hasAuthority('ADMIN')")
-    public String getPois(Model model) {
+    @ResponseBody
+    public List<Poi> getPois(Model model) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserVo loggedInUser = (UserVo) authentication.getPrincipal();
 
@@ -239,6 +261,6 @@ public class PoiController {
         List<Poi> pois = poiService.getAllUserPois();
         model.addAttribute("pois", pois);
 
-        return "poi-list";
+        return pois;
     }
 }

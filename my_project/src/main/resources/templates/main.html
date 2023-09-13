@@ -62,7 +62,7 @@
         <div class="form-group">
             <label for="lclascd" id="lclascd-label">대분류:</label>
             <select class="form-select" id="lclascd">
-                <option selected disabled>대분류명을 선택하세요</option>
+                <option selected value="-1" disabled>대분류명을 선택하세요</option>
             </select>
         </div>
         <div class="form-group">
@@ -91,16 +91,21 @@
         // 초기에 대분류 목록을 불러옵니다.
         loadLCLASCD_main();
         $('#lclascd').change(function () {
-            loadMLSFCCD_main($(this).val());
+            if (!$(this).val === -1) loadLCLASCD_main();
+            else loadMLSFCCD_main($(this).val());
         });
         $('#mlsfccd').change(function () {
-            loadSCLASCD_main($('#lclascd').val(), $(this).val());
+            console.log("middle", $(this).val())
+            if (!$(this).val === -1) loadMLSFCCD_main($(this).val());
+            else loadSCLASCD_main($('#lclascd').val(), $(this).val());
         });
         $('#sclascd').change(function () {
-            loadDCLASCD_main($('#lclascd').val(), $('#mlsfccd').val(), $(this).val());
+            if (!$(this).val === -1) loadSCLASCD_main($('#lclascd').val(), $(this).val());
+            else loadDCLASCD_main($('#lclascd').val(), $('#mlsfccd').val(), $(this).val());
         });
         $('#dclascd').change(function () {
-            loadBCLASCD_main($('#lclascd').val(), $('#mlsfccd').val(), $('#sclascd').val(), $(this).val());
+            if (!$(this).val === -1) loadDCLASCD_main($('#lclascd').val(), $('#mlsfccd').val(), $(this).val());
+            else loadBCLASCD_main($('#lclascd').val(), $('#mlsfccd').val(), $('#sclascd').val(), $(this).val());
         });
 
         // 검색 버튼에 대한 이벤트 핸들러
@@ -112,11 +117,12 @@
             if (routeSaveLayer) {
                 routeSaveLayer.getSource().clear();
             }
-            let lclascd = $("#lclascd").val();
-            let mlsfccd = $("#mlsfccd").val();
-            let sclascd = $("#sclascd").val();
-            let dclascd = $("#dclascd").val();
-            let bclascd = $("#bclascd").val();
+
+            let lclascd = $("#lclascd").val() != -1 ?$("#lclascd").val(): null;
+            let mlsfccd = $("#mlsfccd").val() != -1 ?$("#mlsfccd").val(): null;
+            let sclascd = $("#sclascd").val() != -1 ?$("#sclascd").val(): null;
+            let dclascd = $("#dclascd").val() != -1 ?$("#dclascd").val(): null;
+            let bclascd = $("#bclascd").val() != -1 ?$("#bclascd").val(): null;
 
             if (!lclascd) {
                 // 모든 poi 데이터 출력
@@ -148,7 +154,7 @@
         });
         // 초기화 버튼
         $('#resetButton').click(function () {
-            $('select.form-select').prop('selectedIndex', 0); // 모든 select 박스를 첫 번째 옵션으로 설정
+            $('select.form-select').prop('selected value=-1Index', 0); // 모든 select 박스를 첫 번째 옵션으로 설정
         });
     });
 
@@ -157,10 +163,10 @@
             type: "GET",
             url: "/findDataByLCLASCD",
             success: function (response) {
-                $('#mlsfccd').empty().append('<option selected disabled>중분류명을 선택하세요</option>');
-                $('#sclascd').empty().append('<option selected disabled>소분류명을 선택하세요</option>');
-                $('#dclascd').empty().append('<option selected disabled>상세 분류명을 선택하세요</option>');
-                $('#bclascd').empty().append('<option selected disabled>브랜드 분류명을 선택하세요</option>');
+                $('#mlsfccd').empty().append('<option selected value="-1" >중분류명을 선택하세요</option>');
+                $('#sclascd').empty().append('<option selected value="-1" >소분류명을 선택하세요</option>');
+                $('#dclascd').empty().append('<option selected value="-1" >상세 분류명을 선택하세요</option>');
+                $('#bclascd').empty().append('<option selected value="-1" >브랜드 분류명을 선택하세요</option>');
                 for (let i = 0; i < response.length; i++) {
                     $("#lclascd").append(`<option value="${response[i].lclascd}">${response[i].lclasdc}</option>`);
                 }
@@ -177,16 +183,16 @@
             url: "/findDataByLCLASCDAndMLSFCCD",
             data: {lclascd: lclascdValue},
             success: function (response) {
-                // $('#mlsfccd').append(<option selected disabled>중분류명을 선택하세요</option>)
+                // $('#mlsfccd').append(<option selected value=-1 disabled>중분류명을 선택하세요</option>)
 
                 // 성공시 하위 셀렉트 비우기
-                $('#mlsfccd').empty().append('<option selected disabled>중분류명을 선택하세요</option>');
+                $('#mlsfccd').empty().append('<option selected value="-1"  >중분류명을 선택하세요</option>');
 
-                $('#sclascd').empty().append('<option selected disabled>소분류명을 선택하세요</option>');
+                $('#sclascd').empty().append('<option selected value="-1"  >소분류명을 선택하세요</option>');
 
-                $('#dclascd').empty().append('<option selected disabled>상세 분류명을 선택하세요</option>');
+                $('#dclascd').empty().append('<option selected value="-1"  >상세 분류명을 선택하세요</option>');
 
-                $('#bclascd').empty().append('<option selected disabled>브랜드 분류명을 선택하세요</option>');
+                $('#bclascd').empty().append('<option selected value="-1"  >브랜드 분류명을 선택하세요</option>');
                 for (let i = 0; i < response.length; i++) {
                     $("#mlsfccd").append(`<option value="${response[i].mlsfccd}">${response[i].mlsfcdc}</option>`);
                 }
@@ -206,11 +212,11 @@
                 mlsfccd: mlsfccdValue
             },
             success: function (response) {
-                $('#sclascd').empty().append('<option selected disabled>소분류명을 선택하세요</option>');
+                $('#sclascd').empty().append('<option selected value="-1" >소분류명을 선택하세요</option>');
 
-                $('#dclascd').empty().append('<option selected disabled>상세 분류명을 선택하세요</option>');
+                $('#dclascd').empty().append('<option selected value="-1" >상세 분류명을 선택하세요</option>');
 
-                $('#bclascd').empty().append('<option selected disabled>브랜드 분류명을 선택하세요</option>');
+                $('#bclascd').empty().append('<option selected value="-1" >브랜드 분류명을 선택하세요</option>');
                 for (let i = 0; i < response.length; i++) {
                     $("#sclascd").append(`<option value="${response[i].sclascd}">${response[i].sclasdc}</option>`);
                 }
@@ -231,9 +237,9 @@
                 sclascd: sclascdValue
             },
             success: function (response) {
-                $('#dclascd').empty().append('<option selected disabled>상세 분류명을 선택하세요</option>');
+                $('#dclascd').empty().append('<option selected value="-1" >상세 분류명을 선택하세요</option>');
 
-                $('#bclascd').empty().append('<option selected disabled>브랜드 분류명을 선택하세요</option>');
+                $('#bclascd').empty().append('<option selected value="-1" >브랜드 분류명을 선택하세요</option>');
                 for (let i = 0; i < response.length; i++) {
                     $("#dclascd").append(`<option value="${response[i].dclascd}">${response[i].dclasdc}</option>`);
                 }
@@ -255,7 +261,7 @@
                 dclascd: dclascdValue
             },
             success: function (response) {
-                $('#bclascd').empty().append('<option selected disabled>브랜드 분류명을 선택하세요</option>');
+                $('#bclascd').empty().append('<option selected value="-1">브랜드 분류명을 선택하세요</option>');
                 for (let i = 0; i < response.length; i++) {
                     $("#bclascd").append(`<option value="${response[i].bclascd}">${response[i].bclasdc}</option>`);
                 }

@@ -22,6 +22,15 @@ public interface PoiMapper {
     @Select("SELECT * FROM public.poi_data WHERE poi_name like '%${poi_name}%';")
     List<Poi> findByName(String poi_name);
 
+
+    @SelectProvider(type = CategorySQL.class, method = "findByNameAndCategory")
+    List<Poi> findByNameAndCategory(@Param("poi_name") String poi_name,
+                                    @Param("lclascd") Integer lclascd,
+                                    @Param("mlsfccd") Integer mlsfccd,
+                                    @Param("sclascd") Integer sclascd,
+                                    @Param("dclascd") Integer dclascd,
+                                    @Param("bclascd") Integer bclascd);
+
     // user_id에 해당하는 모든 POI 정보 조회
     @Select("SELECT * FROM public.poi_data WHERE user_id = #{user_id};")
     List<Poi> findByUserId(int user_id);

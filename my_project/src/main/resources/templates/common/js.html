@@ -442,10 +442,12 @@
 
 
         // ================ 조인 함수 ==================
-        function showLPois(lclascd) {
+        function showLPois(l) {
+            let search = new URLSearchParams();
+            if (l && l != -1) search.append("lclascd", l);
             $.ajax({
                 type: "GET",
-                url: "/getPoisByLclascd?lclascd=" + lclascd,
+                url: `/getPoisByLclascd?${search}`,
                 success: function (data) {
                     let features = [];
                     // 현재 지도의 화면 영역
@@ -478,10 +480,13 @@
         }
 
         // 상위 showLPois 함수와 로직 주석 참고
-        function showMPois(lclascd, mlsfccd) {
+        function showMPois(l, m) {
+            let search = new URLSearchParams();
+            if (l && l != -1) search.append("lclascd", l);
+            if (m && m != -1) search.append("mlsfccd", m);
             $.ajax({
                 type: "GET",
-                url: "/getPoisByMlsfccd?lclascd=" + lclascd + "&mlsfccd=" + mlsfccd,
+                url: `/getPoisByMlsfccd?${search}`,
                 success: function (data) {
                     let features = [];
                     let mapViewExtent = map.getView().calculateExtent(map.getSize());
@@ -505,10 +510,14 @@
             });
         }
 
-        function showSPois(lclascd, mlsfccd, sclascd) {
+        function showSPois(l, m, s) {
+            let search = new URLSearchParams();
+            if (l && l != -1) search.append("lclascd", l);
+            if (m && m != -1) search.append("mlsfccd", m);
+            if (s && s != -1) search.append("sclascd", s);
             $.ajax({
                 type: "GET",
-                url: "/getPoisBySclascd?lclascd=" + lclascd + "&mlsfccd=" + mlsfccd + "&sclascd=" + sclascd,
+                url: `/getPoisBySclascd?${search}`,
                 success: function (data) {
                     let features = [];
                     let mapViewExtent = map.getView().calculateExtent(map.getSize());
@@ -531,10 +540,15 @@
             });
         }
 
-        function showDPois(lclascd, mlsfccd, sclascd, dclascd) {
+        function showDPois(l, m, s, d) {
+            let search = new URLSearchParams();
+            if (l && l != -1) search.append("lclascd", l);
+            if (m && m != -1) search.append("mlsfccd", m);
+            if (s && s != -1) search.append("sclascd", s);
+            if (d && d != -1) search.append("dclascd", d);
             $.ajax({
                 type: "GET",
-                url: "/getPoisByDclascd?lclascd=" + lclascd + "&mlsfccd=" + mlsfccd + "&sclascd=" + sclascd + "&dclascd=" + dclascd,
+                url: `/getPoisByDclascd?${search}`,
                 success: function (data) {
                     let features = [];
                     let mapViewExtent = map.getView().calculateExtent(map.getSize());
@@ -557,10 +571,16 @@
             });
         }
 
-        function showBPois(lclascd, mlsfccd, sclascd, dclascd, bclascd) {
+        function showBPois(l, m, s, d, b) {
+            let search = new URLSearchParams();
+            if (l && l != -1) search.append("lclascd", l);
+            if (m && m != -1) search.append("mlsfccd", m);
+            if (s && s != -1) search.append("sclascd", s);
+            if (d && d != -1) search.append("dclascd", d);
+            if (b && b != -1) search.append("bclascd", b);
             $.ajax({
                 type: "GET",
-                url: "/getPoisByBclascd?lclascd=" + lclascd + "&mlsfccd=" + mlsfccd + "&sclascd=" + sclascd + "&dclascd=" + dclascd + "&bclascd=" + bclascd,
+                url: `/getPoisByBclascd?${search}`,
                 success: function (data) {
                     let features = [];
                     let mapViewExtent = map.getView().calculateExtent(map.getSize());
@@ -640,9 +660,24 @@
             if (!searchTerm.trim()) {
                 return;
             }
+            var l = $("#lclascd").val()
+            var m = $("#mlsfccd").val()
+            var s = $("#sclascd").val()
+            var d = $("#dclascd").val()
+            var b = $("#bclascd").val()
+            console.log(l)
+            console.log(m) // 파라미터로 받아옴 ==> 매퍼에서 조건문 추가 ==> 동적 쿼리로 null 값일 때는 빼고 보내기
+            console.log(s)
+            let search = new URLSearchParams();
+            if (searchTerm) search.append("name", searchTerm)
+            if (l && l != -1) search.append("lclascd", l);
+            if (m && m != -1) search.append("mlsfccd", m);
+            if (s && s != -1) search.append("sclascd", s);
+            if (d && d != -1) search.append("dclascd", d);
+            if (b && b != -1) search.append("bclascd", b);
 
             $.ajax({
-                url: `/poi/search?name=${searchTerm}`,
+                url: `/poi/search?${search}`,
                 type: 'GET',
                 success: function (data) {
                     const poiList = $('#poi-list');
@@ -656,8 +691,6 @@
                         const poiInfo = $('<span>').text(`${poi.poi_name} `);
                         itemContainer.append(poiInfo);
 
-                        console.log(poi.lon);
-                        console.log(poi.lat);
 
                         const coords = ol.proj.fromLonLat([poi.lon, poi.lat]);
 
@@ -898,7 +931,7 @@
                 type: "GET",
                 url: "/findDataByLCLASCD",
                 success: function (response) {
-                    $('#mlsfccd-select').empty().append('<option selected disabled>중분류명을 선택하세요</option>');
+                    $('#mlsfccd-select').empty().append('<option selected>중분류명을 선택하세요</option>');
                     $('#sclascd-select').empty().append('<option selected disabled>소분류명을 선택하세요</option>');
                     $('#dclascd-select').empty().append('<option selected disabled>상세 분류명을 선택하세요</option>');
                     $('#bclascd-select').empty().append('<option selected disabled>브랜드 분류명을 선택하세요</option>');
@@ -1229,9 +1262,9 @@
             let end = $('#endLon').val();
             let waypoints = $('#waypointsLon').val();
 
-            console.log("시이작" + start);
-            console.log(end);
-            console.log("경유지@@@@" + waypoints);
+            // console.log("시이작" + start);
+            // console.log(end);
+            // console.log("경유지@@@@" + waypoints);
 
 
             let data = waypoints ? {
@@ -1266,7 +1299,7 @@
                         let point = ol.proj.fromLonLat([path[i][0], path[i][1]]);
                         coordinates.push(point);
                         routeCoordinates.push([path[i][0], path[i][1]]);
-                        console.log([path[i][0], path[i][1]])
+                        // console.log([path[i][0], path[i][1]])
                     }
 
                     // LineString 생성 및 벡터 소스에 추가
@@ -1707,17 +1740,17 @@
         });
         // 장소 검색 버튼 클릭 시 모달 열기
 
-        // 사이드 바가 열리고 실행 되도록 하려고 했으나 그래도 딜레이 생김
-        $('#placeSearchButton').on('shown.bs.offcanvas', function () {
-            $('#category_search_toggle').collapse('toggle');
-        });
-
-        // 딜레이를 줬지만 적용이 안됨
-        $('#placeSearchButton').click(function () {
-            $('#category_search_toggle').collapse('show', {
-                duration: 7000
-            });
-        });
+        // // 사이드 바가 열리고 실행 되도록 하려고 했으나 그래도 딜레이 생김
+        // $('#placeSearchButton').on('shown.bs.offcanvas', function () {
+        //     $('#category_search_toggle').collapse('toggle');
+        // });
+        //
+        // // 딜레이를 줬지만 적용이 안됨
+        // $('#placeSearchButton').click(function () {
+        //     $('#category_search_toggle').collapse('show', {
+        //         duration: 7000
+        //     });
+        // });
 
         $('#placeSearchButton').click(function () {
             // $('#category_search_toggle').collapse('toggle');
@@ -1740,6 +1773,43 @@
             alert(message);
         }
         //     ==============================================================================================
+        $('#modifyAllUserPoisButton').click(function () {
+            $.ajax({
+                url: '/list',
+                type: 'GET',
+                success: function (data) {
+                    const tbody = $('.table tbody');
+                    tbody.empty();
+
+                    if (data.length === 0) { // 데이터가 없을 경우
+                        let row = $('<tr>');
+                        let cell = $('<td>').text('등록된 정보가 없습니다!').attr('colspan', 6);
+                        row.append(cell);
+                        tbody.append(row);
+                    } else { // 데이터가 있을 경우
+                        $.each(data, function (index, poi) {
+                            let row = $('<tr>');
+                            row.append($('<td>').text(poi.user_id));
+                            row.append($('<td>').text(poi.poi_name));
+                            row.append($('<td>').text(poi.tel_no));
+                            row.append($('<td>').text(poi.address));
+                            row.append($('<td>').text(poi.zip_code));
+                            row.append($('<td>').text(poi.memo));
+
+                            let td = $('<td>');
+
+                            row.append(td);
+
+                            tbody.append(row);
+                        });
+                    }
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    console.log(textStatus, errorThrown)
+                }
+            });
+        });
+
 
     </script>
 </head>

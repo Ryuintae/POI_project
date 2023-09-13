@@ -49,17 +49,31 @@
             <div class="spacer"></div> <!-- 간격을 띄우기 위한 빈 div 엘리먼트 -->
             <!-- 로그인 버튼 (로그인되지 않은 상태일 때) -->
             <button class="btn btn-outline-info" type="button" data-bs-toggle="modal"
-                    th:unless="${#request.isUserInRole('USER')}"
+                    th:unless="${#request.isUserInRole('USER') or #request.isUserInRole('ADMIN')}"
                     th:data-bs-target="'#loginModal'">
                 로그인
             </button>
             <div class="spacer"></div> <!-- 간격을 띄우기 위한 빈 div 엘리먼트 -->
             <!-- 회원가입 버튼 (로그인되지 않은 상태일 때) -->
             <button class="btn btn-outline-info" type="button" data-bs-toggle="modal"
-                    th:unless="${#request.isUserInRole('USER')}"
+                    th:unless="${#request.isUserInRole('USER') or #request.isUserInRole('ADMIN')}"
                     th:data-bs-target="'#signupModal'">
                 회원가입
             </button>
+            <div class="spacer"></div> <!-- 간격을 띄우기 위한 빈 div 엘리먼트 -->
+            <div th:if="${#request.isUserInRole('ADMIN')}">
+                <button id="modifyAllUserPoisButton" class="btn btn-outline-danger d-block text-start my-1"
+                        type="button" data-bs-toggle="modal"
+                        th:data-bs-target="'#AllUserplaceModify'"> 모든 유저 장소 관리
+                </button>
+            </div>
+            <div class="spacer"></div> <!-- 간격을 띄우기 위한 빈 div 엘리먼트 -->
+            <div th:if="${#request.isUserInRole('ADMIN')}">
+                <button id="modifyAllUserRouteButton" class="btn btn-outline-danger d-block text-start my-1"
+                        type="button" data-bs-toggle="modal"
+                        th:data-bs-target="'#'"> 모든 유저 경로 관리
+                </button>
+            </div>
         </div>
     </nav>
 

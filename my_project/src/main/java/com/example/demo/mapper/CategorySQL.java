@@ -119,4 +119,39 @@ public class CategorySQL {
         // 완성된 쿼리 문자열을 반환합니다.
         return query.toString();
     }
+
+
+    public String findByNameAndCategory(String poi_name, Integer lclascd, Integer mlsfccd, Integer sclascd, Integer dclascd, Integer bclascd) {
+        StringBuilder sql = new StringBuilder();
+        sql.append("SELECT pd.* ");
+        sql.append("FROM public.poi_data pd ");
+        sql.append("JOIN public.poi_category_data pcd ON pd.category_code = pcd.category_code ");
+
+        if (poi_name != null && !poi_name.isEmpty()) {
+            sql.append("WHERE pd.poi_name LIKE '%").append(poi_name).append("%' ");
+
+            if (lclascd != null) {
+                sql.append("AND pcd.lclascd = ").append(lclascd).append(" ");
+            }
+
+            if (mlsfccd != null) {
+                sql.append( "AND pcd.mlsfccd = ").append(mlsfccd).append(" ");
+            }
+
+            if (sclascd != null) {
+                sql.append("AND pcd.sclascd = ").append(sclascd).append(" ");
+            }
+            if (mlsfccd != null) {
+                sql.append( "AND pcd.dclascd = ").append(dclascd).append(" ");
+            }
+
+            if (sclascd != null) {
+                sql.append("AND pcd.bclascd = ").append(bclascd).append(" ");
+            }
+        }
+
+        return sql.toString();
+    }
+
+
 }

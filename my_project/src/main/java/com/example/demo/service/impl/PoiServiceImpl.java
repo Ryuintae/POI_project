@@ -51,6 +51,13 @@ public class PoiServiceImpl implements PoiService {
         this.poiMapper.updateByUserIdAndPoiNum(poi);
     }
 
+
+    @Override
+    public List<Poi> findByNameAndCategory(String poi_name, Integer lclascd, Integer mlsfccd, Integer sclascd, Integer dclascd, Integer bclascd) {
+        return poiMapper.findByNameAndCategory(poi_name, lclascd, mlsfccd, sclascd, dclascd, bclascd);
+    }
+
+
     //    =========================================================
     @Override
     public List<Poi> getAllUserPois() {

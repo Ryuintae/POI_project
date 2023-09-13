@@ -409,14 +409,7 @@
         <div class="offcanvas-header">
             <img src="/img/placeSearch.png" alt="검색장소">
             <h5 class="offcanvas-title" style="margin-right: 20px" id="placeSearchLabel">장소 검색</h5>
-            <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-        </div>
-        <!-- 이 부분 실패 -->
-        <div sec:authorize="hasRole('ADMIN')">
-            <button id="modifyAllUserPoisButton" class="btn btn-outline-danger d-block text-start my-1"
-                    type="button" data-bs-toggle="modal"
-                    th:data-bs-target="'#'"> 모든 유저 장소 수정
-            </button>
+            <button type="button" class="btn-close text-reset" id="placeSearchButton"></button>
         </div>
         <hr>
 
@@ -502,6 +495,43 @@
         </div>
     </div>
 
+    <!--=============================== 어드민 ============================== -->
+    <!-- 관리자 장소 수정 Modal -->
+    <div class="container">
+        <div class="modal fade" id="AllUserplaceModify" tabindex="-1" aria-labelledby="placeModifyLabel"
+             aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-xl">
+                <div class="modal-content">
+                    <div class="modal-header" style="text-align:center;">
+                        <h5 class="modal-title" id="AllUserplaceModifyLabel">
+                            모든 회원 장소 관리
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+
+
+                    <div class="modal-body">
+                        <table class="table">
+                            <thead class="table-dark"
+                                   style="text-align: center">
+                            <tr>
+                                <th>유저 id</th>
+                                <th>장소 이름</th>
+                                <th>대표 번호</th>
+                                <th>주소</th>
+                                <th>우편번호</th>
+                                <th>메모</th>
+                                <th></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
 </th:block>
 </body>
