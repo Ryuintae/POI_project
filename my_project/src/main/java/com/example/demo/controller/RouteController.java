@@ -9,8 +9,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -194,6 +197,33 @@ public class RouteController {
         }
     }
 
+    //==============================어드민==================================
+    @GetMapping("/admin/routes")
+    @ResponseBody
+    public List<Route> getAllRoutesForAdmin(Model model) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserVo loggedInUser = (UserVo) authentication.getPrincipal();
 
+        model.addAttribute("loggedInUser", loggedInUser);
+
+        List<Route> routes = routeService.findAllRoutesForAdmin();
+        model.addAttribute("routes", routes);
+
+        return routes;
+    }
+
+    @DeleteMapping("/{userId}/{routeId}")
+    public ResponseEntity<Void> deleteRouteAdmin(
+            @AuthenticationPrincipal UserVo loggedInUser, @PathVariable("userId") int user_id, @PathVariable("routeId") int route_id) {
+        if (loggedInUser != null) {
+            try {
+                this.routeService.deleteRoute(route_id, user_id);
+                return new ResponseEntity<>(HttpStatus.OK);
+            } catch (Exception e) {
+                return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        }
+        return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+    }
 }
 

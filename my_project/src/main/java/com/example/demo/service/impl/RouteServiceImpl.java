@@ -44,4 +44,10 @@ public class RouteServiceImpl implements RouteService {
         //routes.forEach(e -> System.out.println(e.getRoute()));
         return routes;
     }
+
+    @Override
+    public List<Route> findAllRoutesForAdmin() {
+        return routeMapper.findAllRoutesForAdmin();
+    }
+
 }

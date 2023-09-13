@@ -60,6 +60,8 @@
                     th:data-bs-target="'#signupModal'">
                 회원가입
             </button>
+
+
             <div class="spacer"></div> <!-- 간격을 띄우기 위한 빈 div 엘리먼트 -->
             <div th:if="${#request.isUserInRole('ADMIN')}">
                 <button id="modifyAllUserPoisButton" class="btn btn-outline-danger d-block text-start my-1"
@@ -71,7 +73,7 @@
             <div th:if="${#request.isUserInRole('ADMIN')}">
                 <button id="modifyAllUserRouteButton" class="btn btn-outline-danger d-block text-start my-1"
                         type="button" data-bs-toggle="modal"
-                        th:data-bs-target="'#'"> 모든 유저 경로 관리
+                        th:data-bs-target="'#AllUserRouteModify'"> 모든 유저 경로 관리
                 </button>
             </div>
         </div>

@@ -717,6 +717,11 @@
                                 .text('이동하기')
                                 .on('click', function () {
                                     moveToPoi(poi);
+                                    if ($('#category_search_toggle').hasClass("d-none")) {
+                                        $('#category_search_toggle').removeClass("d-none")
+                                    } else {
+                                        $('#category_search_toggle').addClass("d-none")
+                                    }
                                 })
                         );
 
@@ -1740,17 +1745,18 @@
         });
         // 장소 검색 버튼 클릭 시 모달 열기
 
-        // // 사이드 바가 열리고 실행 되도록 하려고 했으나 그래도 딜레이 생김
-        // $('#placeSearchButton').on('shown.bs.offcanvas', function () {
-        //     $('#category_search_toggle').collapse('toggle');
-        // });
-        //
-        // // 딜레이를 줬지만 적용이 안됨
-        // $('#placeSearchButton').click(function () {
-        //     $('#category_search_toggle').collapse('show', {
-        //         duration: 7000
-        //     });
-        // });
+        $('#placeSearchButton2').click(function () {
+            // $('#category_search_toggle').collapse('toggle');
+            if ($('#category_search_toggle').hasClass("d-none")) {
+                $('#category_search_toggle').removeClass("d-none")
+            } else {
+                $('#category_search_toggle').addClass("d-none")
+            }
+        });
+
+        $('#placeSearch2').on('hide.bs.offcanvas', function () {
+            $('#category_search_toggle').collapse('hide');
+        });
 
         $('#placeSearchButton').click(function () {
             // $('#category_search_toggle').collapse('toggle');
@@ -1773,6 +1779,43 @@
             alert(message);
         }
         //     ==============================================================================================
+        // $('#modifyAllUserPoisButton').click(function () {
+        //     $.ajax({
+        //         url: '/list',
+        //         type: 'GET',
+        //         success: function (data) {
+        //             const tbody = $('.table tbody');
+        //             tbody.empty();
+        //
+        //             if (data.length === 0) { // 데이터가 없을 경우
+        //                 let row = $('<tr>');
+        //                 let cell = $('<td>').text('등록된 정보가 없습니다!').attr('colspan', 6);
+        //                 row.append(cell);
+        //                 tbody.append(row);
+        //             } else { // 데이터가 있을 경우
+        //                 $.each(data, function (index, poi) {
+        //                     let row = $('<tr>');
+        //                     row.append($('<td>').text(poi.user_id));
+        //                     row.append($('<td>').text(poi.poi_name));
+        //                     row.append($('<td>').text(poi.tel_no));
+        //                     row.append($('<td>').text(poi.address));
+        //                     row.append($('<td>').text(poi.zip_code));
+        //                     row.append($('<td>').text(poi.memo));
+        //                     row.append($('<td>').text(poi.poi_num));
+        //
+        //                     let td = $('<td>');
+        //
+        //                     row.append(td);
+        //
+        //                     tbody.append(row);
+        //                 });
+        //             }
+        //         },
+        //         error: function (jqXHR, textStatus, errorThrown) {
+        //             console.log(textStatus, errorThrown)
+        //         }
+        //     });
+        // });
         $('#modifyAllUserPoisButton').click(function () {
             $.ajax({
                 url: '/list',
@@ -1783,12 +1826,14 @@
 
                     if (data.length === 0) { // 데이터가 없을 경우
                         let row = $('<tr>');
-                        let cell = $('<td>').text('등록된 정보가 없습니다!').attr('colspan', 6);
+                        let cell = $('<td>').text('등록된 정보가 없습니다!').attr('colspan', 7);
                         row.append(cell);
                         tbody.append(row);
                     } else { // 데이터가 있을 경우
                         $.each(data, function (index, poi) {
                             let row = $('<tr>');
+                            row.data('poiId', poi.poi_num); // poi_num을 저장하기
+                            row.data('userId', poi.user_id); // userId 저장하기
                             row.append($('<td>').text(poi.user_id));
                             row.append($('<td>').text(poi.poi_name));
                             row.append($('<td>').text(poi.tel_no));
@@ -1796,9 +1841,36 @@
                             row.append($('<td>').text(poi.zip_code));
                             row.append($('<td>').text(poi.memo));
 
-                            let td = $('<td>');
+                            const button = $('<button class="btn btn-danger">삭제하기</button>');
+                            button.attr('data-bs-toggle', 'modal');
+                            button.attr('data-bs-target', '#delete');
 
-                            row.append(td);
+                            button.on('click', function () {
+                                const r = $(this).closest('tr');
+                                const poiId = r.data('poiId');
+
+                                // 삭제 확인을 위한 경고창 표시
+                                if (confirm("정말로 삭제 하시겠습니까?")) {
+
+                                    $.ajax({
+                                        url: `/pois/${poi.user_id}/${poi.poi_num}`,
+                                        type: 'DELETE',
+                                        success: function (result) {
+                                            r.remove();
+                                            alert("성공적으로 삭제되었습니다");
+                                        },
+                                        error: function (jqXHR, textStatus, errorThrown) {
+                                            alert("Error deleting POI: " + errorThrown);
+                                        }
+                                    });
+                                }
+                            });
+
+                            let tdButtonCell = $('<td>');
+                            tdButtonCell.append(button);
+
+                            // Delete Button 추가.
+                            tdButtonCell.appendTo(row);
 
                             tbody.append(row);
                         });
@@ -1810,6 +1882,74 @@
             });
         });
 
+        $('#modifyAllUserRouteButton').click(function () {
+            $.ajax({
+                url: '/routes/admin/routes',
+                type: 'GET',
+                success: function (data) {
+                    const tbody = $('.table tbody');
+                    tbody.empty();
+
+                    if (data.length === 0) { // 데이터가 없을 경우
+                        let row = $('<tr>');
+                        let cell = $('<td>').text('등록된 정보가 없습니다!').attr('colspan', 7);
+                        row.append(cell);
+                        tbody.append(row);
+                    } else { // 데이터가 있을 경우
+                        $.each(data, function (index, route) {
+                            let row = $('<tr>');
+                            row.data('routeId', route.route_id); // route_id를 저장하기
+                            row.data('userId', route.user_id); // userId 저장하기
+                            row.append($('<td>').text(route.title));
+                            row.append($('<td>').text(route.explain));
+                            row.append($('<td>').text(route.start));
+                            row.append($('<td>').text(route.end_point));
+                            row.append($('<td>').text(route.waypoints));
+                            row.append($('<td>').text(route.tollFare));
+                            row.append($('<td>').text(route.taxiFare));
+                            row.append($('<td>').text(route.fuelPrice));
+                            // 추가적인 필드들은 route 객체의 속성에 따라 변경해야 합니다.
+
+                            const button = $('<button class="btn btn-danger">삭제하기</button>');
+                            button.attr('data-bs-toggle', 'modal');
+                            button.attr('data-bs-target', '#delete');
+
+                            button.on('click', function () {
+                                const r = $(this).closest('tr');
+                                const routeId = r.data('routeId');
+
+                                // 삭제 확인을 위한 경고창 표시
+                                if (confirm("정말로 삭제 하시겠습니까?")) {
+
+                                    $.ajax({
+                                        url: `/routes/${route.user_id}/${route.route_id}`,
+                                        type: 'DELETE',
+                                        success: function (result) {
+                                            r.remove();
+                                            alert("성공적으로 삭제되었습니다");
+                                        },
+                                        error: function (jqXHR, textStatus, errorThrown) {
+                                            alert("Error deleting Route: " + errorThrown);
+                                        }
+                                    });
+                                }
+                            });
+
+                            let tdButtonCell = $('<td>');
+                            tdButtonCell.append(button);
+
+                            // Delete Button 추가.
+                            tdButtonCell.appendTo(row);
+
+                            tbody.append(row);
+                        });
+                    }
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    console.log(textStatus, errorThrown)
+                }
+            });
+        });
 
     </script>
 </head>

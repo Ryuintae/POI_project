@@ -263,4 +263,20 @@ public class PoiController {
 
         return pois;
     }
+
+    @DeleteMapping("/pois/{userId}/{poiId}")
+    @ResponseBody
+    public ResponseEntity<?> deletePoisAdmin(@AuthenticationPrincipal UserVo loggedInUser,
+                                             @PathVariable("userId") int user_id,
+                                             @PathVariable("poiId") int poi_num) {
+        if (loggedInUser != null) {
+            try {
+                this.poiService.deleteByUserIdAndPoiNum(user_id, poi_num);
+                return new ResponseEntity<>(HttpStatus.OK);
+            } catch (Exception e) {
+                return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        }
+        return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+    }
 }

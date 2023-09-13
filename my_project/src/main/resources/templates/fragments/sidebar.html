@@ -409,7 +409,10 @@
         <div class="offcanvas-header">
             <img src="/img/placeSearch.png" alt="검색장소">
             <h5 class="offcanvas-title" style="margin-right: 20px" id="placeSearchLabel">장소 검색</h5>
-            <button type="button" class="btn-close text-reset" id="placeSearchButton"></button>
+            <button class="btn-close text-reset" type="button" data-bs-toggle="offcanvas"
+                    data-bs-target="#placeSearch" th:id="placeSearchButton2"
+                    aria-controls="offcanvasScrolling">
+            </button>
         </div>
         <hr>
 
@@ -495,7 +498,7 @@
         </div>
     </div>
 
-    <!--=============================== 어드민 ============================== -->
+    <!--=============================== 어드민 ==============================-->
     <!-- 관리자 장소 수정 Modal -->
     <div class="container">
         <div class="modal fade" id="AllUserplaceModify" tabindex="-1" aria-labelledby="placeModifyLabel"
@@ -533,6 +536,39 @@
         </div>
     </div>
 
+    <!-- 어드민 저장한 경로 확인하기 Modal -->
+    <div class="container">
+        <div class="modal fade" id="AllUserRouteModify" tabindex="-1" aria-labelledby="pathCheckLabel"
+             aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-xl">
+                <div class="modal-content">
+                    <div class="modal-header" style="text-align:center;">
+                        <h5 class="modal-title" id="AllUserRouteModifyLabel">저장한 경로 확인하기</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <table class="table">
+                            <thead class="table-dark" style="text-align: center; white-space: nowrap">
+                            <tr>
+                                <th>제목</th>
+                                <th>출발지</th>
+                                <th>도착지</th>
+                                <th>경유지</th>
+                                <th>메모</th>
+                                <th>톨게이트 비용</th>
+                                <th>택시 요금</th>
+                                <th>연료 가격</th>
+                                <th></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </th:block>
 </body>
 </html>

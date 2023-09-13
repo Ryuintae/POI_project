@@ -33,4 +33,8 @@ public interface RouteMapper {
     @Select("SELECT r.save_time,r.route_id , ST_AsText(r.route) as route,r.title, r.explain,r.user_id,r.start,r.end_point,r.waypoints,r.waypoints_route,r.tollfare,r.taxifare,r.fuelprice, public.user.user_name " + "FROM public.route_save r " + "JOIN public.user ON r.user_id = public.user.user_id " + "WHERE r.user_id = #{user_id}")
     List<Route> getRoutesWithUserNameByUserId(int user_id);
 
+    // 모든 사용자가 등록한 route_save 정보 조회 (관리자용)
+    @Select("SELECT * FROM public.route_save WHERE user_id IS NOT NULL;")
+    List<Route> findAllRoutesForAdmin();
+
 }

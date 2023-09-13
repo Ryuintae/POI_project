@@ -15,4 +15,9 @@ public interface RouteService {
 
     List<Route> getRoutesWithUserNameByUserId(int user_id);
 
+
+    /// 어드민
+    List<Route> findAllRoutesForAdmin();
+
+
 }
