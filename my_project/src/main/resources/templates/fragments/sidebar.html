@@ -48,16 +48,17 @@
             <hr>
             <div class="btn-group-vertical" role="group" aria-label="Vertical button group">
 
-                <button class="btn btn-outline-success d-block text-start my-1" type="button" data-bs-toggle="modal"
-                        th:data-bs-target="'#userModify'">
-                    회원 정보 수정
-                </button>
+                <!--                <button class="btn btn-outline-success d-block text-start my-1" type="button" data-bs-toggle="modal"-->
+                <!--                        th:data-bs-target="'#userModify'">-->
+                <!--                    회원 정보 수정-->
+                <!--                </button>ㅌ`-->
 
                 <div class="spacer"></div> <!-- 간격을 띄우기 위한 빈 div 엘리먼트 -->
 
-                <button class="btn btn-outline-danger d-block text-start my-1" type="button" data-bs-toggle="modal"
-                        th:data-bs-target="'#'">로그 아웃
-                </button>
+                <!-- 로그아웃 버튼 (로그인된 상태일 때) -->
+                <form th:if="${#request.isUserInRole('USER')}" action="/logout" method="post">
+                    <button class="btn btn-outline-danger d-block text-start my-1" type="submit">로그아웃</button>
+                </form>
 
 
             </div>
@@ -100,7 +101,7 @@
     <!-- 장소 수정 Modal -->
     <div class="container">
         <div class="modal fade" id="placeModify" tabindex="-1" aria-labelledby="placeModifyLabel" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered modal-xl">
+            <div class="modal-dialog modal-dialog-centered modal-lg">
                 <div class="modal-content">
                     <div class="modal-header" style="text-align:center;">
                         <h5 class="modal-title" id="placeModifyLabel">
@@ -111,7 +112,7 @@
                     <!-- 테이블에 부트스트랩 적용 -->
                     <table class="table">
                         <thead class="table-dark"
-                               style="text-align: center">
+                               style="text-align: center; white-space: pre">
                         <tr>
                             <th>장소 이름</th>
                             <th>대표 번호</th>
@@ -151,7 +152,8 @@
                                 </div>
                                 <div class="mb-3">
                                     <label for="gen">대표 번호</label>
-                                    <input type="text" class="form-control" id="gen" name="tel_no" required
+                                    <input type="text" class="form-control" id="gen" name="tel_no"
+                                           placeholder="010-1234-5678" required
                                            pattern="\d{3}-\d{4}-\d{4}">
                                 </div>
                                 <div class="spacer"></div>
@@ -226,7 +228,7 @@
     <!-- 장소 삭제 Modal -->
     <div class="container">
         <div class="modal fade" id="placeDelete" tabindex="-1" aria-labelledby="placeDeleteLabel" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered modal-xl">
+            <div class="modal-dialog modal-dialog-centered modal-lg">
                 <div class="modal-content">
                     <div class="modal-header" style="text-align:center;">
                         <h5 class="modal-title" id="placeDeleteLabel">
@@ -237,7 +239,7 @@
                     <!-- 테이블에 부트스트랩 적용 -->
                     <table class="table">
                         <thead class="table-dark"
-                               style="text-align: center">
+                               style="text-align: center; white-space: pre">
                         <tr>
                             <th>장소 이름</th>
                             <th>대표 번호</th>

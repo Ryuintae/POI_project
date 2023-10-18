@@ -135,14 +135,14 @@ public class CategorySQL {
             }
 
             if (mlsfccd != null) {
-                sql.append( "AND pcd.mlsfccd = ").append(mlsfccd).append(" ");
+                sql.append("AND pcd.mlsfccd = ").append(mlsfccd).append(" ");
             }
 
             if (sclascd != null) {
                 sql.append("AND pcd.sclascd = ").append(sclascd).append(" ");
             }
             if (mlsfccd != null) {
-                sql.append( "AND pcd.dclascd = ").append(dclascd).append(" ");
+                sql.append("AND pcd.dclascd = ").append(dclascd).append(" ");
             }
 
             if (sclascd != null) {

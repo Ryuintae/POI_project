@@ -35,6 +35,9 @@
         // 현재 위치 표시
         let geoSource = new ol.source.Vector();
 
+        let makerDefault = new ol.source.Vector();
+
+
         let mapOverlay;
         let hover = null; //마우스 이벤트에 사용될 변수
 
@@ -88,7 +91,7 @@
 
             // 마커를 출력할 벡터 레이어 생성
             markerLayer = new ol.layer.Vector({
-                source: new ol.source.Vector(),
+                source: makerDefault,
             });
 
             // 마커 레이어를 지도에 추가
@@ -509,15 +512,18 @@
                 }
             });
         }
-
-        function showSPois(l, m, s) {
+        function isValidCate(l,m,s){
             let search = new URLSearchParams();
             if (l && l != -1) search.append("lclascd", l);
             if (m && m != -1) search.append("mlsfccd", m);
             if (s && s != -1) search.append("sclascd", s);
+            return search;
+        }
+        function showSPois(l, m, s) {
+            let search = isValidCate(l,m,s)
             $.ajax({
                 type: "GET",
-                url: `/getPoisBySclascd?${search}`,
+                url: `/getPoisByScla scd?${search}`,
                 success: function (data) {
                     let features = [];
                     let mapViewExtent = map.getView().calculateExtent(map.getSize());
@@ -660,8 +666,17 @@
             if (!searchTerm.trim()) {
                 return;
             }
-            if (markerLayer) {
-                markerLayer.getSource().clear();
+            if (routeSource) {
+                routeSource.clear();
+            }
+            if (categoryMarkerSource) {
+                categoryMarkerSource.clear();
+            }
+            if (routeSaveSource) {
+                routeSaveSource.clear();
+            }
+            if (makerDefault) {
+                makerDefault.clear();
             }
             var l = $("#lclascd").val()
             var m = $("#mlsfccd").val()
@@ -1129,7 +1144,7 @@
                             row.append($('<td>').text(poi.zip_code));
                             row.append($('<td>').text(poi.memo));
 
-                            const button = $('<button class="btn btn-primary">수정하기</button>');
+                            const button = $('<button class="btn btn-primary" style="white-space: pre">수정하기</button>');
 
                             button.on('click', function () {
                                 $('#placeRegister').modal('show');
@@ -1217,7 +1232,7 @@
                             row.append($('<td>').text(poi.zip_code));
                             row.append($('<td>').text(poi.memo));
 
-                            const button = $('<button class="btn btn-danger">삭제하기</button>');
+                            const button = $('<button class="btn btn-danger" style="white-space: pre">삭제하기</button>');
                             button.attr('data-bs-toggle', 'modal');
                             button.attr('data-bs-target', '#delete');
 
@@ -1292,10 +1307,21 @@
                     route_response = JSON.parse(response);
 
                     // 기존 마커 레이어 삭제
-                    if (markerLayer) {
-                        markerLayer.getSource().clear();
+                    if (makerDefault) {
+                        makerDefault.clear();
                     }
-
+                    if (routeSource) {
+                        routeSource.clear();
+                    }
+                    if (routeSaveSource) {
+                        routeSaveSource.clear();
+                    }
+                    if (categoryMarkerSource) {
+                        categoryMarkerSource.clear();
+                    }
+                    if (moveSource) {
+                        moveSource.clear();
+                    }
                     // 경로 그리기 시작
                     let path = route_response.route.traoptimal[0].path;
 
@@ -1364,7 +1390,7 @@
                     map.addLayer(routeLayer);
                     let extent = routeSource.getExtent();
 
-                    map.getView().fit(extent, {padding: [50, 50, 50, 50], duration: 1000});
+                    map.getView().fit(extent, {padding: [100, 100, 100, 100], duration: 1000});
 
 
                     // 응답을 roadResult 요소에 출력하기 전에 이전 내용 초기화
@@ -1439,11 +1465,20 @@
 
                             viewRouteButton.on('click', function () {
                                 // 기존 마커 레이어 삭제
-                                if (markerLayer) {
-                                    markerLayer.getSource().clear();
+                                if (routeSource) {
+                                    routeSource.clear();
                                 }
-                                if (routeSaveLayer) {
-                                    routeSaveLayer.getSource().clear();
+                                if (routeSaveSource) {
+                                    routeSaveSource.clear();
+                                }
+                                if (makerDefault) {
+                                    makerDefault.clear();
+                                }
+                                if (categoryMarkerSource) {
+                                    categoryMarkerSource.clear();
+                                }
+                                if (moveSource) {
+                                    moveSource.clear();
                                 }
                                 let pathStr = route.route.slice(11, -1); // 괄호와 LINESTRING 문자 제거
                                 let pathArr = pathStr.split(','); // 쉼표 기준으로 분리
@@ -1541,7 +1576,7 @@
                                 map.addLayer(routeSaveLayer);
                                 let extent = routeSaveSource.getExtent();
 
-                                map.getView().fit(extent, {padding: [50, 50, 50, 50], duration: 1000});
+                                map.getView().fit(extent, {padding: [100, 100, 100, 100], duration: 1000});
 
 
                                 $('#pathCheck').modal('hide');
@@ -1918,7 +1953,7 @@
                             row.append($('<td>').text(route.fuelPrice));
                             // 추가적인 필드들은 route 객체의 속성에 따라 변경해야 합니다.
 
-                            const button = $('<button class="btn btn-danger"style="white-space: nowrap">삭제하기</button>');
+                            const button = $('<button class="btn btn-danger" style="white-space: nowrap">삭제하기</button>');
                             button.attr('data-bs-toggle', 'modal');
                             button.attr('data-bs-target', '#delete');
 

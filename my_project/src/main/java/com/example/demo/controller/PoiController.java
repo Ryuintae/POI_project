@@ -29,7 +29,6 @@ import java.util.List;
 @Controller
 public class PoiController {
 
-
     private final PoiService poiService;
     private final ImageService imageService;
     private final String uploadPath;
@@ -42,8 +41,7 @@ public class PoiController {
     }
 
     @PostMapping("/register")
-    public String registerPoi(@ModelAttribute Poi poi, @RequestParam(name = "file", required = false) MultipartFile file,
-                              @AuthenticationPrincipal UserVo loggedInUser) {
+    public String registerPoi(@ModelAttribute Poi poi, @RequestParam(name = "file", required = false) MultipartFile file, @AuthenticationPrincipal UserVo loggedInUser) {
         if (loggedInUser != null) {
             // 현재 로그인한 사용자의 user_id를 가져옴
             int userId = loggedInUser.getUser_id();
@@ -105,14 +103,7 @@ public class PoiController {
 
     @GetMapping("/poi/search")
     @ResponseBody
-    public List<Poi> searchByNameAndCategory(
-            @RequestParam("name") String poiName,
-            @RequestParam(value = "lclascd", required = false) Integer lclascd,
-            @RequestParam(value = "mlsfccd", required = false) Integer mlsfccd,
-            @RequestParam(value = "sclascd", required = false) Integer sclascd,
-            @RequestParam(value = "dclascd", required = false) Integer dclascd,
-            @RequestParam(value = "bclascd", required = false) Integer bclascd
-    ) {
+    public List<Poi> searchByNameAndCategory(@RequestParam("name") String poiName, @RequestParam(value = "lclascd", required = false) Integer lclascd, @RequestParam(value = "mlsfccd", required = false) Integer mlsfccd, @RequestParam(value = "sclascd", required = false) Integer sclascd, @RequestParam(value = "dclascd", required = false) Integer dclascd, @RequestParam(value = "bclascd", required = false) Integer bclascd) {
         return poiService.findByNameAndCategory(poiName, lclascd, mlsfccd, sclascd, dclascd, bclascd);
     }
 
@@ -149,25 +140,9 @@ public class PoiController {
     }
 
     @PutMapping(value = "/pois/{poi_num}")
-    public @ResponseBody ResponseEntity<Void> updatePoi(
-            @AuthenticationPrincipal UserVo loggedInUser,
-            @PathVariable("poi_num") int poi_num,
-            @RequestParam("poi_name") String poi_name,
-            @RequestParam("tel_no") String tel_no,
-            @RequestParam("iclas") String iclas,
-            @RequestParam("mlsfc") String mlsfc,
-            @RequestParam("sclas") String sclas,
-            @RequestParam("dclas") String dclas,
-            @RequestParam("memo") String memo,
-            @RequestParam("address") String address,
-            @RequestParam("lon") double lon,
-            @RequestParam("lat") double lat,
-            @RequestParam(name = "file", required = false) MultipartFile file,
-            @RequestParam("category_code") int category_code,
-            @RequestParam("zip_code") int zip_code) {
+    public @ResponseBody ResponseEntity<Void> updatePoi(@AuthenticationPrincipal UserVo loggedInUser, @PathVariable("poi_num") int poi_num, @RequestParam("poi_name") String poi_name, @RequestParam("tel_no") String tel_no, @RequestParam("iclas") String iclas, @RequestParam("mlsfc") String mlsfc, @RequestParam("sclas") String sclas, @RequestParam("dclas") String dclas, @RequestParam("memo") String memo, @RequestParam("address") String address, @RequestParam("lon") double lon, @RequestParam("lat") double lat, @RequestParam(name = "file", required = false) MultipartFile file, @RequestParam("category_code") int category_code, @RequestParam("zip_code") int zip_code) {
 
-        if (loggedInUser == null)
-            new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        if (loggedInUser == null) new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 
         int user_id = loggedInUser.getUser_id();
 
@@ -196,8 +171,7 @@ public class PoiController {
 
         System.out.println(poi_num);
 
-        if (user_id != poi.getUser_id())
-            throw new RuntimeException("해당 유저의 POI가 아닙니다.");
+        if (user_id != poi.getUser_id()) throw new RuntimeException("해당 유저의 POI가 아닙니다.");
 
         try {
             this.poiService.updateByUserIdAndPoiNum(poi);
@@ -266,9 +240,7 @@ public class PoiController {
 
     @DeleteMapping("/pois/{userId}/{poiId}")
     @ResponseBody
-    public ResponseEntity<?> deletePoisAdmin(@AuthenticationPrincipal UserVo loggedInUser,
-                                             @PathVariable("userId") int user_id,
-                                             @PathVariable("poiId") int poi_num) {
+    public ResponseEntity<?> deletePoisAdmin(@AuthenticationPrincipal UserVo loggedInUser, @PathVariable("userId") int user_id, @PathVariable("poiId") int poi_num) {
         if (loggedInUser != null) {
             try {
                 this.poiService.deleteByUserIdAndPoiNum(user_id, poi_num);

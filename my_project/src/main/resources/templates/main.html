@@ -81,7 +81,7 @@
             <label for="bclascd" id="bclascd-label">브랜드 분류:</label>
             <select class="form-select" id="bclascd"></select>
         </div>
-        <button type='button' class="btn btn-outline-info" id='resetButton' style="margin-right: 110px;">초기화</button>
+        <!--        <button type='button' class="btn btn-outline-info" id='resetButton' style="margin-right: 110px;">초기화</button>-->
     </div>
 </div>
 
@@ -111,18 +111,29 @@
         // 검색 버튼에 대한 이벤트 핸들러
         $("#search").on("click", function () {
             // 기존 경로 레이어 삭제
-            if (routeLayer) {
-                routeLayer.getSource().clear();
+            if (routeSource) {
+                routeSource.clear();
             }
-            if (routeSaveLayer) {
-                routeSaveLayer.getSource().clear();
+            if (routeSaveSource) {
+                routeSaveSource.clear();
             }
-
-            let lclascd = $("#lclascd").val() != -1 ?$("#lclascd").val(): null;
-            let mlsfccd = $("#mlsfccd").val() != -1 ?$("#mlsfccd").val(): null;
-            let sclascd = $("#sclascd").val() != -1 ?$("#sclascd").val(): null;
-            let dclascd = $("#dclascd").val() != -1 ?$("#dclascd").val(): null;
-            let bclascd = $("#bclascd").val() != -1 ?$("#bclascd").val(): null;
+            if (makerDefault) {
+                makerDefault.clear();
+            }
+            if (categoryMarkerSource) {
+                categoryMarkerSource.clear();
+            }
+            if (moveSource) {
+                moveSource.clear();
+            }
+            // if (geoSource) {
+            //     geoSource.clear();
+            // }
+            let lclascd = $("#lclascd").val() != -1 ? $("#lclascd").val() : null;
+            let mlsfccd = $("#mlsfccd").val() != -1 ? $("#mlsfccd").val() : null;
+            let sclascd = $("#sclascd").val() != -1 ? $("#sclascd").val() : null;
+            let dclascd = $("#dclascd").val() != -1 ? $("#dclascd").val() : null;
+            let bclascd = $("#bclascd").val() != -1 ? $("#bclascd").val() : null;
 
             if (!lclascd) {
                 // 모든 poi 데이터 출력
@@ -152,10 +163,10 @@
                 showDPois(lclascd, mlsfccd, sclascd, dclascd);
             }
         });
-        // 초기화 버튼
-        $('#resetButton').click(function () {
-            $('select.form-select').prop('selected value=-1Index', 0); // 모든 select 박스를 첫 번째 옵션으로 설정
-        });
+        // // 초기화 버튼
+        // $('#resetButton').click(function () {
+        //     $('select.form-select').prop('selected value=-1Index', 0); // 모든 select 박스를 첫 번째 옵션으로 설정
+        // });
     });
 
     function loadLCLASCD_main() {
